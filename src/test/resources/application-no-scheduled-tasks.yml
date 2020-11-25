@@ -1,0 +1,11 @@
+lunch:
+  slack-webhook-url: http://localhost:9876/lunch/slack/webhook
+  sync-interval: null
+  client:
+    user-agent: "Some user agent"
+    timeout: PT100S
+  pages:
+  - id: PŻPS
+    url: http://localhost:9876/lunch/facebook/pzps/posts
+  - id: WegeGuru
+    url: http://localhost:9876/lunch/facebook/wegeguru/posts

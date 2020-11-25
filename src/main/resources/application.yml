@@ -1,0 +1,41 @@
+logging:
+  pattern:
+    console: '${CONSOLE_LOG_PATTERN:%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID: }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-30.30logger{0}){cyan} %clr({%mdc}){faint} %m%n%wEx}'
+
+spring:
+  application:
+    name: slack-bot
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    default-property-inclusion: NON_EMPTY
+    serialization:
+      WRITE_ENUMS_USING_TO_STRING: true
+    deserialization:
+      READ_ENUMS_USING_TO_STRING: true
+  task:
+    scheduling:
+      pool:
+        size: 3
+  datasource:
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/slack-bot}
+    username: ${JDBC_DATABASE_USERNAME:slack-bot}
+    password: ${JDBC_DATABASE_PASSWORD:slack-bot}
+    maximum-pool-size: 2
+
+server:
+  port: ${PORT:8080} # For Heroku: the app must bind itself to $PORT port.
+  forward-headers-strategy: native
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /internal
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+
+lunch:
+  sync-interval: ${LUNCH_SYNC_INTERVAL:PT5M}

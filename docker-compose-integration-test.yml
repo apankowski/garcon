@@ -1,0 +1,12 @@
+version: '3.1'
+
+services:
+  database:
+    restart: always
+    image: postgres:9.6.9
+    environment:
+      POSTGRES_DB: slack-bot
+      POSTGRES_USER: slack-bot
+      POSTGRES_PASS: slack-bot
+    ports:
+    - 5432:5432
