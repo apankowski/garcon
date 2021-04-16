@@ -8,8 +8,8 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @SpringBootApplication
 @ConfigurationPropertiesScan
 @EnableScheduling
-class SlackBotApplication
+class GarconApplication
 
 fun main(args: Array<String>) {
-	runApplication<SlackBotApplication>(*args)
+	runApplication<GarconApplication>(*args)
 }

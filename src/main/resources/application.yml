@@ -4,7 +4,7 @@ logging:
 
 spring:
   application:
-    name: slack-bot
+    name: garcon
   jackson:
     property-naming-strategy: SNAKE_CASE
     default-property-inclusion: NON_EMPTY
@@ -17,9 +17,9 @@ spring:
       pool:
         size: 3
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/slack-bot}
-    username: ${JDBC_DATABASE_USERNAME:slack-bot}
-    password: ${JDBC_DATABASE_PASSWORD:slack-bot}
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/garcon}
+    username: ${JDBC_DATABASE_USERNAME:garcon}
+    password: ${JDBC_DATABASE_PASSWORD:garcon}
     maximum-pool-size: 2
 
 server:

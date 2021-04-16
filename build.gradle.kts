@@ -141,9 +141,9 @@ tasks.composeUp {
 // FLYWAY
 
 val dbHost = System.getenv("DB_HOST") ?: "localhost:5432"
-val dbName = "slack-bot"
-val dbUser = "slack-bot"
-val dbPassword = "slack-bot"
+val dbName = "garcon"
+val dbUser = "garcon"
+val dbPassword = "garcon"
 val dbUrl = "jdbc:postgresql://$dbHost/$dbName"
 
 flyway {

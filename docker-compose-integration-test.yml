@@ -5,8 +5,8 @@ services:
     restart: always
     image: postgres:9.6.9
     environment:
-      POSTGRES_DB: slack-bot
-      POSTGRES_USER: slack-bot
-      POSTGRES_PASS: slack-bot
+      POSTGRES_DB: garcon
+      POSTGRES_USER: garcon
+      POSTGRES_PASSWORD: garcon
     ports:
     - 5432:5432

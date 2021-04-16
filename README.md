@@ -20,7 +20,7 @@ To protect certain things the original git commit history had to be wiped out.
 
 ## Stack
 
-The Slack Bot service is written in Kotlin and uses the following stack:
+The service is written in Kotlin and uses the following stack:
 
   * Kotlin 1.4 on Java 11
   * Gradle 6 (with build script in Kotlin)
@@ -75,7 +75,7 @@ Configure _Incoming Webhooks_ and _Slash Commands_ for the app:
  1. Build the docker image:
 
     ```
-    docker build -t slack-bot .
+    docker build -t garcon .
     ```
 
  1. Push built image to the docker registry of your choosing & deploy to your target environment. If you're going with Heroku, see the [respective section](#Heroku).
@@ -89,9 +89,9 @@ Create an empty PostgreSQL database for the bot with UTF-8 encoding to support e
 | Name | Description | Required | Default/Example |
 |------|-------------|:--------:|-----------------|
 | `PORT` | HTTP port that will serve requests | ✓ | `8080` |
-| `JDBC_DATABASE_URL` | JDBC URL to the database | ✗ | `jdbc:postgresql://localhost:5432/slack-bot` |
-| `JDBC_DATABASE_USERNAME` | Username used to connect to the database | ✗ | `slack-bot` |
-| `JDBC_DATABASE_PASSWORD` | Password used to connect to the database | ✗ | `slack-bot` |
+| `JDBC_DATABASE_URL` | JDBC URL to the database | ✗ | `jdbc:postgresql://localhost:5432/garcon` |
+| `JDBC_DATABASE_USERNAME` | Username used to connect to the database | ✗ | `garcon` |
+| `JDBC_DATABASE_PASSWORD` | Password used to connect to the database | ✗ | `garcon` |
 | `LUNCH_SLACK_WEBHOOK_URL` | URL of Slack's Incoming Webhook that will be used to send lunch messages. | ✗ | `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX` |
 | `LUNCH_SYNC_INTERVAL` | Interval between consecutive checks for lunch posts. | ✗ | `PT5M` |
 | `LUNCH_CLIENT_USER_AGENT` | User agent by which the client identifies itself when fetching lunch pages. | ✗ | `Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:80.0) Gecko/20100101 Firefox/80.0` |
@@ -111,8 +111,8 @@ To deploy the service issue the following commands (presence of `heroku` CLI and
 
  1. `heroku login`
  1. `heroku container:login`
- 1. `heroku container:push web --app your-slack-bot-name`
- 1. `heroku container:release web --app your-slack-bot-name`
+ 1. `heroku container:push web --app garcon`
+ 1. `heroku container:release web --app garcon`
 
 See [here](https://devcenter.heroku.com/articles/container-registry-and-runtime) for more details.
 
