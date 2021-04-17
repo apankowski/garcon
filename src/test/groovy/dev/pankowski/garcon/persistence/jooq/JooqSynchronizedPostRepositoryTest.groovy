@@ -20,6 +20,10 @@ import spock.lang.Specification
 import spock.lang.Subject
 
 import java.time.Instant
+import java.time.temporal.ChronoUnit
+import java.util.concurrent.TimeUnit
+
+import static java.time.temporal.ChronoUnit.MICROS
 
 @JooqTest
 @FlywayTest
@@ -38,7 +42,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
   private static def somePost(Map arguments = [:]) {
     arguments = [
       "facebookId" : "SomeFacebookId",
-      "publishedAt": Instant.now(),
+      "publishedAt": Instant.now().truncatedTo(MICROS),
       "content"    : "some content"
     ] << arguments
 
@@ -51,11 +55,11 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
   }
 
   private static def someRepostError() {
-    new Repost.Error(1, Instant.now())
+    new Repost.Error(1, Instant.now().truncatedTo(MICROS))
   }
 
   private static def someRepostSuccess() {
-    new Repost.Success(Instant.now())
+    new Repost.Success(Instant.now().truncatedTo(MICROS))
   }
 
   def "should persist synchronized post"() {
@@ -188,7 +192,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
     given:
     def somePageId = new LunchPageId("1")
     def otherPageId = new LunchPageId("2")
-    def now = Instant.now()
+    def now = Instant.now().truncatedTo(MICROS)
 
     repository.findExisting(repository.store(new StoreData(
       somePageId,
@@ -237,7 +241,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
 
   def "should stream synchronization log"() {
     given:
-    def now = Instant.now()
+    def now = Instant.now().truncatedTo(MICROS)
     def posts = (1..100).collect {
       def i = it
       repository.findExisting(repository.store(new StoreData(
