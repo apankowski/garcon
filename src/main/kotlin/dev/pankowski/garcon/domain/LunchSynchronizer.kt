@@ -8,7 +8,7 @@ import java.time.Instant
 class LunchSynchronizer(
   private val postClient: FacebookPostClient,
   private val lunchPostClassifier: LunchPostClassifier,
-  private val reposter: LunchReposter,
+  private val reposter: SlackReposter,
   private val repository: SynchronizedPostRepository
 ) {
 

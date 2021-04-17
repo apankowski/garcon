@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 
 @Component
-class LunchReposter(private val lunchConfig: LunchConfig, restTemplateBuilder: RestTemplateBuilder) {
+class SlackReposter(private val lunchConfig: LunchConfig, restTemplateBuilder: RestTemplateBuilder) {
 
   private val log = getLogger(javaClass)
 

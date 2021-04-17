@@ -16,7 +16,7 @@ class LunchSynchronizerTest extends Specification {
 
   FacebookPostClient postClient = Mock()
   LunchPostClassifier postClassifier = Mock()
-  LunchReposter reposter = Mock()
+  SlackReposter reposter = Mock()
   SynchronizedPostRepository repository = Spy(InMemorySynchronizedPostRepository)
 
   @Subject

@@ -1,8 +1,6 @@
 package dev.pankowski.garcon.domain
 
-import dev.pankowski.garcon.domain.FacebookId
-import dev.pankowski.garcon.domain.FacebookPost
-import dev.pankowski.garcon.domain.LunchPageId
+
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -21,7 +19,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 // TODO: Use Kotlin & Junit 5 (JUnit 4 doesn't seem to be compatible with Kotlin)?
 // https://spring.io/guides/tutorials/spring-boot-kotlin/
-class LunchReposterTest extends Specification {
+class SlackReposterTest extends Specification {
 
   def lunchConfig = new LunchConfig(
     new URL("https://slack/webhook"),
@@ -31,7 +29,7 @@ class LunchReposterTest extends Specification {
   )
 
   @Subject
-  def repostingClient = new LunchReposter(lunchConfig, new RestTemplateBuilder())
+  def repostingClient = new SlackReposter(lunchConfig, new RestTemplateBuilder())
 
   def mockServer = MockRestServiceServer.createServer(repostingClient.restTemplate)
 
