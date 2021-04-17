@@ -11,11 +11,11 @@ plugins {
   kotlin("kapt") version "1.4.32"
   kotlin("plugin.spring") version "1.4.32"
   id("org.springframework.boot") version "2.3.4.RELEASE"
-  id("io.spring.dependency-management") version "1.0.10.RELEASE"
+  id("io.spring.dependency-management") version "1.0.11.RELEASE"
   id("com.gorylenko.gradle-git-properties") version "2.2.4"
-  id("com.adarshr.test-logger") version "2.1.1"
-  id("com.avast.gradle.docker-compose") version "0.13.4"
-  id("org.flywaydb.flyway") version "7.2.1"
+  id("com.adarshr.test-logger") version "3.0.0"
+  id("com.avast.gradle.docker-compose") version "0.14.3"
+  id("org.flywaydb.flyway") version "7.8.1"
   id("com.rohanprabhu.kotlin-dsl-jooq") version "0.4.6"
 }
 
