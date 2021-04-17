@@ -10,7 +10,7 @@ plugins {
   kotlin("jvm") version "1.4.32"
   kotlin("kapt") version "1.4.32"
   kotlin("plugin.spring") version "1.4.32"
-  id("org.springframework.boot") version "2.3.4.RELEASE"
+  id("org.springframework.boot") version "2.4.5"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
   id("com.gorylenko.gradle-git-properties") version "2.2.4"
   id("com.adarshr.test-logger") version "3.0.0"
@@ -100,6 +100,7 @@ dependencies {
   testImplementation("org.spockframework:spock-core")
   testImplementation("com.github.tomakehurst:wiremock")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test")
+  testRuntimeOnly("org.junit.vintage:junit-vintage-engine") // For Spock (relying on JUnit 4)
 
   // OTHER
   kapt("org.springframework.boot:spring-boot-configuration-processor")
