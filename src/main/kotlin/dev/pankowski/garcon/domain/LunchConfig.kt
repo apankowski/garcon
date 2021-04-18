@@ -69,3 +69,5 @@ data class LunchPageConfig(
    */
   val url: URL
 )
+
+data class LunchPageId(val value: String)
