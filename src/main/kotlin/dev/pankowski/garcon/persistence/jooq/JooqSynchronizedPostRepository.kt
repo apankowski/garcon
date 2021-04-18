@@ -30,7 +30,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       lunchPageId = data.pageId.value
 
       // Post
-      postFacebookId = data.post.facebookId.id
+      postExternalId = data.post.externalId.id
       postLink = data.post.link.toString()
       postPublishedAt = data.post.publishedAt
       postContent = data.post.content
@@ -112,8 +112,8 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
 
   private fun toDomainObject(record: SynchronizedPostsRecord): SynchronizedPost {
     fun toFacebookPost(r: SynchronizedPostsRecord) =
-      FacebookPost(
-        facebookId = FacebookId(r.postFacebookId),
+      Post(
+        externalId = ExternalId(r.postExternalId),
         link = URI.create(r.postLink),
         publishedAt = r.postPublishedAt,
         content = r.postContent

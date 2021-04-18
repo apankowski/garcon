@@ -1,8 +1,6 @@
 package dev.pankowski.garcon.domain
 
-import dev.pankowski.garcon.domain.Classification
-import dev.pankowski.garcon.domain.FacebookId
-import dev.pankowski.garcon.domain.FacebookPost
+
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
@@ -15,8 +13,8 @@ class LunchPostClassifierTest extends Specification {
   LunchPostClassifier classifier = new LunchPostClassifier()
 
   private static def somePost(String content) {
-    new FacebookPost(
-      new FacebookId("SomeId"),
+    new Post(
+      new ExternalId("SomeId"),
       URI.create("https://www.facebook.com/"),
       Instant.now(),
       content

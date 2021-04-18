@@ -46,7 +46,7 @@ data class SynchronizedPost(
   val createdAt: Instant,
   val updatedAt: Instant,
   val pageId: LunchPageId,
-  val post: FacebookPost,
+  val post: Post,
   val classification: Classification,
   val repost: Repost
 )

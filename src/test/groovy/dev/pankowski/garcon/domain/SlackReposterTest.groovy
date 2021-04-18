@@ -35,8 +35,8 @@ class SlackReposterTest extends Specification {
 
   def "should repost using incoming webhook"() {
     given:
-    def post = new FacebookPost(
-      new FacebookId("SomeId"),
+    def post = new Post(
+      new ExternalId("SomeId"),
       URI.create("https://www.facebook.com/post"),
       Instant.now(),
       "Some content"

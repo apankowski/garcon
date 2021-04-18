@@ -1,19 +1,6 @@
 package dev.pankowski.garcon.domain
 
 import com.google.common.util.concurrent.MoreExecutors
-import dev.pankowski.garcon.domain.ChannelId
-import dev.pankowski.garcon.domain.Classification
-import dev.pankowski.garcon.domain.FacebookId
-import dev.pankowski.garcon.domain.FacebookPost
-import dev.pankowski.garcon.domain.LunchPageId
-import dev.pankowski.garcon.domain.LunchSubcommand
-import dev.pankowski.garcon.domain.Repost
-import dev.pankowski.garcon.domain.ResponseType
-import dev.pankowski.garcon.domain.SlashCommand
-import dev.pankowski.garcon.domain.SynchronizedPost
-import dev.pankowski.garcon.domain.SynchronizedPostId
-import dev.pankowski.garcon.domain.UserId
-import dev.pankowski.garcon.domain.Version
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -142,8 +129,8 @@ class LunchServiceTest extends Specification {
         baseDateTime.plusDays(0).toInstant(),
         baseDateTime.plusDays(1).toInstant(),
         new LunchPageId("LP1"),
-        new FacebookPost(
-          new FacebookId("FB1"),
+        new Post(
+          new ExternalId("FB1"),
           new URI("https://facebook/1"),
           baseDateTime.plusDays(2).toInstant(),
           "Some post content 1"
@@ -157,8 +144,8 @@ class LunchServiceTest extends Specification {
         baseDateTime.plusDays(5).toInstant(),
         baseDateTime.plusDays(6).toInstant(),
         new LunchPageId("LP2"),
-        new FacebookPost(
-          new FacebookId("FB2"),
+        new Post(
+          new ExternalId("FB2"),
           new URI("https://facebook/2"),
           baseDateTime.plusDays(7).toInstant(),
           "Some post content 2"
@@ -172,8 +159,8 @@ class LunchServiceTest extends Specification {
         baseDateTime.plusDays(10).toInstant(),
         baseDateTime.plusDays(11).toInstant(),
         new LunchPageId("LP3"),
-        new FacebookPost(
-          new FacebookId("FB3"),
+        new Post(
+          new ExternalId("FB3"),
           new URI("https://facebook/3"),
           baseDateTime.plusDays(12).toInstant(),
           "Some post content 3"
@@ -187,8 +174,8 @@ class LunchServiceTest extends Specification {
         baseDateTime.plusDays(15).toInstant(),
         baseDateTime.plusDays(16).toInstant(),
         new LunchPageId("LP4"),
-        new FacebookPost(
-          new FacebookId("FB4"),
+        new Post(
+          new ExternalId("FB4"),
           new URI("https://facebook/4"),
           baseDateTime.plusDays(17).toInstant(),
           "Some post content 4"

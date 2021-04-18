@@ -13,7 +13,7 @@ class SlackReposter(private val lunchConfig: LunchConfig, restTemplateBuilder: R
   // Visible for testing
   val restTemplate: RestTemplate = restTemplateBuilder.build()
 
-  fun repost(post: FacebookPost, pageId: LunchPageId) {
+  fun repost(post: Post, pageId: LunchPageId) {
     log.debug("Reposting on Slack: {}", post)
     val text =
       """

@@ -51,7 +51,7 @@ class LunchSynchronizer(
       .map(repository::findExisting)
   }
 
-  private fun fetchPostsAfter(page: LunchPageConfig, lastSeenPublishedAt: Instant?): List<FacebookPost> =
+  private fun fetchPostsAfter(page: LunchPageConfig, lastSeenPublishedAt: Instant?): List<Post> =
     postClient.fetch(page)
       .let {
         // Remove seen posts.
@@ -93,7 +93,7 @@ class LunchSynchronizer(
     }
   }
 
-  private fun repost(post: FacebookPost, pageId: LunchPageId) =
+  private fun repost(post: Post, pageId: LunchPageId) =
     try {
       reposter.repost(post, pageId)
       log.info("Post ${post.link} reposted on Slack")

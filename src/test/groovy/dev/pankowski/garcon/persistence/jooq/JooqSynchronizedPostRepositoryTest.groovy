@@ -1,8 +1,8 @@
 package dev.pankowski.garcon.persistence.jooq
 
 import dev.pankowski.garcon.domain.Classification
-import dev.pankowski.garcon.domain.FacebookId
-import dev.pankowski.garcon.domain.FacebookPost
+import dev.pankowski.garcon.domain.ExternalId
+import dev.pankowski.garcon.domain.Post
 import dev.pankowski.garcon.domain.LunchPageId
 import dev.pankowski.garcon.domain.Repost
 import dev.pankowski.garcon.domain.StoreData
@@ -20,8 +20,6 @@ import spock.lang.Specification
 import spock.lang.Subject
 
 import java.time.Instant
-import java.time.temporal.ChronoUnit
-import java.util.concurrent.TimeUnit
 
 import static java.time.temporal.ChronoUnit.MICROS
 
@@ -41,14 +39,14 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
 
   private static def somePost(Map arguments = [:]) {
     arguments = [
-      "facebookId" : "SomeFacebookId",
+      "externalId" : "SomeExternalId",
       "publishedAt": Instant.now().truncatedTo(MICROS),
       "content"    : "some content"
     ] << arguments
 
-    new FacebookPost(
-      new FacebookId(arguments.facebookId as String),
-      URI.create("https://www.facebook.com/" + arguments.facebookId),
+    new Post(
+      new ExternalId(arguments.externalId as String),
+      URI.create("https://www.facebook.com/" + arguments.externalId),
       arguments.publishedAt as Instant,
       arguments.content as String
     )
@@ -196,35 +194,35 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
 
     repository.findExisting(repository.store(new StoreData(
       somePageId,
-      somePost(facebookId: "3", publishedAt: now.minusSeconds(300), content: "3"),
+      somePost(externalId: "3", publishedAt: now.minusSeconds(300), content: "3"),
       someClassification(),
       someRepost()
     )))
 
     def somePageExpectedLastSeen = repository.findExisting(repository.store(new StoreData(
       somePageId,
-      somePost(facebookId: "1", publishedAt: now.minusSeconds(100), content: "1"),
+      somePost(externalId: "1", publishedAt: now.minusSeconds(100), content: "1"),
       someClassification(),
       someRepost()
     )))
 
     repository.findExisting(repository.store(new StoreData(
       somePageId,
-      somePost(facebookId: "2", publishedAt: now.minusSeconds(200), content: "2"),
+      somePost(externalId: "2", publishedAt: now.minusSeconds(200), content: "2"),
       someClassification(),
       someRepost()
     )))
 
     def otherPageExpectedLastSeen = repository.findExisting(repository.store(new StoreData(
       otherPageId,
-      somePost(facebookId: "4", publishedAt: now.minusSeconds(10), content: "4"),
+      somePost(externalId: "4", publishedAt: now.minusSeconds(10), content: "4"),
       someClassification(),
       someRepost()
     )))
 
     repository.findExisting(repository.store(new StoreData(
       otherPageId,
-      somePost(facebookId: "5", publishedAt: now.minusSeconds(50), content: "5"),
+      somePost(externalId: "5", publishedAt: now.minusSeconds(50), content: "5"),
       someClassification(),
       someRepost()
     )))
@@ -246,7 +244,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
       def i = it
       repository.findExisting(repository.store(new StoreData(
         somePageId(),
-        somePost(facebookId: "$i", publishedAt: now.minusSeconds(i), content: "Content #$i"),
+        somePost(externalId: "$i", publishedAt: now.minusSeconds(i), content: "Content #$i"),
         someClassification(),
         someRepost()
       )))

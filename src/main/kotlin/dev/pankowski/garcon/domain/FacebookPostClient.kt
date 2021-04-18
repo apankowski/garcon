@@ -19,7 +19,7 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
 
   private val log: Logger = LoggerFactory.getLogger(javaClass)
 
-  fun fetch(pageConfig: LunchPageConfig): FacebookPosts =
+  fun fetch(pageConfig: LunchPageConfig): Posts =
     fetchDocument(pageConfig.url)
       .let(::extract)
       .let(::sort)
@@ -46,10 +46,10 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
     return fetch()
   }
 
-  private fun extract(document: Document): FacebookPosts =
+  private fun extract(document: Document): Posts =
     document.select(".userContentWrapper").mapNotNull(::processContentWrapper)
 
-  private fun processContentWrapper(e: Element): FacebookPost? {
+  private fun processContentWrapper(e: Element): Post? {
     // Wrap content wrapper element in a document shell to limit parent traversal.
     Document.createShell(e.baseUri()).appendChild(e)
 
@@ -74,13 +74,13 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
       log.warn(
         "Possible unexpected format of facebook page post. Found .userContentWrapper but "
           + "some of the post parts couldn't be extracted.\ntimestampElement: {}\nlink: {}\n"
-          + "facebookId: {}\nfacebookLink: {}\npublishedAt: {}\ncontent: {}\n.userContentWrapper: {}",
+          + "externalId: {}\nfacebookLink: {}\npublishedAt: {}\ncontent: {}\n.userContentWrapper: {}",
         timestampElement, facebookId, facebookLink, publishedAt, content, e
       )
       return null
     }
 
-    return FacebookPost(facebookId, facebookLink, publishedAt, content)
+    return Post(facebookId, facebookLink, publishedAt, content)
   }
 
   private fun getTimestampData(e: Element): Instant? =
@@ -95,7 +95,7 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
       ?.emptyToNull()
       ?.let(URI::create)
 
-  private fun extractFacebookId(uri: URI): FacebookId? {
+  private fun extractFacebookId(uri: URI): ExternalId? {
     // Regular post
     val postPathRegex = "^/?permalink\\.php".toRegex()
     val postPathMatch = postPathRegex.find(uri.path)
@@ -103,28 +103,28 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
       return UriComponentsBuilder.fromUri(uri).build()
         .queryParams["story_fbid"]
         ?.firstOrNull()
-        ?.let(::FacebookId)
+        ?.let(::ExternalId)
     }
 
     // Regular post - alternative version
     val altPostPathRegex = "^/?[^/]+/posts/([\\d]+)/?$".toRegex()
     val altPostPathMatch = altPostPathRegex.find(uri.path)
     if (altPostPathMatch != null) {
-      return FacebookId(altPostPathMatch.groupValues[1])
+      return ExternalId(altPostPathMatch.groupValues[1])
     }
 
     // Photo
     val photoPathRegex = "^/?[^/]+/photos/[a-z.\\d]+/([\\d]+)/?$".toRegex()
     val photoPathMatch = photoPathRegex.find(uri.path)
     if (photoPathMatch != null) {
-      return FacebookId(photoPathMatch.groupValues[1])
+      return ExternalId(photoPathMatch.groupValues[1])
     }
 
     // Dunno
     return null
   }
 
-  private fun buildFacebookLink(id: FacebookId) =
+  private fun buildFacebookLink(id: ExternalId) =
     URI.create("https://www.facebook.com/${id.id}")
 
   private fun extractContent(e: Element): String {
@@ -145,6 +145,6 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
     return clean.trim().lines().joinToString(transform = String::trim, separator = "\n")
   }
 
-  private fun sort(posts: FacebookPosts): FacebookPosts =
-    posts.sortedBy(FacebookPost::publishedAt)
+  private fun sort(posts: Posts): Posts =
+    posts.sortedBy(Post::publishedAt)
 }

@@ -1,9 +1,6 @@
 package dev.pankowski.garcon.domain
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import dev.pankowski.garcon.domain.FacebookId
-import dev.pankowski.garcon.domain.FacebookPost
-import dev.pankowski.garcon.domain.LunchPageId
 import org.jsoup.HttpStatusException
 import org.springframework.http.MediaType
 import spock.lang.Shared
@@ -87,8 +84,8 @@ class FacebookPostClientTest extends Specification {
 
     then:
     posts == [
-      new FacebookPost(
-        new FacebookId("0"),
+      new Post(
+        new ExternalId("0"),
         new URI("https://www.facebook.com/0"),
         Instant.ofEpochSecond(0),
         "Some content"
@@ -218,14 +215,14 @@ class FacebookPostClientTest extends Specification {
 
     then:
     posts == [
-      new FacebookPost(
-        new FacebookId("1"),
+      new Post(
+        new ExternalId("1"),
         new URI("https://www.facebook.com/1"),
         Instant.ofEpochSecond(1),
         "Some content 1"
       ),
-      new FacebookPost(
-        new FacebookId("2"),
+      new Post(
+        new ExternalId("2"),
         new URI("https://www.facebook.com/2"),
         Instant.ofEpochSecond(2),
         "Some content 2"
@@ -247,8 +244,8 @@ class FacebookPostClientTest extends Specification {
 
     then:
     posts == [
-      new FacebookPost(
-        new FacebookId("2342169022692189"),
+      new Post(
+        new ExternalId("2342169022692189"),
         URI.create("https://www.facebook.com/2342169022692189"),
         Instant.ofEpochSecond(1558799401),
         """\
@@ -256,24 +253,24 @@ class FacebookPostClientTest extends Specification {
         |i dla wszystkich mam mamy słodką niespodziankę - zapraszamy 26 maja
         |do Pół Żartem Pół Serio slow bistro""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2346741902234901"),
+      new Post(
+        new ExternalId("2346741902234901"),
         URI.create("https://www.facebook.com/2346741902234901"),
         Instant.ofEpochSecond(1559387087),
         """\
         |Schabowy z kostką i młodą kapustą
         |i gravlax z łososia""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2346903232218768"),
+      new Post(
+        new ExternalId("2346903232218768"),
         URI.create("https://www.facebook.com/2346903232218768"),
         Instant.ofEpochSecond(1559402930),
         """\
         |Sałatka z owoców morza
         |i filet z łososia na risotto""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2350532298522528"),
+      new Post(
+        new ExternalId("2350532298522528"),
         URI.create("https://www.facebook.com/2350532298522528"),
         Instant.ofEpochSecond(1559822687),
         """\
@@ -284,8 +281,8 @@ class FacebookPostClientTest extends Specification {
         |naleśnik z dżemem
         |naleśnik z owocami i polewą czekoladową""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2352062648369493"),
+      new Post(
+        new ExternalId("2352062648369493"),
         URI.create("https://www.facebook.com/2352062648369493"),
         Instant.ofEpochSecond(1559985730),
         """\
@@ -297,52 +294,52 @@ class FacebookPostClientTest extends Specification {
         |* pasta z pieczonego bakłażana
         |* ser kozi, owoce i szpinak""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2357670637808694"),
+      new Post(
+        new ExternalId("2357670637808694"),
         URI.create("https://www.facebook.com/2357670637808694"),
         Instant.ofEpochSecond(1560623524),
         """\
         |Dziś  w Pół Żartem Pół Serio świętujemy urodziny Pana Tomka""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2362955620613529"),
+      new Post(
+        new ExternalId("2362955620613529"),
         URI.create("https://www.facebook.com/2362955620613529"),
         Instant.ofEpochSecond(1561205318),
         """\
         |Półmisek greckich przekąsek
         |(pasta z bobu,hummus,karczochy)podawane z pitą🌮""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2363823310526760"),
+      new Post(
+        new ExternalId("2363823310526760"),
         URI.create("https://www.facebook.com/2363823310526760"),
         Instant.ofEpochSecond(1561297183),
         """\
         |Po co jechać do Kampinosu, jak w Pół Żartem Pół Serio Cafe mamy trochę Lasu 🌲🌲🌲
         |Zapraszamy na nowe pyszne ciacho o wdzięcznej nazwie LEŚNY MECH 😁""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2364540033788421"),
+      new Post(
+        new ExternalId("2364540033788421"),
         URI.create("https://www.facebook.com/2364540033788421"),
         Instant.ofEpochSecond(1561376258),
         """\
         |Kto nie lubi poniedziałków to z nami je pokocha 😍 Dziś na dobry początek tygodnia mamy dla Was kolejne pyszności! Ciacho Owocowy Raj już dostępne w Pół Żartem Pół Serio Cafe  🍭☕️🍰🍨 Zapraszamy!""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2367006246875133"),
+      new Post(
+        new ExternalId("2367006246875133"),
         URI.create("https://www.facebook.com/2367006246875133"),
         Instant.ofEpochSecond(1561639211),
         """\
         |Odrobina słodyczy każdemu się przyda 😁😋🤗 Dziś do Pół Żartem Pół Serio Cafe na Tartę Cytrynową 🍋🍋🍋 i Bezę z owocami sezonowymi 🍓🍓🍓""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2369216289987462"),
+      new Post(
+        new ExternalId("2369216289987462"),
         URI.create("https://www.facebook.com/2369216289987462"),
         Instant.ofEpochSecond(1561900524),
         """\
         |Żar bucha z nieba ☀️☀️☀️ to coś na ochłodę potrzeba! 🍦🍦🍦 Zapraszamy do Pół Żartem Pół Serio Cafe 🍭🍭🍭na lody rzemieślnicze i kawę mrożoną! 😋🌈🦄🍒""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2371503593092065"),
+      new Post(
+        new ExternalId("2371503593092065"),
         URI.create("https://www.facebook.com/2371503593092065"),
         Instant.ofEpochSecond(1562160573),
         """\
@@ -352,8 +349,8 @@ class FacebookPostClientTest extends Specification {
         |3 nagroda zaproszenie do cafe
         |Konkurs trwa do 1 września 2019""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2375021466073611"),
+      new Post(
+        new ExternalId("2375021466073611"),
         URI.create("https://www.facebook.com/2375021466073611"),
         Instant.ofEpochSecond(1562595849),
         """\
@@ -363,22 +360,22 @@ class FacebookPostClientTest extends Specification {
         |
         |Zapraszamy 😁""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2376464095929348"),
+      new Post(
+        new ExternalId("2376464095929348"),
         URI.create("https://www.facebook.com/2376464095929348"),
         Instant.ofEpochSecond(1562771399),
         """\
         |Dziś do Pół Żartem Poł Serio Cafe zapraszamy na klasykę polskich serników - Sernik Rosa 🍰🍰🍰, czyli delikatna i pyszna masa serowa z bezową chmurką na tradycyjnym kruchym spodzie. Pychota! Życzymy Smacznego 🤗""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2377153185860439"),
+      new Post(
+        new ExternalId("2377153185860439"),
         URI.create("https://www.facebook.com/2377153185860439"),
         Instant.ofEpochSecond(1562856474),
         """\
         |Delikatne kruche ciasto, aksamitna masa budyniowa, świeże owoce i orzeźwiająca cytrynowa galaretka. 🍓🍇🥝🍋 To znakomite połączenie i rewelacyjny smak naszej TARTY, którą już dziś można dostać w Pół Żartem Pół Serio Cafe ☕️🍰 Zapraszamy 🤗""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2377781032464321"),
+      new Post(
+        new ExternalId("2377781032464321"),
         URI.create("https://www.facebook.com/2377781032464321"),
         Instant.ofEpochSecond(1562936915),
         """\
@@ -390,15 +387,15 @@ class FacebookPostClientTest extends Specification {
         |
         |Zapraszamy i życzymy smacznego 🤗""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2378495385726219"),
+      new Post(
+        new ExternalId("2378495385726219"),
         URI.create("https://www.facebook.com/2378495385726219"),
         Instant.ofEpochSecond(1563025708),
         """\
         |Dziś w Pol Żartem Pół Serio Cafe 🍰☕️ polecamy pyszne Buraczane Ciasto , czyli Murzynek w wersji wegańskiej 😁😋 Zapraszamy! 🤗""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2385517911690633"),
+      new Post(
+        new ExternalId("2385517911690633"),
         URI.create("https://www.facebook.com/2385517911690633"),
         Instant.ofEpochSecond(1563869152),
         """\
@@ -415,8 +412,8 @@ class FacebookPostClientTest extends Specification {
         |
         |Zapraszamy🍲🍗😆""".stripMargin()
       ),
-      new FacebookPost(
-        new FacebookId("2385635615012196"),
+      new Post(
+        new ExternalId("2385635615012196"),
         URI.create("https://www.facebook.com/2385635615012196"),
         Instant.ofEpochSecond(1563883027),
         """\

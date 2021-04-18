@@ -26,8 +26,8 @@ class LunchSynchronizerTest extends Specification {
   def "should ignore already seen posts"() {
     given:
     def now = Instant.now()
-    def post = new FacebookPost(
-      new FacebookId("FBID1"),
+    def post = new Post(
+      new ExternalId("FBID1"),
       new URI("https://facebook/post/1"),
       now.minusSeconds(1),
       "Some content 1"
@@ -47,8 +47,8 @@ class LunchSynchronizerTest extends Specification {
 
   def "should save & repost fetched lunch posts"() {
     given:
-    def post = new FacebookPost(
-      new FacebookId("FBID1"),
+    def post = new Post(
+      new ExternalId("FBID1"),
       new URI("https://facebook/post/1"),
       Instant.now(),
       "Some content 1"
@@ -68,8 +68,8 @@ class LunchSynchronizerTest extends Specification {
 
   def "should save fetched non-lunch posts"() {
     given:
-    def post = new FacebookPost(
-      new FacebookId("FBID1"),
+    def post = new Post(
+      new ExternalId("FBID1"),
       new URI("https://facebook/post/1"),
       Instant.now(),
       "Some content 1"

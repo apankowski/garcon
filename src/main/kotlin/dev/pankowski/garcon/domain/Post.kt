@@ -3,13 +3,13 @@ package dev.pankowski.garcon.domain
 import java.net.URI
 import java.time.Instant
 
-data class FacebookId(val id: String)
+data class ExternalId(val id: String)
 
-data class FacebookPost(
-  val facebookId: FacebookId,
+data class Post(
+  val externalId: ExternalId,
   val link: URI,
   val publishedAt: Instant,
   val content: String
 )
 
-typealias FacebookPosts = List<FacebookPost>
+typealias Posts = List<Post>
