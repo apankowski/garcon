@@ -18,11 +18,11 @@ class ScheduledTaskInitializerTest extends Specification {
       [],
     )
 
-    TaskScheduler taskScheduler = Mock()
-    LunchService service = Mock()
+    def taskScheduler = Mock(TaskScheduler)
+    def service = Mock(LunchSynchronizer)
 
     @Subject
-    ScheduledTaskInitializer initializer = new ScheduledTaskInitializer(taskScheduler, service, config)
+    def initializer = new ScheduledTaskInitializer(taskScheduler, service, config)
 
     when:
     initializer.run()
@@ -44,7 +44,7 @@ class ScheduledTaskInitializerTest extends Specification {
       assert delay == syncInterval
     }
 
-    1 * service.checkForLunchPosts()
+    1 * service.synchronizeAll()
   }
 
   def "should *not* schedule synchronization of posts when sync interval is *not* set"() {
@@ -56,11 +56,11 @@ class ScheduledTaskInitializerTest extends Specification {
       [],
     )
 
-    TaskScheduler taskScheduler = Mock()
-    LunchService service = Mock()
+    def taskScheduler = Mock(TaskScheduler)
+    def service = Mock(LunchSynchronizer)
 
     @Subject
-    ScheduledTaskInitializer initializer = new ScheduledTaskInitializer(taskScheduler, service, config)
+    def initializer = new ScheduledTaskInitializer(taskScheduler, service, config)
 
     when:
     initializer.run()

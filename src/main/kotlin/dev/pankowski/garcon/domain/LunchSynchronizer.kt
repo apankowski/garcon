@@ -6,14 +6,28 @@ import java.time.Instant
 
 @Component
 class LunchSynchronizer(
+  private val lunchConfig: LunchConfig,
   private val postClient: FacebookPostClient,
   private val lunchPostClassifier: LunchPostClassifier,
   private val reposter: SlackReposter,
-  private val repository: SynchronizedPostRepository
+  private val repository: SynchronizedPostRepository,
 ) {
 
   private val log = LoggerFactory.getLogger(javaClass)
 
+  @Synchronized
+  fun synchronizeAll() {
+    log.info("Checking for lunch posts")
+    lunchConfig.pages.forEach { pageConfig ->
+      try {
+        synchronize(pageConfig)
+      } catch (e: Exception) {
+        log.error("Error while synchronizing posts of page $pageConfig", e)
+      }
+    }
+  }
+
+  // Visible for testing
   fun synchronize(page: LunchPageConfig) =
     Mdc.PageId.having(page.id) {
       val synchronizedPosts = synchronizePosts(page)
@@ -87,4 +101,7 @@ class LunchSynchronizer(
       log.error("Failed to repost post ${post.link} on Slack", e)
       throw e
     }
+
+  fun getLog(count: Int) =
+    repository.getLog(count)
 }

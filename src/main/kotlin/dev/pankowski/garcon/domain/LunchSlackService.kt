@@ -8,12 +8,10 @@ import java.util.concurrent.Executor
 import kotlin.text.Typography.ellipsis
 
 @Service
-class LunchService(
-  private val lunchConfig: LunchConfig,
+class LunchSlackService(
   private val subcommandParser: LunchSubcommandParser,
   private val taskScheduler: Executor,
   private val synchronizer: LunchSynchronizer,
-  private val repository: SynchronizedPostRepository
 ) {
 
   private val log = getLogger(javaClass)
@@ -52,24 +50,12 @@ class LunchService(
   private fun handleCheckForLunchPost() =
     try {
       // TODO: Reply with responseId from command?
-      taskScheduler.execute(::checkForLunchPosts)
+      taskScheduler.execute(synchronizer::synchronizeAll)
       MessagePayload( "Checking...", ResponseType.EPHEMERAL)
     } catch (e: Exception) {
       log.error("Failed to schedule checking for lunch posts", e)
       MessagePayload("Error while scheduling synchronization :frowning:", ResponseType.EPHEMERAL)
     }
-
-  @Synchronized
-  fun checkForLunchPosts() {
-    log.info("Checking for lunch posts")
-    lunchConfig.pages.forEach { pageConfig ->
-      try {
-        synchronizer.synchronize(pageConfig)
-      } catch (e: Exception) {
-        log.error("Error while synchronizing posts of page $pageConfig", e)
-      }
-    }
-  }
 
   private fun handleLog(): MessagePayload {
     fun contentPreview(content: String, ellipsizeAt: Int): String {
@@ -125,7 +111,7 @@ class LunchService(
     // https://api.slack.com/changelog/2018-04-truncating-really-long-messages
     // but we shouldn't hit it in any case.
     return MessagePayload(
-      buildLog(repository.getLog(20)),
+      buildLog(synchronizer.getLog(20)),
       ResponseType.EPHEMERAL
     )
   }

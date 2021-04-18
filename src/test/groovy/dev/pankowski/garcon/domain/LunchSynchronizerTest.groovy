@@ -5,6 +5,7 @@ import dev.pankowski.garcon.persistence.InMemorySynchronizedPostRepository
 import spock.lang.Specification
 import spock.lang.Subject
 
+import java.time.Duration
 import java.time.Instant
 
 class LunchSynchronizerTest extends Specification {
@@ -14,14 +15,20 @@ class LunchSynchronizerTest extends Specification {
     new URL("https://facebook/page")
   )
 
-  FacebookPostClient postClient = Mock()
-  LunchPostClassifier postClassifier = Mock()
-  SlackReposter reposter = Mock()
-  SynchronizedPostRepository repository = Spy(InMemorySynchronizedPostRepository)
+  def config = new LunchConfig(
+    new URL("https://slack/webhook"),
+    Duration.ofMinutes(5),
+    new LunchClientConfig("Some User Agent", Duration.ofSeconds(5)),
+    [pageConfig],
+  )
+
+  def postClient = Mock(FacebookPostClient)
+  def postClassifier = Mock(LunchPostClassifier)
+  def reposter = Mock(SlackReposter)
+  def repository = Spy(InMemorySynchronizedPostRepository)
 
   @Subject
-  LunchSynchronizer synchronizer = new LunchSynchronizer(
-    postClient, postClassifier, reposter, repository)
+  def synchronizer = new LunchSynchronizer(config, postClient, postClassifier, reposter, repository)
 
   def "should fetch new posts"() {
     given:
@@ -90,5 +97,16 @@ class LunchSynchronizerTest extends Specification {
     1 * repository.store(new StoreData(pageConfig.id, post, Classification.MissingKeywords.INSTANCE, Repost.Skip.INSTANCE))
     0 * reposter.repost(_, _)
     0 * repository.updateExisting(_)
+  }
+
+  def "should return synchronization log"() {
+    given:
+    def count = 7
+    def log = []
+
+    repository.getLog(count) >> log
+
+    expect:
+    synchronizer.getLog(count).is(log)
   }
 }

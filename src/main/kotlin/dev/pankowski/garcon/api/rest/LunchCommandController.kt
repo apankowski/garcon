@@ -1,6 +1,6 @@
 package dev.pankowski.garcon.api.rest
 
-import dev.pankowski.garcon.domain.LunchService
+import dev.pankowski.garcon.domain.LunchSlackService
 import dev.pankowski.garcon.domain.MessagePayload
 import dev.pankowski.garcon.domain.SlashCommand
 import dev.pankowski.garcon.domain.WrongCommandException
@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST
 
 @RestController
-class LunchCommandController(private val lunchService: LunchService) {
+class LunchCommandController(private val lunchSlackService: LunchSlackService) {
 
   @SlashCommandMapping("/commands/lunch")
   fun lunch(c: SlashCommand): MessagePayload {
-    return lunchService.handle(c)
+    return lunchSlackService.handle(c)
   }
 
   @ExceptionHandler(WrongCommandException::class)

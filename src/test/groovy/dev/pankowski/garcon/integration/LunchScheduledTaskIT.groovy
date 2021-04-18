@@ -1,6 +1,7 @@
 package dev.pankowski.garcon.integration
 
-import dev.pankowski.garcon.domain.LunchService
+
+import dev.pankowski.garcon.domain.LunchSynchronizer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -19,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class LunchScheduledTaskIT extends CommonIT {
 
   @Autowired
-  LunchService service
+  LunchSynchronizer service
 
   @TestConfiguration
   static class Mocks {
@@ -27,8 +28,8 @@ class LunchScheduledTaskIT extends CommonIT {
     def mockFactory = new DetachedMockFactory()
 
     @Bean
-    LunchService lunchService() {
-      return mockFactory.Mock(LunchService)
+    LunchSynchronizer lunchSynchronizer() {
+      return mockFactory.Mock(LunchSynchronizer)
     }
   }
 
@@ -38,7 +39,7 @@ class LunchScheduledTaskIT extends CommonIT {
     def counter = new AtomicInteger(0)
 
     and:
-    service.checkForLunchPosts() >> {
+    service.synchronizeAll() >> {
       counter.incrementAndGet()
     }
 
