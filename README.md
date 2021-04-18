@@ -129,8 +129,8 @@ Specifically, information about the service & its health can be observed via the
 
   * Slack webhook testing subcommand
   * Fetch page name from metadata
+  * Configurable lunch keywords
   * Retry failed reposts
   * Update/delete reposts based on upstream
-  * Configurable lunch keywords
   * [Prometheus](https://prometheus.io/) metrics
   * [Instagram](https://www.instagram.com/) support
