@@ -16,21 +16,17 @@ class LunchSynchronizer(
 
   fun synchronize(page: LunchPageConfig) =
     Mdc.PageId.having(page.id) {
-      try {
-        val synchronizedPosts = synchronizePosts(page)
-        synchronizedPosts
-          .filter { it.repost != Repost.Skip }
-          .forEach { attemptRepost(it, page.id) }
-      } catch (e: Exception) {
-        log.error("Error while synchronizing posts", e)
-      }
+      val synchronizedPosts = synchronizePosts(page)
+      synchronizedPosts
+        .filter { it.repost != Repost.Skip }
+        .forEach { attemptRepost(it, page.id) }
     }
 
   private fun synchronizePosts(page: LunchPageConfig): List<SynchronizedPost> {
     log.info("Synchronizing posts of {}", page)
 
     val lastSeen = repository.findLastSeen(page.id)
-    val newPosts = fetchPostsAfter(page, lastSeen?.post?.publishedAt)
+    val newPosts = postClient.fetch(page, lastSeen?.post?.publishedAt)
 
     if (newPosts.isEmpty()) {
       log.info("No new posts")
@@ -50,16 +46,6 @@ class LunchSynchronizer(
       .map(repository::store)
       .map(repository::findExisting)
   }
-
-  private fun fetchPostsAfter(page: LunchPageConfig, lastSeenPublishedAt: Instant?): List<Post> =
-    postClient.fetch(page)
-      .let {
-        // Remove seen posts.
-        return when (lastSeenPublishedAt) {
-          null -> it
-          else -> it.filter { p -> p.publishedAt > lastSeenPublishedAt }
-        }
-      }
 
   private fun decideOnRepost(c: Classification) =
     when (c) {

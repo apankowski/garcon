@@ -59,7 +59,7 @@ class FacebookPostClientTest extends Specification {
       .willReturn(okHtml("<html><body>Some body</body></html>")))
 
     when:
-    client.fetch(lunchPage)
+    client.fetch(lunchPage, null)
 
     then:
     server.verify(getRequestedFor(urlEqualTo("/posts"))
@@ -68,45 +68,6 @@ class FacebookPostClientTest extends Specification {
       .withHeader("Accept-Language", equalTo("pl,en;q=0.5"))
       .withHeader("Cache-Control", equalTo("no-cache"))
       .withHeader("Pragma", equalTo("no-cache")))
-  }
-
-  def "should extract posts from given page"() {
-    given:
-    def client = somePostClient()
-    def lunchPage = someLunchPageConfig()
-
-    and:
-    server.givenThat(get("/posts")
-      .willReturn(okHtml(htmlFrom("/lunch/facebook/post-extraction-test.html"))))
-
-    when:
-    def posts = client.fetch(lunchPage)
-
-    then:
-    posts == [
-      new Post(
-        new ExternalId("0"),
-        new URI("https://www.facebook.com/0"),
-        Instant.ofEpochSecond(0),
-        "Some content"
-      )
-    ]
-  }
-
-  def "should ignore unextractable posts"() {
-    given:
-    def client = somePostClient()
-    def lunchPage = someLunchPageConfig()
-
-    and:
-    server.givenThat(get("/posts")
-      .willReturn(okHtml(htmlFrom("/lunch/facebook/unextractable-post-test.html"))))
-
-    when:
-    def posts = client.fetch(lunchPage)
-
-    then:
-    posts == []
   }
 
   def "should honor specified timeout"() {
@@ -120,7 +81,7 @@ class FacebookPostClientTest extends Specification {
       .willReturn(ok().withFixedDelay(200)))
 
     when:
-    client.fetch(lunchPage)
+    client.fetch(lunchPage, null)
 
     then:
     thrown SocketTimeoutException
@@ -159,7 +120,7 @@ class FacebookPostClientTest extends Specification {
       .willReturn(okHtml("<html><body>Some body</body></html>")))
 
     when:
-    def posts = client.fetch(lunchPage)
+    def posts = client.fetch(lunchPage, null)
 
     then:
     posts == []
@@ -195,10 +156,49 @@ class FacebookPostClientTest extends Specification {
       .willReturn(okHtml("<html><body>Some body</body></html>")))
 
     when:
-    client.fetch(lunchPage)
+    client.fetch(lunchPage, null)
 
     then:
     thrown HttpStatusException
+  }
+
+  def "should extract posts from given page"() {
+    given:
+    def client = somePostClient()
+    def lunchPage = someLunchPageConfig()
+
+    and:
+    server.givenThat(get("/posts")
+      .willReturn(okHtml(htmlFrom("/lunch/facebook/post-extraction-test.html"))))
+
+    when:
+    def posts = client.fetch(lunchPage, null)
+
+    then:
+    posts == [
+      new Post(
+        new ExternalId("0"),
+        new URI("https://www.facebook.com/0"),
+        Instant.ofEpochSecond(0),
+        "Some content"
+      )
+    ]
+  }
+
+  def "should ignore unextractable posts"() {
+    given:
+    def client = somePostClient()
+    def lunchPage = someLunchPageConfig()
+
+    and:
+    server.givenThat(get("/posts")
+      .willReturn(okHtml(htmlFrom("/lunch/facebook/unextractable-post-test.html"))))
+
+    when:
+    def posts = client.fetch(lunchPage, null)
+
+    then:
+    posts == []
   }
 
   def "should return posts sorted by published date"() {
@@ -211,7 +211,7 @@ class FacebookPostClientTest extends Specification {
       .willReturn(okHtml(htmlFrom("/lunch/facebook/post-sorting-test.html"))))
 
     when:
-    def posts = client.fetch(lunchPage)
+    def posts = client.fetch(lunchPage, null)
 
     then:
     posts == [
@@ -221,6 +221,29 @@ class FacebookPostClientTest extends Specification {
         Instant.ofEpochSecond(1),
         "Some content 1"
       ),
+      new Post(
+        new ExternalId("2"),
+        new URI("https://www.facebook.com/2"),
+        Instant.ofEpochSecond(2),
+        "Some content 2"
+      )
+    ]
+  }
+
+  def "should return posts newer than specified published date"() {
+    given:
+    def client = somePostClient()
+    def lunchPage = someLunchPageConfig()
+
+    and:
+    server.givenThat(get("/posts")
+      .willReturn(okHtml(htmlFrom("/lunch/facebook/post-sorting-test.html"))))
+
+    when:
+    def posts = client.fetch(lunchPage, Instant.ofEpochSecond(1))
+
+    then:
+    posts == [
       new Post(
         new ExternalId("2"),
         new URI("https://www.facebook.com/2"),
@@ -240,7 +263,7 @@ class FacebookPostClientTest extends Specification {
       .willReturn(okHtml(htmlFrom("/lunch/facebook/facebook-dump-test.html"))))
 
     when:
-    def posts = client.fetch(lunchPage)
+    def posts = client.fetch(lunchPage, null)
 
     then:
     posts == [

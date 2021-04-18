@@ -19,10 +19,11 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
 
   private val log: Logger = LoggerFactory.getLogger(javaClass)
 
-  fun fetch(pageConfig: LunchPageConfig): Posts =
+  fun fetch(pageConfig: LunchPageConfig, lastSeenPublishedAt: Instant?): Posts =
     fetchDocument(pageConfig.url)
-      .let(::extract)
-      .let(::sort)
+      .let(::extractPosts)
+      .sortedBy(Post::publishedAt)
+      .filter { it.publishedAt > (lastSeenPublishedAt ?: Instant.MIN) }
 
   // We use retries as Facebook seems to be responding with 500 from time to time.
   private fun fetchDocument(url: URL): Document {
@@ -46,7 +47,7 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
     return fetch()
   }
 
-  private fun extract(document: Document): Posts =
+  private fun extractPosts(document: Document): Posts =
     document.select(".userContentWrapper").mapNotNull(::processContentWrapper)
 
   private fun processContentWrapper(e: Element): Post? {
@@ -144,7 +145,4 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
     // Remove surrounding newlines & whitespace surrounding each individual line.
     return clean.trim().lines().joinToString(transform = String::trim, separator = "\n")
   }
-
-  private fun sort(posts: Posts): Posts =
-    posts.sortedBy(Post::publishedAt)
 }

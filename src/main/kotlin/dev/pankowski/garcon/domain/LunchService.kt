@@ -62,7 +62,13 @@ class LunchService(
   @Synchronized
   fun checkForLunchPosts() {
     log.info("Checking for lunch posts")
-    lunchConfig.pages.forEach(synchronizer::synchronize)
+    lunchConfig.pages.forEach { pageConfig ->
+      try {
+        synchronizer.synchronize(pageConfig)
+      } catch (e: Exception) {
+        log.error("Error while synchronizing posts of page $pageConfig", e)
+      }
+    }
   }
 
   private fun handleLog(): MessagePayload {
