@@ -17,14 +17,14 @@ import spock.lang.Subject
 import java.time.ZonedDateTime
 import java.util.concurrent.Executor
 
-class LunchCommandControllerTest extends Specification {
+class LunchControllerTest extends Specification {
 
   def parser = Mock(LunchSubcommandParser)
   def executor = MoreExecutors.directExecutor()
   def service = Mock(LunchService)
 
   @Subject
-  def controller = new LunchCommandController(parser, executor, service)
+  def controller = new LunchController(parser, executor, service)
 
   def someCommand() {
     new SlashCommand("/command", "text", null, null, new UserId("U1234"), new ChannelId("C1234"), null, null)
@@ -88,7 +88,7 @@ class LunchCommandControllerTest extends Specification {
     def executor = Mock(Executor)
     executor.execute(_) >> { throw new RuntimeException("No threads available") }
 
-    def controller = new LunchCommandController(parser, executor, service)
+    def controller = new LunchController(parser, executor, service)
 
     def command = someCommand()
     parser.parse(command) >> LunchSubcommand.CheckForLunchPost.INSTANCE

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST
 
 @RestController
-class LunchCommandController(
+class LunchController(
   private val subcommandParser: LunchSubcommandParser,
   private val taskScheduler: Executor,
   private val service: LunchService,
