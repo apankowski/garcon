@@ -1,7 +1,6 @@
 package dev.pankowski.garcon.api
 
 import com.google.common.util.concurrent.MoreExecutors
-import dev.pankowski.garcon.api.LunchSlackService
 import dev.pankowski.garcon.domain.Classification
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.LunchPageId
@@ -18,14 +17,14 @@ import spock.lang.Subject
 import java.time.ZonedDateTime
 import java.util.concurrent.Executor
 
-class LunchSlackServiceTest extends Specification {
+class LunchCommandControllerTest extends Specification {
 
   def parser = Mock(LunchSubcommandParser)
   def executor = MoreExecutors.directExecutor()
   def synchronizer = Mock(LunchSynchronizer)
 
   @Subject
-  def slackService = new LunchSlackService(parser, executor, synchronizer)
+  def controller = new LunchCommandController(parser, executor, synchronizer)
 
   def someCommand() {
     new SlashCommand("/command", "text", null, null, new UserId("U1234"), new ChannelId("C1234"), null, null)
@@ -37,7 +36,7 @@ class LunchSlackServiceTest extends Specification {
     parser.parse(command) >> LunchSubcommand.Help.INSTANCE
 
     when:
-    def result = slackService.handle(command)
+    def result = controller.handle(command)
 
     then:
     result.responseType == ResponseType.EPHEMERAL
@@ -55,7 +54,7 @@ class LunchSlackServiceTest extends Specification {
     parser.parse(command) >> new LunchSubcommand.Unrecognized(["a", "b", "c"])
 
     when:
-    def result = slackService.handle(command)
+    def result = controller.handle(command)
 
     then:
     result.responseType == ResponseType.EPHEMERAL
@@ -75,7 +74,7 @@ class LunchSlackServiceTest extends Specification {
     parser.parse(command) >> LunchSubcommand.CheckForLunchPost.INSTANCE
 
     when:
-    def result = slackService.handle(command)
+    def result = controller.handle(command)
 
     then:
     1 * synchronizer.synchronizeAll()
@@ -89,13 +88,13 @@ class LunchSlackServiceTest extends Specification {
     def executor = Mock(Executor)
     executor.execute(_) >> { throw new RuntimeException("No threads available") }
 
-    def slackService = new LunchSlackService(parser, executor, synchronizer)
+    def controller = new LunchCommandController(parser, executor, synchronizer)
 
     def command = someCommand()
     parser.parse(command) >> LunchSubcommand.CheckForLunchPost.INSTANCE
 
     when:
-    def result = slackService.handle(command)
+    def result = controller.handle(command)
 
     then:
     result.responseType == ResponseType.EPHEMERAL
@@ -110,7 +109,7 @@ class LunchSlackServiceTest extends Specification {
     synchronizer.getLog() >> []
 
     when:
-    def result = slackService.handle(command)
+    def result = controller.handle(command)
 
     then:
     result.responseType == ResponseType.EPHEMERAL
@@ -188,7 +187,7 @@ class LunchSlackServiceTest extends Specification {
     ]
 
     when:
-    def result = slackService.handle(command)
+    def result = controller.handle(command)
 
     then:
     result.responseType == ResponseType.EPHEMERAL
