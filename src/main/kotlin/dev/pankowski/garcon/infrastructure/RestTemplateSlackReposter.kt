@@ -1,4 +1,4 @@
-package dev.pankowski.garcon.configuration
+package dev.pankowski.garcon.infrastructure
 
 import dev.pankowski.garcon.api.MessagePayload
 import dev.pankowski.garcon.domain.LunchConfig
