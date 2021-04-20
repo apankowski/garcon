@@ -1,7 +1,7 @@
 package dev.pankowski.garcon.configuration
 
 import dev.pankowski.garcon.domain.LunchConfig
-import dev.pankowski.garcon.domain.LunchSynchronizer
+import dev.pankowski.garcon.domain.LunchService
 import org.springframework.boot.CommandLineRunner
 import org.springframework.scheduling.TaskScheduler
 import org.springframework.stereotype.Component
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 @Component
 class ScheduledTaskInitializer(
   private val taskScheduler: TaskScheduler,
-  private val service: LunchSynchronizer,
+  private val service: LunchService,
   private val config: LunchConfig,
 ) : CommandLineRunner {
 

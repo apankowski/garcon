@@ -8,7 +8,7 @@ import spock.lang.Subject
 import java.time.Duration
 import java.time.Instant
 
-class LunchSynchronizerTest extends Specification {
+class LunchServiceTest extends Specification {
 
   def pageConfig = new LunchPageConfig(
     new LunchPageId("LP1"),
@@ -28,7 +28,7 @@ class LunchSynchronizerTest extends Specification {
   def repository = Spy(InMemorySynchronizedPostRepository)
 
   @Subject
-  def synchronizer = new LunchSynchronizer(config, postClient, postClassifier, reposter, repository)
+  def service = new LunchService(config, postClient, postClassifier, reposter, repository)
 
   def "should fetch new posts"() {
     given:
@@ -51,7 +51,7 @@ class LunchSynchronizerTest extends Specification {
     repository.findLastSeen(pageConfig.id) >> lastSeen
 
     when:
-    synchronizer.synchronize(pageConfig)
+    service.synchronize(pageConfig)
 
     then:
     1 * postClient.fetch(pageConfig, lastSeen.post.publishedAt) >> []
@@ -70,7 +70,7 @@ class LunchSynchronizerTest extends Specification {
     postClassifier.classify(post) >> Classification.LunchPost.INSTANCE
 
     when:
-    synchronizer.synchronize(pageConfig)
+    service.synchronize(pageConfig)
 
     then:
     1 * repository.store(new StoreData(pageConfig.id, post, Classification.LunchPost.INSTANCE, Repost.Pending.INSTANCE))
@@ -91,7 +91,7 @@ class LunchSynchronizerTest extends Specification {
     postClassifier.classify(post) >> Classification.MissingKeywords.INSTANCE
 
     when:
-    synchronizer.synchronize(pageConfig)
+    service.synchronize(pageConfig)
 
     then:
     1 * repository.store(new StoreData(pageConfig.id, post, Classification.MissingKeywords.INSTANCE, Repost.Skip.INSTANCE))
@@ -106,6 +106,6 @@ class LunchSynchronizerTest extends Specification {
     repository.getLog(20) >> log
 
     expect:
-    synchronizer.getLog().is(log)
+    service.getLog().is(log)
   }
 }

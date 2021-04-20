@@ -5,7 +5,7 @@ import dev.pankowski.garcon.domain.Classification
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.LunchPageId
 import dev.pankowski.garcon.domain.LunchSubcommand
-import dev.pankowski.garcon.domain.LunchSynchronizer
+import dev.pankowski.garcon.domain.LunchService
 import dev.pankowski.garcon.domain.Post
 import dev.pankowski.garcon.domain.Repost
 import dev.pankowski.garcon.domain.SynchronizedPost
@@ -21,10 +21,10 @@ class LunchCommandControllerTest extends Specification {
 
   def parser = Mock(LunchSubcommandParser)
   def executor = MoreExecutors.directExecutor()
-  def synchronizer = Mock(LunchSynchronizer)
+  def service = Mock(LunchService)
 
   @Subject
-  def controller = new LunchCommandController(parser, executor, synchronizer)
+  def controller = new LunchCommandController(parser, executor, service)
 
   def someCommand() {
     new SlashCommand("/command", "text", null, null, new UserId("U1234"), new ChannelId("C1234"), null, null)
@@ -77,7 +77,7 @@ class LunchCommandControllerTest extends Specification {
     def result = controller.handle(command)
 
     then:
-    1 * synchronizer.synchronizeAll()
+    1 * service.synchronizeAll()
 
     result.responseType == ResponseType.EPHEMERAL
     result.text == "Checking..."
@@ -88,7 +88,7 @@ class LunchCommandControllerTest extends Specification {
     def executor = Mock(Executor)
     executor.execute(_) >> { throw new RuntimeException("No threads available") }
 
-    def controller = new LunchCommandController(parser, executor, synchronizer)
+    def controller = new LunchCommandController(parser, executor, service)
 
     def command = someCommand()
     parser.parse(command) >> LunchSubcommand.CheckForLunchPost.INSTANCE
@@ -106,7 +106,7 @@ class LunchCommandControllerTest extends Specification {
     def command = someCommand()
     parser.parse(command) >> LunchSubcommand.Log.INSTANCE
 
-    synchronizer.getLog() >> []
+    service.getLog() >> []
 
     when:
     def result = controller.handle(command)
@@ -123,7 +123,7 @@ class LunchCommandControllerTest extends Specification {
 
     def baseDateTime = ZonedDateTime.parse("2000-01-01T00:00:00Z")
 
-    synchronizer.getLog() >> [
+    service.getLog() >> [
       new SynchronizedPost(
         new SynchronizedPostId("P1"),
         new Version(1),

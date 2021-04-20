@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST
 class LunchCommandController(
   private val subcommandParser: LunchSubcommandParser,
   private val taskScheduler: Executor,
-  private val synchronizer: LunchSynchronizer,
+  private val service: LunchService,
 ) {
 
   private val log = LoggerFactory.getLogger(javaClass)
@@ -59,7 +59,7 @@ class LunchCommandController(
   private fun handleCheckForLunchPost() =
     try {
       // TODO: Reply with responseId from command?
-      taskScheduler.execute(synchronizer::synchronizeAll)
+      taskScheduler.execute(service::synchronizeAll)
       MessagePayload( "Checking...", ResponseType.EPHEMERAL)
     } catch (e: Exception) {
       log.error("Failed to schedule checking for lunch posts", e)
@@ -120,7 +120,7 @@ class LunchCommandController(
     // https://api.slack.com/changelog/2018-04-truncating-really-long-messages
     // but we shouldn't hit it in any case.
     return MessagePayload(
-      buildLog(synchronizer.getLog()),
+      buildLog(service.getLog()),
       ResponseType.EPHEMERAL
     )
   }

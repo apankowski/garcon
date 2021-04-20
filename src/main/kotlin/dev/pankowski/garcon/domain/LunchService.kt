@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 import java.time.Instant
 
 @Component
-class LunchSynchronizer(
+class LunchService(
   private val lunchConfig: LunchConfig,
   private val postClient: FacebookPostClient,
   private val lunchPostClassifier: LunchPostClassifier,

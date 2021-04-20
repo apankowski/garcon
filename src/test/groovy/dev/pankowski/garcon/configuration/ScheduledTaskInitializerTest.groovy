@@ -3,7 +3,7 @@ package dev.pankowski.garcon.configuration
 
 import dev.pankowski.garcon.domain.LunchClientConfig
 import dev.pankowski.garcon.domain.LunchConfig
-import dev.pankowski.garcon.domain.LunchSynchronizer
+import dev.pankowski.garcon.domain.LunchService
 import org.springframework.scheduling.TaskScheduler
 import spock.lang.Specification
 import spock.lang.Subject
@@ -23,7 +23,7 @@ class ScheduledTaskInitializerTest extends Specification {
     )
 
     def taskScheduler = Mock(TaskScheduler)
-    def service = Mock(LunchSynchronizer)
+    def service = Mock(LunchService)
 
     @Subject
     def initializer = new ScheduledTaskInitializer(taskScheduler, service, config)
@@ -61,7 +61,7 @@ class ScheduledTaskInitializerTest extends Specification {
     )
 
     def taskScheduler = Mock(TaskScheduler)
-    def service = Mock(LunchSynchronizer)
+    def service = Mock(LunchService)
 
     @Subject
     def initializer = new ScheduledTaskInitializer(taskScheduler, service, config)
