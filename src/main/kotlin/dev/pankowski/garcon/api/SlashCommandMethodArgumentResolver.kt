@@ -1,6 +1,5 @@
 package dev.pankowski.garcon.api
 
-import dev.pankowski.garcon.domain.*
 import org.springframework.core.MethodParameter
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.ServletRequestBindingException

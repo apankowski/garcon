@@ -1,6 +1,17 @@
-package dev.pankowski.garcon.domain
+package dev.pankowski.garcon.api
 
 import com.google.common.util.concurrent.MoreExecutors
+import dev.pankowski.garcon.api.LunchSlackService
+import dev.pankowski.garcon.domain.Classification
+import dev.pankowski.garcon.domain.ExternalId
+import dev.pankowski.garcon.domain.LunchPageId
+import dev.pankowski.garcon.domain.LunchSubcommand
+import dev.pankowski.garcon.domain.LunchSynchronizer
+import dev.pankowski.garcon.domain.Post
+import dev.pankowski.garcon.domain.Repost
+import dev.pankowski.garcon.domain.SynchronizedPost
+import dev.pankowski.garcon.domain.SynchronizedPostId
+import dev.pankowski.garcon.domain.Version
 import spock.lang.Specification
 import spock.lang.Subject
 

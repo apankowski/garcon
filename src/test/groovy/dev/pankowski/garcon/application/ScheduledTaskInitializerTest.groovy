@@ -1,5 +1,9 @@
-package dev.pankowski.garcon.domain
+package dev.pankowski.garcon.application
 
+import dev.pankowski.garcon.application.ScheduledTaskInitializer
+import dev.pankowski.garcon.domain.LunchClientConfig
+import dev.pankowski.garcon.domain.LunchConfig
+import dev.pankowski.garcon.domain.LunchSynchronizer
 import org.springframework.scheduling.TaskScheduler
 import spock.lang.Specification
 import spock.lang.Subject

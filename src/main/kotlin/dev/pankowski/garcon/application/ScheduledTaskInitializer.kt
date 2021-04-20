@@ -1,5 +1,7 @@
-package dev.pankowski.garcon.domain
+package dev.pankowski.garcon.application
 
+import dev.pankowski.garcon.domain.LunchConfig
+import dev.pankowski.garcon.domain.LunchSynchronizer
 import org.springframework.boot.CommandLineRunner
 import org.springframework.scheduling.TaskScheduler
 import org.springframework.stereotype.Component

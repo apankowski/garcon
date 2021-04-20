@@ -1,5 +1,6 @@
-package dev.pankowski.garcon.domain
+package dev.pankowski.garcon.api
 
+import dev.pankowski.garcon.domain.*
 import org.slf4j.LoggerFactory.getLogger
 import org.springframework.stereotype.Service
 import java.net.URI

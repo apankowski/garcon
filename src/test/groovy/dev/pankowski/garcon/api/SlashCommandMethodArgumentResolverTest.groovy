@@ -1,11 +1,6 @@
 package dev.pankowski.garcon.api
 
-import dev.pankowski.garcon.domain.ChannelId
-import dev.pankowski.garcon.domain.EnterpriseId
-import dev.pankowski.garcon.domain.SlashCommand
-import dev.pankowski.garcon.domain.TeamId
-import dev.pankowski.garcon.domain.TriggerId
-import dev.pankowski.garcon.domain.UserId
+
 import org.springframework.core.MethodParameter
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.bind.MissingServletRequestParameterException

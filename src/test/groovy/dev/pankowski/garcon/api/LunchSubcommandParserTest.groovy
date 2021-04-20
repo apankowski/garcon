@@ -1,9 +1,6 @@
-package dev.pankowski.garcon.domain
+package dev.pankowski.garcon.api
 
-import dev.pankowski.garcon.domain.ChannelId
 import dev.pankowski.garcon.domain.LunchSubcommand
-import dev.pankowski.garcon.domain.SlashCommand
-import dev.pankowski.garcon.domain.UserId
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll

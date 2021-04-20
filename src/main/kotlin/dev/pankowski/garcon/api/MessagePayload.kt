@@ -1,4 +1,4 @@
-package dev.pankowski.garcon.domain
+package dev.pankowski.garcon.api
 
 enum class ResponseType(private val apiName: String) {
   EPHEMERAL("ephemeral"),

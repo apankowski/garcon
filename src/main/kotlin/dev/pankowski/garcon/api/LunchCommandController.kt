@@ -1,9 +1,5 @@
 package dev.pankowski.garcon.api
 
-import dev.pankowski.garcon.domain.LunchSlackService
-import dev.pankowski.garcon.domain.MessagePayload
-import dev.pankowski.garcon.domain.SlashCommand
-import dev.pankowski.garcon.domain.WrongCommandException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestController
 import javax.servlet.http.HttpServletResponse

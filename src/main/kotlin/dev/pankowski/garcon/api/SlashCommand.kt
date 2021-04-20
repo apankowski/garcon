@@ -1,4 +1,4 @@
-package dev.pankowski.garcon.domain
+package dev.pankowski.garcon.api
 
 import java.net.URL
 

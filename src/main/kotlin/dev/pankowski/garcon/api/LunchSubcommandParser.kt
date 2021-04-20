@@ -1,6 +1,10 @@
-package dev.pankowski.garcon.domain
+package dev.pankowski.garcon.api
 
+import dev.pankowski.garcon.domain.LunchSubcommand
 import dev.pankowski.garcon.domain.LunchSubcommand.*
+import dev.pankowski.garcon.domain.PolishLocale
+import dev.pankowski.garcon.domain.WordExtractor
+import dev.pankowski.garcon.domain.damerauLevenshtein
 import org.springframework.stereotype.Component
 
 class WrongCommandException : RuntimeException("Received wrong command")
