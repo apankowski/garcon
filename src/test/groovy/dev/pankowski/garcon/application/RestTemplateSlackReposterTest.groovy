@@ -1,6 +1,5 @@
 package dev.pankowski.garcon.application
 
-import dev.pankowski.garcon.application.SlackReposter
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.LunchClientConfig
 import dev.pankowski.garcon.domain.LunchConfig
@@ -24,7 +23,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 // TODO: Use Kotlin & Junit 5 (JUnit 4 doesn't seem to be compatible with Kotlin)?
 // https://spring.io/guides/tutorials/spring-boot-kotlin/
-class SlackReposterTest extends Specification {
+class RestTemplateSlackReposterTest extends Specification {
 
   def lunchConfig = new LunchConfig(
     new URL("https://slack/webhook"),
@@ -34,7 +33,7 @@ class SlackReposterTest extends Specification {
   )
 
   @Subject
-  def repostingClient = new SlackReposter(lunchConfig, new RestTemplateBuilder())
+  def repostingClient = new RestTemplateSlackReposter(lunchConfig, new RestTemplateBuilder())
 
   def mockServer = MockRestServiceServer.createServer(repostingClient.restTemplate)
 

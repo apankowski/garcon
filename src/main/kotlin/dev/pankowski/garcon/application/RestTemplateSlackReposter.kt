@@ -4,20 +4,22 @@ import dev.pankowski.garcon.api.MessagePayload
 import dev.pankowski.garcon.domain.LunchConfig
 import dev.pankowski.garcon.domain.LunchPageId
 import dev.pankowski.garcon.domain.Post
+import dev.pankowski.garcon.domain.SlackReposter
 import org.slf4j.LoggerFactory.getLogger
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 
 @Component
-class SlackReposter(private val lunchConfig: LunchConfig, restTemplateBuilder: RestTemplateBuilder) {
+class RestTemplateSlackReposter(private val lunchConfig: LunchConfig, restTemplateBuilder: RestTemplateBuilder) :
+  SlackReposter {
 
   private val log = getLogger(javaClass)
 
   // Visible for testing
   val restTemplate: RestTemplate = restTemplateBuilder.build()
 
-  fun repost(post: Post, pageId: LunchPageId) {
+  override fun repost(post: Post, pageId: LunchPageId) {
     log.debug("Reposting on Slack: {}", post)
     val text =
       """

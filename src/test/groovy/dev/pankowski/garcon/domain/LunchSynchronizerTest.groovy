@@ -1,6 +1,6 @@
 package dev.pankowski.garcon.domain
 
-import dev.pankowski.garcon.application.SlackReposter
+
 import dev.pankowski.garcon.persistence.InMemorySynchronizedPostRepository
 import spock.lang.Specification
 import spock.lang.Subject
