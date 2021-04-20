@@ -4,8 +4,8 @@ import com.google.common.util.concurrent.MoreExecutors
 import dev.pankowski.garcon.domain.Classification
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.LunchPageId
-import dev.pankowski.garcon.domain.LunchSubcommand
 import dev.pankowski.garcon.domain.LunchService
+import dev.pankowski.garcon.domain.LunchSubcommand
 import dev.pankowski.garcon.domain.Post
 import dev.pankowski.garcon.domain.Repost
 import dev.pankowski.garcon.domain.SynchronizedPost
