@@ -1,4 +1,4 @@
-package dev.pankowski.garcon.persistence
+package dev.pankowski.garcon.infrastructure.persistence
 
 import spock.lang.Specification
 import spock.lang.Subject

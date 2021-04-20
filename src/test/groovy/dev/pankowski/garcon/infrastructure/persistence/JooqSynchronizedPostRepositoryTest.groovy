@@ -1,4 +1,4 @@
-package dev.pankowski.garcon.persistence
+package dev.pankowski.garcon.infrastructure.persistence
 
 import dev.pankowski.garcon.domain.Classification
 import dev.pankowski.garcon.domain.ExternalId

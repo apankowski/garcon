@@ -1,8 +1,8 @@
-package dev.pankowski.garcon.persistence
+package dev.pankowski.garcon.infrastructure.persistence
 
 import dev.pankowski.garcon.domain.*
-import dev.pankowski.garcon.persistence.generated.Tables.SYNCHRONIZED_POSTS
-import dev.pankowski.garcon.persistence.generated.tables.records.SynchronizedPostsRecord
+import dev.pankowski.garcon.infrastructure.persistence.generated.Tables.SYNCHRONIZED_POSTS
+import dev.pankowski.garcon.infrastructure.persistence.generated.tables.records.SynchronizedPostsRecord
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
