@@ -101,12 +101,11 @@ class LunchSynchronizerTest extends Specification {
 
   def "should return synchronization log"() {
     given:
-    def count = 7
     def log = []
 
-    repository.getLog(count) >> log
+    repository.getLog(20) >> log
 
     expect:
-    synchronizer.getLog(count).is(log)
+    synchronizer.getLog().is(log)
   }
 }

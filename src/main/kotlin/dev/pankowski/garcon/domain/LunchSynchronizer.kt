@@ -102,6 +102,6 @@ class LunchSynchronizer(
       throw e
     }
 
-  fun getLog(count: Int) =
-    repository.getLog(count)
+  fun getLog() =
+    repository.getLog(20)
 }

@@ -96,7 +96,7 @@ class LunchSlackServiceTest extends Specification {
     def command = someCommand()
     parser.parse(command) >> LunchSubcommand.Log.INSTANCE
 
-    synchronizer.getLog(_) >> []
+    synchronizer.getLog() >> []
 
     when:
     def result = slackService.handle(command)
@@ -113,7 +113,7 @@ class LunchSlackServiceTest extends Specification {
 
     def baseDateTime = ZonedDateTime.parse("2000-01-01T00:00:00Z")
 
-    synchronizer.getLog(_) >> [
+    synchronizer.getLog() >> [
       new SynchronizedPost(
         new SynchronizedPostId("P1"),
         new Version(1),

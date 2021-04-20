@@ -111,7 +111,7 @@ class LunchSlackService(
     // https://api.slack.com/changelog/2018-04-truncating-really-long-messages
     // but we shouldn't hit it in any case.
     return MessagePayload(
-      buildLog(synchronizer.getLog(20)),
+      buildLog(synchronizer.getLog()),
       ResponseType.EPHEMERAL
     )
   }
