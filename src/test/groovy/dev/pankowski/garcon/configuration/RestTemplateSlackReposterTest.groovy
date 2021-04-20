@@ -1,4 +1,4 @@
-package dev.pankowski.garcon.application
+package dev.pankowski.garcon.configuration
 
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.LunchClientConfig

@@ -1,4 +1,4 @@
-package dev.pankowski.garcon.application
+package dev.pankowski.garcon.configuration
 
 import dev.pankowski.garcon.domain.LunchConfig
 import dev.pankowski.garcon.domain.LunchSynchronizer
