@@ -181,13 +181,13 @@ jooqGenerator {
             forcedType {
               types = "timestamp\\ without\\ time\\ zone"
               userType = "java.time.Instant"
-              converter = "dev.pankowski.garcon.persistence.jooq.InstantConverter"
+              converter = "dev.pankowski.garcon.persistence.InstantConverter"
             }
             forcedType {
               types = "integer"
               expression = "version"
               userType = "dev.pankowski.garcon.domain.Version"
-              converter = "dev.pankowski.garcon.persistence.jooq.VersionConverter"
+              converter = "dev.pankowski.garcon.persistence.VersionConverter"
             }
             forcedType {
               expression = "classification_status"
@@ -218,7 +218,7 @@ jooqGenerator {
           isDeprecated = false
         }
         target {
-          packageName = "dev.pankowski.garcon.persistence.jooq.generated"
+          packageName = "dev.pankowski.garcon.persistence.generated"
           directory = "build/generated/source/jooq/main"
         }
       }

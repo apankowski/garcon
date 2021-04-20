@@ -1,4 +1,4 @@
-package dev.pankowski.garcon.api.rest
+package dev.pankowski.garcon.api
 
 import org.springframework.core.annotation.AliasFor
 import org.springframework.http.MediaType

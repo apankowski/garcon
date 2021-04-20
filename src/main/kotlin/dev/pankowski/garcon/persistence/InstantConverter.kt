@@ -1,4 +1,4 @@
-package dev.pankowski.garcon.persistence.jooq
+package dev.pankowski.garcon.persistence
 
 import org.jooq.Converter
 import java.time.Instant

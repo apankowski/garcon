@@ -1,4 +1,4 @@
-package dev.pankowski.garcon.api.rest
+package dev.pankowski.garcon.api
 
 import org.springframework.stereotype.Component
 import org.springframework.web.method.support.HandlerMethodArgumentResolver

@@ -1,9 +1,9 @@
-package dev.pankowski.garcon.persistence.jooq
+package dev.pankowski.garcon.persistence
 
 import dev.pankowski.garcon.domain.Classification
 import dev.pankowski.garcon.domain.ExternalId
-import dev.pankowski.garcon.domain.Post
 import dev.pankowski.garcon.domain.LunchPageId
+import dev.pankowski.garcon.domain.Post
 import dev.pankowski.garcon.domain.Repost
 import dev.pankowski.garcon.domain.StoreData
 import dev.pankowski.garcon.domain.SynchronizedPostId

@@ -1,4 +1,4 @@
-package dev.pankowski.garcon.api.rest
+package dev.pankowski.garcon.api
 
 import dev.pankowski.garcon.domain.LunchSlackService
 import dev.pankowski.garcon.domain.MessagePayload

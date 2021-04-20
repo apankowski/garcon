@@ -1,4 +1,4 @@
-package dev.pankowski.garcon.persistence.jooq
+package dev.pankowski.garcon.persistence
 
 import dev.pankowski.garcon.domain.Version
 import org.jooq.Converter
