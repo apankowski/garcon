@@ -3,8 +3,8 @@ package dev.pankowski.garcon.api
 import dev.pankowski.garcon.domain.LunchSubcommand
 import dev.pankowski.garcon.domain.LunchSubcommand.*
 import dev.pankowski.garcon.domain.PolishLocale
-import dev.pankowski.garcon.domain.WordExtractor
 import dev.pankowski.garcon.domain.damerauLevenshtein
+import dev.pankowski.garcon.domain.extractWords
 import org.springframework.stereotype.Component
 
 class WrongCommandException : RuntimeException("Received wrong command")
@@ -12,14 +12,14 @@ class WrongCommandException : RuntimeException("Received wrong command")
 @Component
 class LunchSubcommandParser {
 
+  // TODO: Make locale configurable
   private val locale = PolishLocale
-  private val wordExtractor = WordExtractor(locale)
 
   fun parse(command: SlashCommand): LunchSubcommand {
     if (!"/lunch".equals(command.command, ignoreCase = true))
       throw WrongCommandException()
 
-    val words = wordExtractor.extract(command.text.toLowerCase(locale))
+    val words = command.text.toLowerCase(locale).extractWords(locale)
     if (words.isEmpty())
       return CheckForLunchPost
 

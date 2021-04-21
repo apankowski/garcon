@@ -1,19 +1,19 @@
 package dev.pankowski.garcon.domain
 
 import spock.lang.Specification
-import spock.lang.Subject
+
+import static dev.pankowski.garcon.domain.TextsKt.extractWords
 
 class WordExtractorTest extends Specification {
 
-  @Subject
-  WordExtractor extractor = new WordExtractor(TextsKt.polishLocale)
+  def locale = TextsKt.polishLocale
 
   def 'should extract words'() {
     given:
     // text
 
     expect:
-    extractor.extract(text) == words
+    extractWords(text, locale) == words
 
     where:
     text                | words
@@ -28,7 +28,7 @@ class WordExtractorTest extends Specification {
     // text
 
     expect:
-    extractor.extract(text) == words
+    extractWords(text, locale) == words
 
     where:
     text            | words
@@ -42,7 +42,7 @@ class WordExtractorTest extends Specification {
     // text
 
     expect:
-    extractor.extract(text) == words
+    extractWords(text, locale) == words
 
     where:
     text                      | words

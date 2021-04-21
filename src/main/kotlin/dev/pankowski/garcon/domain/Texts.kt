@@ -97,21 +97,18 @@ fun damerauLevenshtein(a: CharSequence, b: CharSequence): Int {
   }
 }
 
-class WordExtractor(private val locale: Locale) {
+fun String.extractWords(locale: Locale): List<String> {
+  val it = BreakIterator.getWordInstance(locale)
+  it.setText(this)
 
-  fun extract(s: String): List<String> {
-    val it = BreakIterator.getWordInstance(locale)
-    it.setText(s)
-
-    tailrec fun collectWords(start: Int, end: Int, words: List<String>): List<String> {
-      if (end == BreakIterator.DONE) return words
-      val word = s.substring(start, end)
-      val newWords =
-        if (Character.isLetterOrDigit(word[0])) words + word
-        else words
-      return collectWords(end, it.next(), newWords)
-    }
-
-    return unmodifiableList(collectWords(it.first(), it.next(), emptyList()))
+  tailrec fun collectWords(start: Int, end: Int, words: List<String>): List<String> {
+    if (end == BreakIterator.DONE) return words
+    val word = this.substring(start, end)
+    val newWords =
+      if (Character.isLetterOrDigit(word[0])) words + word
+      else words
+    return collectWords(end, it.next(), newWords)
   }
+
+  return unmodifiableList(collectWords(it.first(), it.next(), emptyList()))
 }

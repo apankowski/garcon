@@ -8,12 +8,11 @@ class LunchPostClassifier {
 
   private val log = getLogger(javaClass)
   private val locale = PolishLocale
-  private val wordExtractor = WordExtractor(locale)
   private val lunchKeywords = listOf("lunch", "lunchowa")
   private val maxEditDistance = 1
 
   fun classify(post: Post): Classification {
-    val words = wordExtractor.extract(post.content.toLowerCase(locale))
+    val words = post.content.toLowerCase(locale).extractWords(locale)
     log.debug("Finished word extraction for text: {}. Extracted words: {}", post.content, words)
     return if (words.any(::isConsideredLunchKeyword)) Classification.LunchPost
     else Classification.MissingKeywords
