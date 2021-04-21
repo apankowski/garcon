@@ -22,7 +22,7 @@ To protect certain things the original git commit history had to be wiped out.
 
 The service is written in Kotlin and uses the following stack:
 
-  * Kotlin 1.4 on Java 11
+  * Kotlin 1.4 on Java 15
   * Gradle 6 (with build script in Kotlin)
   * Spring Boot 2
   * Spock for tests (written in Groovy)
