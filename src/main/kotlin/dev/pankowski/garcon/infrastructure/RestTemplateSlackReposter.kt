@@ -1,10 +1,6 @@
 package dev.pankowski.garcon.infrastructure
 
-import dev.pankowski.garcon.api.MessagePayload
-import dev.pankowski.garcon.domain.LunchConfig
-import dev.pankowski.garcon.domain.LunchPageId
-import dev.pankowski.garcon.domain.Post
-import dev.pankowski.garcon.domain.SlackReposter
+import dev.pankowski.garcon.domain.*
 import org.slf4j.LoggerFactory.getLogger
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.stereotype.Component
@@ -28,7 +24,7 @@ class RestTemplateSlackReposter(private val lunchConfig: LunchConfig, restTempla
       |>>>${post.content}
       """.trimMargin()
 
-    val message = MessagePayload(text = text)
+    val message = SlackMessage(text = text)
 
     restTemplate.postForLocation(lunchConfig.slackWebhookUrl.toURI(), message)
   }

@@ -8,6 +8,7 @@ import dev.pankowski.garcon.domain.LunchService
 import dev.pankowski.garcon.domain.LunchSubcommand
 import dev.pankowski.garcon.domain.Post
 import dev.pankowski.garcon.domain.Repost
+import dev.pankowski.garcon.domain.ResponseType
 import dev.pankowski.garcon.domain.SynchronizedPost
 import dev.pankowski.garcon.domain.SynchronizedPostId
 import dev.pankowski.garcon.domain.Version

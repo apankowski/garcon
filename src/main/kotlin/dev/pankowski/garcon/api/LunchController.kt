@@ -20,7 +20,7 @@ class LunchController(
   private val log = LoggerFactory.getLogger(javaClass)
 
   @SlashCommandMapping("/commands/lunch")
-  fun handle(command: SlashCommand): MessagePayload {
+  fun handle(command: SlashCommand): SlackMessage {
     log.info("Received command {}", command)
     return when (val subcommand = subcommandParser.parse(command)) {
       is LunchSubcommand.Help -> handleHelp()
@@ -36,7 +36,7 @@ class LunchController(
   }
 
   private fun handleHelp() =
-    MessagePayload(
+    SlackMessage(
       """
       |Recognized subcommands are:
       |• `/lunch` or `/lunch check` - manually triggers checking for lunch post
@@ -47,7 +47,7 @@ class LunchController(
     )
 
   private fun handleUnrecognized(unrecognized: LunchSubcommand.Unrecognized) =
-    MessagePayload(
+    SlackMessage(
       """
       |Unrecognized subcommand: `/lunch ${unrecognized.words.joinToString(separator = " ")}`
       |
@@ -60,13 +60,13 @@ class LunchController(
     try {
       // TODO: Reply with responseId from command?
       taskScheduler.execute(service::synchronizeAll)
-      MessagePayload( "Checking...", ResponseType.EPHEMERAL)
+      SlackMessage( "Checking...", ResponseType.EPHEMERAL)
     } catch (e: Exception) {
       log.error("Failed to schedule checking for lunch posts", e)
-      MessagePayload("Error while scheduling synchronization :frowning:", ResponseType.EPHEMERAL)
+      SlackMessage("Error while scheduling synchronization :frowning:", ResponseType.EPHEMERAL)
     }
 
-  private fun handleLog(): MessagePayload {
+  private fun handleLog(): SlackMessage {
     fun contentPreview(content: String, ellipsizeAt: Int): String {
       val oneLine = content.split("\\s+".toRegex()).joinToString(" ")
       return when {
@@ -119,7 +119,7 @@ class LunchController(
     // Note there is a 40k char limit on the message text, see:
     // https://api.slack.com/changelog/2018-04-truncating-really-long-messages
     // but we shouldn't hit it in any case.
-    return MessagePayload(
+    return SlackMessage(
       buildLog(service.getLog()),
       ResponseType.EPHEMERAL
     )
