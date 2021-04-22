@@ -1,8 +1,6 @@
 package dev.pankowski.garcon.configuration
 
-import dev.pankowski.garcon.domain.LunchClientConfig
 import dev.pankowski.garcon.domain.LunchConfig
-import dev.pankowski.garcon.domain.LunchPostConfig
 import dev.pankowski.garcon.domain.LunchService
 import org.springframework.scheduling.TaskScheduler
 import spock.lang.Specification
@@ -18,9 +16,7 @@ class ScheduledTaskInitializerTest extends Specification {
     def config = new LunchConfig(
       new URL("https://slack/webhook"),
       syncInterval,
-      new LunchClientConfig("Some User Agent", Duration.ofSeconds(5)),
       [],
-      new LunchPostConfig(Locale.ENGLISH),
     )
 
     def taskScheduler = Mock(TaskScheduler)
@@ -57,9 +53,7 @@ class ScheduledTaskInitializerTest extends Specification {
     def config = new LunchConfig(
       new URL("https://slack/webhook"),
       null,
-      new LunchClientConfig("Some User Agent", Duration.ofSeconds(5)),
       [],
-      new LunchPostConfig(Locale.ENGLISH),
     )
 
     def taskScheduler = Mock(TaskScheduler)

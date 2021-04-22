@@ -2,8 +2,6 @@ package dev.pankowski.garcon.domain
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
-import org.springframework.boot.context.properties.NestedConfigurationProperty
-import org.springframework.stereotype.Component
 import java.net.URL
 import java.time.Duration
 import java.util.*
@@ -26,28 +24,16 @@ data class LunchConfig(
   val syncInterval: Duration?,
 
   /**
-   * Configuration of web client used to fetch lunch pages.
-   */
-  @NestedConfigurationProperty
-  val client: LunchClientConfig = LunchClientConfig(),
-
-  /**
    * Lunch pages.
    */
   val pages: List<LunchPageConfig> = emptyList(),
-
-  /**
-   * Lunch post classification configuration.
-   */
-  @NestedConfigurationProperty
-  val post: LunchPostConfig = LunchPostConfig(),
 )
 
 /**
  * Configuration of web client used to fetch lunch pages.
  */
-@Component
 @ConstructorBinding
+@ConfigurationProperties("lunch.client")
 data class LunchClientConfig(
 
   /**
@@ -82,8 +68,8 @@ data class LunchPageId(val value: String)
 /**
  * Configuration related to lunch post classification.
  */
-@Component
 @ConstructorBinding
+@ConfigurationProperties("lunch.post")
 data class LunchPostConfig(
 
   val locale: Locale = Locale.ENGLISH,

@@ -1,10 +1,8 @@
 package dev.pankowski.garcon.infrastructure
 
 import dev.pankowski.garcon.domain.ExternalId
-import dev.pankowski.garcon.domain.LunchClientConfig
 import dev.pankowski.garcon.domain.LunchConfig
 import dev.pankowski.garcon.domain.LunchPageId
-import dev.pankowski.garcon.domain.LunchPostConfig
 import dev.pankowski.garcon.domain.Post
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpMethod
@@ -29,9 +27,7 @@ class RestTemplateSlackReposterTest extends Specification {
   def lunchConfig = new LunchConfig(
     new URL("https://slack/webhook"),
     Duration.ofMinutes(5),
-    new LunchClientConfig("Some User Agent", Duration.ofSeconds(5)),
     [],
-    new LunchPostConfig(Locale.ENGLISH),
   )
 
   @Subject

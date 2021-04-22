@@ -1,6 +1,5 @@
 package dev.pankowski.garcon.domain
 
-
 import dev.pankowski.garcon.infrastructure.persistence.InMemorySynchronizedPostRepository
 import spock.lang.Specification
 import spock.lang.Subject
@@ -18,9 +17,7 @@ class LunchServiceTest extends Specification {
   def config = new LunchConfig(
     new URL("https://slack/webhook"),
     Duration.ofMinutes(5),
-    new LunchClientConfig("Some User Agent", Duration.ofSeconds(5)),
     [pageConfig],
-    new LunchPostConfig(Locale.ENGLISH),
   )
 
   def postClient = Mock(FacebookPostClient)
