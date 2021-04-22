@@ -7,17 +7,18 @@ import org.springframework.stereotype.Component
 class LunchPostClassifier {
 
   private val log = getLogger(javaClass)
+
+  // TODO: Make locale & keywords configurable
   private val locale = PolishLocale
-  private val lunchKeywords = listOf("lunch", "lunchowa")
-  private val maxEditDistance = 1
+  private val lunchKeywords = listOf(
+    Keyword("lunch", 1),
+    Keyword("lunchowa", 2)
+  )
 
   fun classify(post: Post): Classification {
-    val words = post.content.toLowerCase(locale).extractWords(locale)
-    log.debug("Finished word extraction for text: {}. Extracted words: {}", post.content, words)
-    return if (words.any(::isConsideredLunchKeyword)) Classification.LunchPost
+    val matcher = KeywordMatcher.onWordsOf(post.content, locale)
+    log.debug("Words extracted for post {}: {}", post, matcher.words)
+    return if (lunchKeywords.any { matcher.matches(it) }) Classification.LunchPost
     else Classification.MissingKeywords
   }
-
-  private fun isConsideredLunchKeyword(w: String) =
-    lunchKeywords.any { k -> damerauLevenshtein(k, w) <= maxEditDistance }
 }

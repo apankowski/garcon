@@ -36,7 +36,7 @@ class LunchSubcommandParserTest extends Specification {
     thrown WrongCommandException
   }
 
-  def 'should return "check for lunch post" when command has no text'() {
+  def 'should return "check for lunch post" when command has no words'() {
     given:
     def command = someLunchCommand(text: text)
 
@@ -44,7 +44,7 @@ class LunchSubcommandParserTest extends Specification {
     parser.parse(command) == LunchSubcommand.CheckForLunchPost.INSTANCE
 
     where:
-    text << ["", " ", "\t", "\n"]
+    text << ["", " ", "\t", "\n", ".", "  ,@% "]
   }
 
   @Unroll
@@ -89,14 +89,9 @@ class LunchSubcommandParserTest extends Specification {
     def command = someLunchCommand(text: text)
 
     expect:
-    parser.parse(command) == new LunchSubcommand.Unrecognized(words)
+    parser.parse(command) == LunchSubcommand.Unrecognized.INSTANCE
 
     where:
-    text     | words
-    "l"      | ["l"]
-    "He"     | ["he"]
-    "hle"    | ["hle"]
-    "no go!" | ["no", "go"]
-    "What?"  | ["what"]
+    text << ["l", "He", "hle", "no go!", "What?", "log something", "check something", "help something"]
   }
 }

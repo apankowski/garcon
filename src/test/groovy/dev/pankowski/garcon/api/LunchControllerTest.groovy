@@ -28,7 +28,7 @@ class LunchControllerTest extends Specification {
   def controller = new LunchController(parser, executor, service)
 
   def someCommand() {
-    new SlashCommand("/command", "text", null, null, new UserId("U1234"), new ChannelId("C1234"), null, null)
+    new SlashCommand("/command", "command text", null, null, new UserId("U1234"), new ChannelId("C1234"), null, null)
   }
 
   def "should handle 'help' subcommand"() {
@@ -52,7 +52,7 @@ class LunchControllerTest extends Specification {
   def "should handle unrecognized subcommand"() {
     given:
     def command = someCommand()
-    parser.parse(command) >> new LunchSubcommand.Unrecognized(["a", "b", "c"])
+    parser.parse(command) >> LunchSubcommand.Unrecognized.INSTANCE
 
     when:
     def result = controller.handle(command)
@@ -61,7 +61,7 @@ class LunchControllerTest extends Specification {
     result.responseType == ResponseType.EPHEMERAL
     result.text ==
       """\
-      |Unrecognized subcommand: `/lunch a b c`
+      |Unrecognized subcommand: `/lunch command text`
       |
       |Recognized subcommands are:
       |• `/lunch` or `/lunch check` - manually triggers checking for lunch post

@@ -4,14 +4,11 @@ import spock.lang.Specification
 
 import static dev.pankowski.garcon.domain.TextsKt.extractWords
 
-class WordExtractorTest extends Specification {
+class WordExtractionTest extends Specification {
 
   def locale = TextsKt.polishLocale
 
   def 'should extract words'() {
-    given:
-    // text
-
     expect:
     extractWords(text, locale) == words
 
@@ -24,9 +21,6 @@ class WordExtractorTest extends Specification {
   }
 
   def 'should ignore punctuation'() {
-    given:
-    // text
-
     expect:
     extractWords(text, locale) == words
 
@@ -38,9 +32,6 @@ class WordExtractorTest extends Specification {
   }
 
   def 'should handle language-specific characters'() {
-    given:
-    // text
-
     expect:
     extractWords(text, locale) == words
 

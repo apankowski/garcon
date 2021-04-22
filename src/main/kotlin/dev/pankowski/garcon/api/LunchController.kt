@@ -22,9 +22,9 @@ class LunchController(
   @SlashCommandMapping("/commands/lunch")
   fun handle(command: SlashCommand): SlackMessage {
     log.info("Received command {}", command)
-    return when (val subcommand = subcommandParser.parse(command)) {
+    return when (subcommandParser.parse(command)) {
       is LunchSubcommand.Help -> handleHelp()
-      is LunchSubcommand.Unrecognized -> handleUnrecognized(subcommand)
+      is LunchSubcommand.Unrecognized -> handleUnrecognized(command)
       is LunchSubcommand.CheckForLunchPost -> handleCheckForLunchPost()
       is LunchSubcommand.Log -> handleLog()
     }
@@ -46,10 +46,10 @@ class LunchController(
       ResponseType.EPHEMERAL
     )
 
-  private fun handleUnrecognized(unrecognized: LunchSubcommand.Unrecognized) =
+  private fun handleUnrecognized(command: SlashCommand) =
     SlackMessage(
       """
-      |Unrecognized subcommand: `/lunch ${unrecognized.words.joinToString(separator = " ")}`
+      |Unrecognized subcommand: `/lunch ${command.text}`
       |
       |${handleHelp().text}
       """.trimMargin(),
