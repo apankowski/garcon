@@ -4,6 +4,7 @@ import dev.pankowski.garcon.domain.LunchClientConfig
 import dev.pankowski.garcon.domain.LunchConfig
 import dev.pankowski.garcon.domain.LunchPageConfig
 import dev.pankowski.garcon.domain.LunchPageId
+import dev.pankowski.garcon.domain.LunchPostConfig
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Subject
 
@@ -24,5 +25,6 @@ class LunchConfigIT extends CommonIT {
       new LunchPageConfig(new LunchPageId("PŻPS"), new URL("http://localhost:9876/lunch/facebook/pzps/posts")),
       new LunchPageConfig(new LunchPageId("WegeGuru"), new URL("http://localhost:9876/lunch/facebook/wegeguru/posts"))
     ]
+    config.post == new LunchPostConfig(new Locale("pl", "PL"))
   }
 }

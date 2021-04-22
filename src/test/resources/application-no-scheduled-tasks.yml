@@ -9,3 +9,5 @@ lunch:
     url: http://localhost:9876/lunch/facebook/pzps/posts
   - id: WegeGuru
     url: http://localhost:9876/lunch/facebook/wegeguru/posts
+  post:
+    locale: pl_PL

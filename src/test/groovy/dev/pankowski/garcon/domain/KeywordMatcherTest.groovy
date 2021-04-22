@@ -5,13 +5,11 @@ import spock.lang.Unroll
 
 class KeywordMatcherTest extends Specification {
 
-  def locale = TextsKt.polishLocale
-
   @Unroll
   def '"some text" matches keyword "#keywordText" with edit distance #editDistance: #match'() {
     given:
     def text = "some text"
-    def matcher = KeywordMatcher.onWordsOf(text, locale)
+    def matcher = KeywordMatcher.onWordsOf(text, Locale.ENGLISH)
     def keyword = new Keyword(keywordText, editDistance)
 
     expect:

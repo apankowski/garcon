@@ -4,8 +4,8 @@ import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.LunchClientConfig
 import dev.pankowski.garcon.domain.LunchConfig
 import dev.pankowski.garcon.domain.LunchPageId
+import dev.pankowski.garcon.domain.LunchPostConfig
 import dev.pankowski.garcon.domain.Post
-import dev.pankowski.garcon.infrastructure.RestTemplateSlackReposter
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -31,6 +31,7 @@ class RestTemplateSlackReposterTest extends Specification {
     Duration.ofMinutes(5),
     new LunchClientConfig("Some User Agent", Duration.ofSeconds(5)),
     [],
+    new LunchPostConfig(Locale.ENGLISH),
   )
 
   @Subject

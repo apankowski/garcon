@@ -1,6 +1,5 @@
 package dev.pankowski.garcon.domain
 
-
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
@@ -9,8 +8,10 @@ import java.time.Instant
 
 class LunchPostClassifierTest extends Specification {
 
+  def postConfig = new LunchPostConfig(new Locale("pl", "PL"))
+
   @Subject
-  LunchPostClassifier classifier = new LunchPostClassifier()
+  def classifier = new LunchPostClassifier(postConfig)
 
   private static def somePost(String content) {
     new Post(

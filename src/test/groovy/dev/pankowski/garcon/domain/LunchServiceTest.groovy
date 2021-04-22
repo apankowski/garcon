@@ -20,6 +20,7 @@ class LunchServiceTest extends Specification {
     Duration.ofMinutes(5),
     new LunchClientConfig("Some User Agent", Duration.ofSeconds(5)),
     [pageConfig],
+    new LunchPostConfig(Locale.ENGLISH),
   )
 
   def postClient = Mock(FacebookPostClient)

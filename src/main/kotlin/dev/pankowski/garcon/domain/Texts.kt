@@ -4,8 +4,6 @@ import java.text.BreakIterator
 import java.util.*
 import java.util.Collections.unmodifiableList
 
-val PolishLocale: Locale = Locale.forLanguageTag("pl-PL")
-
 /**
  * Calculates [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance)
  * between given char sequences.

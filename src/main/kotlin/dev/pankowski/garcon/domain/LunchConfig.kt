@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.stereotype.Component
 import java.net.URL
 import java.time.Duration
+import java.util.*
 
 /**
  * Configuration of lunch feature of the bot.
@@ -33,14 +34,20 @@ data class LunchConfig(
   /**
    * Lunch pages.
    */
-  val pages: List<LunchPageConfig> = emptyList()
+  val pages: List<LunchPageConfig> = emptyList(),
+
+  /**
+   * Lunch post classification configuration.
+   */
+  @NestedConfigurationProperty
+  val post: LunchPostConfig = LunchPostConfig(),
 )
 
 /**
  * Configuration of web client used to fetch lunch pages.
  */
-@ConstructorBinding
 @Component
+@ConstructorBinding
 data class LunchClientConfig(
 
   /**
@@ -51,7 +58,7 @@ data class LunchClientConfig(
   /**
    * Max time to wait for the lunch page to be fetched.
    */
-  val timeout: Duration = Duration.ofSeconds(10)
+  val timeout: Duration = Duration.ofSeconds(10),
 )
 
 /**
@@ -67,7 +74,17 @@ data class LunchPageConfig(
   /**
    * URL of Facebook post page containing lunch posts.
    */
-  val url: URL
+  val url: URL,
 )
 
 data class LunchPageId(val value: String)
+
+/**
+ * Configuration related to lunch post classification.
+ */
+@Component
+@ConstructorBinding
+data class LunchPostConfig(
+
+  val locale: Locale = Locale.ENGLISH,
+)

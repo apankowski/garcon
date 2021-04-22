@@ -6,7 +6,7 @@ import static dev.pankowski.garcon.domain.TextsKt.extractWords
 
 class WordExtractionTest extends Specification {
 
-  def locale = TextsKt.polishLocale
+  def locale = new Locale("pl", "PL")
 
   def 'should extract words'() {
     expect:
