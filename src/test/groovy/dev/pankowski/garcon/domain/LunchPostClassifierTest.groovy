@@ -8,7 +8,10 @@ import java.time.Instant
 
 class LunchPostClassifierTest extends Specification {
 
-  def postConfig = new LunchPostConfig(new Locale("pl", "PL"))
+  def postConfig = new LunchPostConfig(
+    new Locale("pl", "PL"),
+    [new Keyword("lunch", 1), new Keyword("lunchowa", 2)]
+  )
 
   @Subject
   def classifier = new LunchPostClassifier(postConfig)

@@ -11,3 +11,8 @@ lunch:
     url: http://localhost:9876/lunch/facebook/wegeguru/posts
   post:
     locale: pl_PL
+    keywords:
+    - text: "lunch"
+      edit-distance: 1
+    - text: "lunchowa"
+      edit-distance: 2

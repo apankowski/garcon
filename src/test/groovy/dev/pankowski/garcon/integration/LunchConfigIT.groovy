@@ -1,5 +1,6 @@
 package dev.pankowski.garcon.integration
 
+import dev.pankowski.garcon.domain.Keyword
 import dev.pankowski.garcon.domain.LunchClientConfig
 import dev.pankowski.garcon.domain.LunchConfig
 import dev.pankowski.garcon.domain.LunchPageConfig
@@ -39,5 +40,9 @@ class LunchConfigIT extends CommonIT {
   def "post config should be set based on configuration properties"() {
     expect:
     postConfig.locale == new Locale("pl", "PL")
+    postConfig.keywords == [
+      new Keyword("lunch", 1),
+      new Keyword("lunchowa", 2),
+    ]
   }
 }

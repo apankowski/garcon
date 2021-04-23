@@ -30,24 +30,6 @@ data class LunchConfig(
 )
 
 /**
- * Configuration of web client used to fetch lunch pages.
- */
-@ConstructorBinding
-@ConfigurationProperties("lunch.client")
-data class LunchClientConfig(
-
-  /**
-   * User agent by which the client identifies itself when fetching lunch pages.
-   */
-  val userAgent: String = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:80.0) Gecko/20100101 Firefox/80.0",
-
-  /**
-   * Max time to wait for the lunch page to be fetched.
-   */
-  val timeout: Duration = Duration.ofSeconds(10),
-)
-
-/**
  * Configuration of a single lunch page to synchronize.
  */
 data class LunchPageConfig(
@@ -66,6 +48,24 @@ data class LunchPageConfig(
 data class LunchPageId(val value: String)
 
 /**
+ * Configuration of web client used to fetch lunch pages.
+ */
+@ConstructorBinding
+@ConfigurationProperties("lunch.client")
+data class LunchClientConfig(
+
+  /**
+   * User agent by which the client identifies itself when fetching lunch pages.
+   */
+  val userAgent: String = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:80.0) Gecko/20100101 Firefox/80.0",
+
+  /**
+   * Max time to wait for the lunch page to be fetched.
+   */
+  val timeout: Duration = Duration.ofSeconds(10),
+)
+
+/**
  * Configuration related to lunch post classification.
  */
 @ConstructorBinding
@@ -76,4 +76,9 @@ data class LunchPostConfig(
    * Locale of text of posts used while extracting their keywords.
    */
   val locale: Locale = Locale.ENGLISH,
+
+  /**
+   * Lunch post keywords.
+   */
+  val keywords: List<Keyword> = listOf(Keyword("lunch", 1)),
 )
