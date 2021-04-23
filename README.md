@@ -98,7 +98,7 @@ Create an empty PostgreSQL database for the bot with UTF-8 encoding to support e
 | `LUNCH_CLIENT_TIMEOUT` | Max time to wait for the lunch page to be fetched (expressed as ISO 8601 time duration). | ✗ | `PT10S` |
 | `LUNCH_PAGES_<INDEX>_ID`, e.g. `LUNCH_PAGES_0_ID` | Textual identifier of the lunch page presented as the name of the page when reposting. Should not change once assigned. | ✓ | `PŻPS` |
 | `LUNCH_PAGES_<INDEX>_URL`, e.g. `LUNCH_PAGES_0_URL` | URL of the lunch page. | ✓ | `https://www.facebook.com/1597565460485886/posts/` |
-| `LUNCH_POST_LOCALE` | Locale of text of posts used while performing their classification. | ✗ | `Locale.ENGLISH` |
+| `LUNCH_POST_LOCALE` | Locale of text of posts used while extracting their keywords. | ✗ | `Locale.ENGLISH` |
 
 ### Heroku
 

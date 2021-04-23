@@ -72,5 +72,8 @@ data class LunchPageId(val value: String)
 @ConfigurationProperties("lunch.post")
 data class LunchPostConfig(
 
+  /**
+   * Locale of text of posts used while extracting their keywords.
+   */
   val locale: Locale = Locale.ENGLISH,
 )
