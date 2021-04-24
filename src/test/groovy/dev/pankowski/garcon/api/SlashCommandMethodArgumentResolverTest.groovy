@@ -77,7 +77,6 @@ class SlashCommandMethodArgumentResolverTest extends Specification {
     where:
     param        | type
     'command'    | 'string'
-    'text'       | 'string'
     'user_id'    | 'user ID'
     'channel_id' | 'channel ID'
   }
@@ -100,7 +99,7 @@ class SlashCommandMethodArgumentResolverTest extends Specification {
     notThrown MissingServletRequestParameterException
 
     where:
-    param << ['response_url', 'trigger_id', 'team_id', 'enterprise_id']
+    param << ['text', 'response_url', 'trigger_id', 'team_id', 'enterprise_id']
   }
 
   @Unroll

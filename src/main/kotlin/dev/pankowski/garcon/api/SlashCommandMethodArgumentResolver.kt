@@ -25,7 +25,7 @@ class SlashCommandMethodArgumentResolver : HandlerMethodArgumentResolver {
   ): SlashCommand {
 
     val command = request.parameter("command", "string", identity(), ::required)!!
-    val text = request.parameter("text", "string", identity(), ::required)!!
+    val text = request.parameter("text", "string", identity(), ::nullIfEmpty) ?: ""
     val responseUrl = request.parameter("response_url", "URL", ::URL, ::nullIfEmpty)
     val triggerId = request.parameter("trigger_id", "trigger ID", ::TriggerId, ::nullIfEmpty)
     val userId = request.parameter("user_id", "user ID", ::UserId, ::required)!!
