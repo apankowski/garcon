@@ -2,7 +2,7 @@ package dev.pankowski.garcon.infrastructure
 
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.LunchConfig
-import dev.pankowski.garcon.domain.PageId
+import dev.pankowski.garcon.domain.PageName
 import dev.pankowski.garcon.domain.Post
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpMethod
@@ -44,7 +44,7 @@ class RestTemplateSlackReposterTest extends Specification {
       "Some content"
     )
 
-    def pageId = new PageId("SomePageId")
+    def pageName = new PageName("Some page name")
 
     mockServer.expect(requestTo(lunchConfig.slackWebhookUrl.toURI()))
       .andExpect(method(HttpMethod.POST))
@@ -52,14 +52,14 @@ class RestTemplateSlackReposterTest extends Specification {
       .andExpect(content().json(
         """\
         |{
-        |"text":"New <https://www.facebook.com/post|lunch post> from SomePageId :tada:\\n\\n>>>Some content"
+        |"text":"New <https://www.facebook.com/post|lunch post> from Some page name :tada:\\n\\n>>>Some content"
         |}""".stripMargin(),
         false
       ))
       .andRespond(withStatus(HttpStatus.OK))
 
     when:
-    repostingClient.repost(post, pageId)
+    repostingClient.repost(post, pageName)
 
     then:
     mockServer.verify()

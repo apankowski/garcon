@@ -33,7 +33,7 @@ class LunchService(
       val synchronizedPosts = synchronizePosts(page)
       synchronizedPosts
         .filter { it.repost != Repost.Skip }
-        .forEach { attemptRepost(it, page.id) }
+        .forEach(::attemptRepost)
     }
 
   private fun synchronizePosts(pageConfig: LunchPageConfig): List<SynchronizedPost> {
@@ -67,7 +67,7 @@ class LunchService(
       Classification.MissingKeywords -> Repost.Skip
     }
 
-  private fun attemptRepost(p: SynchronizedPost, pageId: PageId) {
+  private fun attemptRepost(p: SynchronizedPost) {
     fun updateWith(r: Repost) =
       repository.updateExisting(UpdateData(p.id, p.version, r))
 
@@ -79,7 +79,7 @@ class LunchService(
       is Repost.Error -> {
         if (p.repost is Repost.Error && p.repost.errorCount > 3) return
         try {
-          repost(p.post, pageId)
+          doRepost(p)
           updateWith(Repost.Success(Instant.now()))
         } catch (e: Exception) {
           val newRepost = when (p.repost) {
@@ -93,12 +93,12 @@ class LunchService(
     }
   }
 
-  private fun repost(post: Post, pageId: PageId) =
+  private fun doRepost(p: SynchronizedPost) =
     try {
-      reposter.repost(post, pageId)
-      log.info("Post ${post.link} reposted on Slack")
+      reposter.repost(p.post, p.pageName ?: PageName(p.pageId.value))
+      log.info("Post ${p.post.link} reposted on Slack")
     } catch (e: Exception) {
-      log.error("Failed to repost post ${post.link} on Slack", e)
+      log.error("Failed to repost post ${p.post.link} on Slack", e)
       throw e
     }
 

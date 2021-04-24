@@ -78,7 +78,7 @@ class LunchServiceTest extends Specification {
     def post = somePost()
     def classification = Classification.LunchPost.INSTANCE
 
-    postClient.fetch(pageConfig, _) >> new Pair(somePageName(), [post])
+    postClient.fetch(pageConfig, _) >> new Pair(pageName, [post])
     postClassifier.classify(post) >> classification
 
     when:
@@ -86,7 +86,7 @@ class LunchServiceTest extends Specification {
 
     then:
     1 * repository.store(new StoreData(pageConfig.id, pageName, post, classification, Repost.Pending.INSTANCE))
-    1 * reposter.repost(post, pageConfig.id)
+    1 * reposter.repost(post, pageName)
     1 * repository.updateExisting({ it.version == Version.first() && it.repost instanceof Repost.Success })
   }
 

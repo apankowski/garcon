@@ -15,11 +15,11 @@ class RestTemplateSlackReposter(private val lunchConfig: LunchConfig, restTempla
   // Visible for testing
   val restTemplate: RestTemplate = restTemplateBuilder.build()
 
-  override fun repost(post: Post, pageId: PageId) {
+  override fun repost(post: Post, pageName: PageName) {
     log.debug("Reposting on Slack: {}", post)
     val text =
       """
-      |New <${post.link}|lunch post> from ${pageId.value} :tada:
+      |New <${post.link}|lunch post> from ${pageName.value} :tada:
       |
       |>>>${post.content}
       """.trimMargin()
