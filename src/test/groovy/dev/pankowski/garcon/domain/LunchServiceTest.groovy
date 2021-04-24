@@ -10,15 +10,10 @@ import java.time.Instant
 
 class LunchServiceTest extends Specification {
 
-  def pageConfig = new LunchPageConfig(
-    new LunchPageId("LP1"),
-    new URL("https://facebook/page")
-  )
-
   def config = new LunchConfig(
     new URL("https://slack/webhook"),
     Duration.ofMinutes(5),
-    [pageConfig],
+    [],
   )
 
   def postClient = Mock(FacebookPostClient)
@@ -29,71 +24,85 @@ class LunchServiceTest extends Specification {
   @Subject
   def service = new LunchService(config, postClient, postClassifier, reposter, repository)
 
+  def somePageConfig() {
+    new LunchPageConfig(
+      new LunchPageId("some id"),
+      new URL("https://facebook/page")
+    )
+  }
+
+  def somePageName() {
+    new PageName("some name")
+  }
+
+  def somePost() {
+    new Post(
+      new ExternalId("some id"),
+      new URI("https://facebook/post"),
+      Instant.now(),
+      "some post content"
+    )
+  }
+
   def "should fetch new posts"() {
     given:
-    def lastSeen = new SynchronizedPost(
-      new SynchronizedPostId("PID"),
+    def pageConfig = somePageConfig()
+
+    def lastSeen = somePost()
+    def lastSeenPublishedAt = lastSeen.publishedAt
+
+    repository.findLastSeen(pageConfig.id) >> new SynchronizedPost(
+      new SynchronizedPostId("some id"),
       new Version(1),
       Instant.now(),
       Instant.now(),
-      new LunchPageId("LPID"),
-      new Post(
-        new ExternalId("FBID"),
-        new URI("https://facebook/post"),
-        Instant.now(),
-        "Some post content"
-      ),
+      new LunchPageId("some id"),
+      lastSeen,
       Classification.LunchPost.INSTANCE,
       Repost.Skip.INSTANCE
     )
 
-    repository.findLastSeen(pageConfig.id) >> lastSeen
-
     when:
     service.synchronize(pageConfig)
 
     then:
-    1 * postClient.fetch(pageConfig, lastSeen.post.publishedAt) >> new Pair(new PageName("some name"), [])
+    1 * postClient.fetch(pageConfig, lastSeenPublishedAt) >> new Pair(somePageName(), [])
   }
 
   def "should save & repost fetched lunch posts"() {
     given:
-    def post = new Post(
-      new ExternalId("FBID1"),
-      new URI("https://facebook/post/1"),
-      Instant.now(),
-      "Some content 1"
-    )
+    def pageConfig = somePageConfig()
 
-    postClient.fetch(pageConfig, _) >> new Pair(new PageName("some name"), [post])
-    postClassifier.classify(post) >> Classification.LunchPost.INSTANCE
+    def post = somePost()
+    def classification = Classification.LunchPost.INSTANCE
+
+    postClient.fetch(pageConfig, _) >> new Pair(somePageName(), [post])
+    postClassifier.classify(post) >> classification
 
     when:
     service.synchronize(pageConfig)
 
     then:
-    1 * repository.store(new StoreData(pageConfig.id, post, Classification.LunchPost.INSTANCE, Repost.Pending.INSTANCE))
+    1 * repository.store(new StoreData(pageConfig.id, post, classification, Repost.Pending.INSTANCE))
     1 * reposter.repost(post, pageConfig.id)
     1 * repository.updateExisting({ it.version == Version.first() && it.repost instanceof Repost.Success })
   }
 
   def "should save fetched non-lunch posts"() {
     given:
-    def post = new Post(
-      new ExternalId("FBID1"),
-      new URI("https://facebook/post/1"),
-      Instant.now(),
-      "Some content 1"
-    )
+    def pageConfig = somePageConfig()
 
-    postClient.fetch(pageConfig, _) >> new Pair(new PageName("some name"), [post])
-    postClassifier.classify(post) >> Classification.MissingKeywords.INSTANCE
+    def post = somePost()
+    def classification = Classification.MissingKeywords.INSTANCE
+
+    postClient.fetch(pageConfig, _) >> new Pair(somePageName(), [post])
+    postClassifier.classify(post) >> classification
 
     when:
     service.synchronize(pageConfig)
 
     then:
-    1 * repository.store(new StoreData(pageConfig.id, post, Classification.MissingKeywords.INSTANCE, Repost.Skip.INSTANCE))
+    1 * repository.store(new StoreData(pageConfig.id, post, classification, Repost.Skip.INSTANCE))
     0 * reposter.repost(_, _)
     0 * repository.updateExisting(_)
   }
