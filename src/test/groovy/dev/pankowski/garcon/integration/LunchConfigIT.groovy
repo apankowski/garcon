@@ -4,7 +4,7 @@ import dev.pankowski.garcon.domain.Keyword
 import dev.pankowski.garcon.domain.LunchClientConfig
 import dev.pankowski.garcon.domain.LunchConfig
 import dev.pankowski.garcon.domain.LunchPageConfig
-import dev.pankowski.garcon.domain.LunchPageId
+import dev.pankowski.garcon.domain.PageId
 import dev.pankowski.garcon.domain.LunchPostConfig
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -26,8 +26,8 @@ class LunchConfigIT extends CommonIT {
     config.slackWebhookUrl == new URL('http://localhost:9876/lunch/slack/webhook')
     config.syncInterval == null
     config.pages == [
-      new LunchPageConfig(new LunchPageId("PŻPS"), new URL("http://localhost:9876/lunch/facebook/pzps/posts")),
-      new LunchPageConfig(new LunchPageId("WegeGuru"), new URL("http://localhost:9876/lunch/facebook/wegeguru/posts"))
+      new LunchPageConfig(new PageId("PŻPS"), new URL("http://localhost:9876/lunch/facebook/pzps/posts")),
+      new LunchPageConfig(new PageId("WegeGuru"), new URL("http://localhost:9876/lunch/facebook/wegeguru/posts"))
     ]
   }
 

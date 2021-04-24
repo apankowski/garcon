@@ -2,7 +2,7 @@ package dev.pankowski.garcon.infrastructure
 
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.LunchConfig
-import dev.pankowski.garcon.domain.LunchPageId
+import dev.pankowski.garcon.domain.PageId
 import dev.pankowski.garcon.domain.Post
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpMethod
@@ -44,7 +44,7 @@ class RestTemplateSlackReposterTest extends Specification {
       "Some content"
     )
 
-    def pageId = new LunchPageId("SomePageId")
+    def pageId = new PageId("SomePageId")
 
     mockServer.expect(requestTo(lunchConfig.slackWebhookUrl.toURI()))
       .andExpect(method(HttpMethod.POST))

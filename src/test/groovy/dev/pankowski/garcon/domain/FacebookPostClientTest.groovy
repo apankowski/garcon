@@ -40,7 +40,7 @@ class FacebookPostClientTest extends Specification {
 
   def somePageConfig() {
     new LunchPageConfig(
-      new LunchPageId("LP1"),
+      new PageId("LP1"),
       new URL("http://localhost:4321/posts")
     )
   }

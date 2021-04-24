@@ -2,7 +2,7 @@ package dev.pankowski.garcon.infrastructure.persistence
 
 import dev.pankowski.garcon.domain.Classification
 import dev.pankowski.garcon.domain.ExternalId
-import dev.pankowski.garcon.domain.LunchPageId
+import dev.pankowski.garcon.domain.PageId
 import dev.pankowski.garcon.domain.PageName
 import dev.pankowski.garcon.domain.Post
 import dev.pankowski.garcon.domain.Repost
@@ -64,7 +64,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
   def "should persist synchronized post"() {
     given:
     def pageName = pname != null ? new PageName(pname) : null
-    def pageId = new LunchPageId(pid)
+    def pageId = new PageId(pid)
     def storeData = new StoreData(pageId, pageName, somePost(), classification, repost)
 
     when:
@@ -97,7 +97,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
   }
 
   private static def somePageId() {
-    new LunchPageId("1")
+    new PageId("1")
   }
 
   private static def somePageName() {
@@ -196,8 +196,8 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
 
   def "should allow finding last seen post of a given page"() {
     given:
-    def somePageId = new LunchPageId("1")
-    def otherPageId = new LunchPageId("2")
+    def somePageId = new PageId("1")
+    def otherPageId = new PageId("2")
     def now = Instant.now().truncatedTo(MICROS)
 
     repository.findExisting(repository.store(new StoreData(

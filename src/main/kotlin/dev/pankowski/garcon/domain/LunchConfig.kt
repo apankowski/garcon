@@ -37,15 +37,13 @@ data class LunchPageConfig(
   /**
    * ID of Facebook post page containing lunch posts.
    */
-  val id: LunchPageId,
+  val id: PageId,
 
   /**
    * URL of Facebook post page containing lunch posts.
    */
   val url: URL,
 )
-
-data class LunchPageId(val value: String)
 
 /**
  * Configuration of web client used to fetch lunch pages.

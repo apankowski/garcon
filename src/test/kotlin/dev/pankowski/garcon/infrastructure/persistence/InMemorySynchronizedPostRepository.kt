@@ -43,7 +43,7 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
   override fun findExisting(id: SynchronizedPostId): SynchronizedPost =
     posts[id] ?: throw IllegalArgumentException("Post with $id does not exist")
 
-  override fun findLastSeen(pageId: LunchPageId): SynchronizedPost? =
+  override fun findLastSeen(pageId: PageId): SynchronizedPost? =
     posts.values.filter { it.pageId == pageId }.maxByOrNull { it.post.publishedAt }
 
   override fun getLog(count: Int): SynchronizationLog =

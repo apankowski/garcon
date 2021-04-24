@@ -3,7 +3,7 @@ package dev.pankowski.garcon.api
 import com.google.common.util.concurrent.MoreExecutors
 import dev.pankowski.garcon.domain.Classification
 import dev.pankowski.garcon.domain.ExternalId
-import dev.pankowski.garcon.domain.LunchPageId
+import dev.pankowski.garcon.domain.PageId
 import dev.pankowski.garcon.domain.LunchService
 import dev.pankowski.garcon.domain.LunchSubcommand
 import dev.pankowski.garcon.domain.PageName
@@ -131,7 +131,7 @@ class LunchControllerTest extends Specification {
         new Version(1),
         baseDateTime.plusDays(0).toInstant(),
         baseDateTime.plusDays(1).toInstant(),
-        new LunchPageId("LP1"),
+        new PageId("LP1"),
         new PageName("Page name 1"),
         new Post(
           new ExternalId("FB1"),
@@ -147,7 +147,7 @@ class LunchControllerTest extends Specification {
         new Version(2),
         baseDateTime.plusDays(5).toInstant(),
         baseDateTime.plusDays(6).toInstant(),
-        new LunchPageId("LP2"),
+        new PageId("LP2"),
         new PageName("Page name 2"),
         new Post(
           new ExternalId("FB2"),
@@ -163,7 +163,7 @@ class LunchControllerTest extends Specification {
         new Version(3),
         baseDateTime.plusDays(10).toInstant(),
         baseDateTime.plusDays(11).toInstant(),
-        new LunchPageId("LP3"),
+        new PageId("LP3"),
         new PageName("Page name 3"),
         new Post(
           new ExternalId("FB3"),
@@ -179,7 +179,7 @@ class LunchControllerTest extends Specification {
         new Version(4),
         baseDateTime.plusDays(15).toInstant(),
         baseDateTime.plusDays(16).toInstant(),
-        new LunchPageId("LP4"),
+        new PageId("LP4"),
         new PageName("Page name 4"),
         new Post(
           new ExternalId("FB4"),

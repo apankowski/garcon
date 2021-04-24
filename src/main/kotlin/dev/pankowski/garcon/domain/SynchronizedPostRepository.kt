@@ -4,7 +4,7 @@ class SynchronizedPostNotFound(message: String) : RuntimeException(message)
 class SynchronizedPostModifiedConcurrently(message: String) : RuntimeException(message)
 
 data class StoreData(
-  val pageId: LunchPageId,
+  val pageId: PageId,
   val pageName: PageName?,
   val post: Post,
   val classification: Classification,
@@ -25,7 +25,7 @@ interface SynchronizedPostRepository {
 
   fun findExisting(id: SynchronizedPostId): SynchronizedPost
 
-  fun findLastSeen(pageId: LunchPageId): SynchronizedPost?
+  fun findLastSeen(pageId: PageId): SynchronizedPost?
 
   fun getLog(count: Int): SynchronizationLog
 }

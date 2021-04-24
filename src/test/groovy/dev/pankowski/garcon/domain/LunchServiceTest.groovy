@@ -26,7 +26,7 @@ class LunchServiceTest extends Specification {
 
   def somePageConfig() {
     new LunchPageConfig(
-      new LunchPageId("some id"),
+      new PageId("some id"),
       new URL("https://facebook/page")
     )
   }
@@ -56,7 +56,7 @@ class LunchServiceTest extends Specification {
       new Version(1),
       Instant.now(),
       Instant.now(),
-      new LunchPageId("some id"),
+      new PageId("some id"),
       null,
       lastSeen,
       Classification.LunchPost.INSTANCE,

@@ -67,7 +67,7 @@ class LunchService(
       Classification.MissingKeywords -> Repost.Skip
     }
 
-  private fun attemptRepost(p: SynchronizedPost, pageId: LunchPageId) {
+  private fun attemptRepost(p: SynchronizedPost, pageId: PageId) {
     fun updateWith(r: Repost) =
       repository.updateExisting(UpdateData(p.id, p.version, r))
 
@@ -93,7 +93,7 @@ class LunchService(
     }
   }
 
-  private fun repost(post: Post, pageId: LunchPageId) =
+  private fun repost(post: Post, pageId: PageId) =
     try {
       reposter.repost(post, pageId)
       log.info("Post ${post.link} reposted on Slack")

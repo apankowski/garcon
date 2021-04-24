@@ -1,7 +1,7 @@
 package dev.pankowski.garcon.domain
 
 import org.slf4j.MDC
-import dev.pankowski.garcon.domain.LunchPageId as PageIdValue
+import dev.pankowski.garcon.domain.PageId as PageIdValue
 
 sealed class Mdc(private val key: String) {
 

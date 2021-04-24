@@ -8,7 +8,7 @@ class MdcTest extends Specification {
 
   def "should allow setting PageId for a closure"() {
     given:
-    def pageId = new LunchPageId("P1234")
+    def pageId = new PageId("P1234")
 
     expect:
     MDC.get("pageId") == null
@@ -24,7 +24,7 @@ class MdcTest extends Specification {
   def "should clear PageId when closure fails"() {
     when:
     Mdc.PageId.INSTANCE.having(
-      new LunchPageId("P1234"),
+      new PageId("P1234"),
       { throw new RuntimeException("Something went wrong") }
     )
 

@@ -146,7 +146,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       version = record.version,
       createdAt = record.createdAt,
       updatedAt = record.updatedAt,
-      pageId = LunchPageId(record.pageId),
+      pageId = PageId(record.pageId),
       pageName = record.pageName?.let(::PageName),
       post = toFacebookPost(record),
       classification = toClassification(record),
@@ -174,7 +174,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
   }
 
   @Transactional(readOnly = true)
-  override fun findLastSeen(pageId: LunchPageId): SynchronizedPost? =
+  override fun findLastSeen(pageId: PageId): SynchronizedPost? =
     context
       .selectFrom(SYNCHRONIZED_POSTS)
       .where(SYNCHRONIZED_POSTS.PAGE_ID.equal(pageId.value))

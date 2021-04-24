@@ -15,7 +15,7 @@ class RestTemplateSlackReposter(private val lunchConfig: LunchConfig, restTempla
   // Visible for testing
   val restTemplate: RestTemplate = restTemplateBuilder.build()
 
-  override fun repost(post: Post, pageId: LunchPageId) {
+  override fun repost(post: Post, pageId: PageId) {
     log.debug("Reposting on Slack: {}", post)
     val text =
       """
