@@ -6,6 +6,7 @@ import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.LunchPageId
 import dev.pankowski.garcon.domain.LunchService
 import dev.pankowski.garcon.domain.LunchSubcommand
+import dev.pankowski.garcon.domain.PageName
 import dev.pankowski.garcon.domain.Post
 import dev.pankowski.garcon.domain.Repost
 import dev.pankowski.garcon.domain.ResponseType
@@ -131,6 +132,7 @@ class LunchControllerTest extends Specification {
         baseDateTime.plusDays(0).toInstant(),
         baseDateTime.plusDays(1).toInstant(),
         new LunchPageId("LP1"),
+        new PageName("Page name 1"),
         new Post(
           new ExternalId("FB1"),
           new URI("https://facebook/1"),
@@ -146,6 +148,7 @@ class LunchControllerTest extends Specification {
         baseDateTime.plusDays(5).toInstant(),
         baseDateTime.plusDays(6).toInstant(),
         new LunchPageId("LP2"),
+        new PageName("Page name 2"),
         new Post(
           new ExternalId("FB2"),
           new URI("https://facebook/2"),
@@ -161,6 +164,7 @@ class LunchControllerTest extends Specification {
         baseDateTime.plusDays(10).toInstant(),
         baseDateTime.plusDays(11).toInstant(),
         new LunchPageId("LP3"),
+        new PageName("Page name 3"),
         new Post(
           new ExternalId("FB3"),
           new URI("https://facebook/3"),
@@ -176,6 +180,7 @@ class LunchControllerTest extends Specification {
         baseDateTime.plusDays(15).toInstant(),
         baseDateTime.plusDays(16).toInstant(),
         new LunchPageId("LP4"),
+        new PageName("Page name 4"),
         new Post(
           new ExternalId("FB4"),
           new URI("https://facebook/4"),

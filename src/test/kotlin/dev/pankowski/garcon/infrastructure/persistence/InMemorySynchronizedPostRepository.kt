@@ -17,6 +17,7 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
       now,
       now,
       data.pageId,
+      data.pageName,
       data.post,
       data.classification,
       data.repost

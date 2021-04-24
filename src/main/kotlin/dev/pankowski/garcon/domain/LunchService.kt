@@ -40,8 +40,7 @@ class LunchService(
     log.info("Synchronizing posts of {}", pageConfig)
 
     val lastSeen = repository.findLastSeen(pageConfig.id)
-    // TODO: Use extracted page name
-    val (_, posts) = postClient.fetch(pageConfig, lastSeen?.post?.publishedAt)
+    val (pageName, posts) = postClient.fetch(pageConfig, lastSeen?.post?.publishedAt)
 
     if (posts.isEmpty()) {
       log.info("No new posts")
@@ -54,7 +53,7 @@ class LunchService(
       val classification = lunchPostClassifier.classify(p)
       val repost = decideOnRepost(classification)
       log.info("Post $p classified as $classification, repost decision $repost")
-      StoreData(pageConfig.id, p, classification, repost)
+      StoreData(pageConfig.id, pageName, p, classification, repost)
     }
 
     return synchronizedPostsToStore

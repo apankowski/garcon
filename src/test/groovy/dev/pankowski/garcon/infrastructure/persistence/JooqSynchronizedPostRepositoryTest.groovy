@@ -3,6 +3,7 @@ package dev.pankowski.garcon.infrastructure.persistence
 import dev.pankowski.garcon.domain.Classification
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.LunchPageId
+import dev.pankowski.garcon.domain.PageName
 import dev.pankowski.garcon.domain.Post
 import dev.pankowski.garcon.domain.Repost
 import dev.pankowski.garcon.domain.StoreData
@@ -62,7 +63,9 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
 
   def "should persist synchronized post"() {
     given:
-    def storeData = new StoreData(new LunchPageId(pid), somePost(), classification, repost)
+    def pageName = pname != null ? new PageName(pname) : null
+    def pageId = new LunchPageId(pid)
+    def storeData = new StoreData(pageId, pageName, somePost(), classification, repost)
 
     when:
     def before = Instant.now()
@@ -75,6 +78,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
     then:
     verifyAll(retrieved) {
       id == storedId
+      it.pageName == storeData.pageName
       version == Version.first()
       before <= createdAt && createdAt <= after
       updatedAt == createdAt
@@ -85,15 +89,19 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
     }
 
     where:
-    pid | classification                          | repost
-    "1" | Classification.MissingKeywords.INSTANCE | Repost.Skip.INSTANCE
-    "1" | Classification.LunchPost.INSTANCE       | Repost.Pending.INSTANCE
-    "2" | Classification.LunchPost.INSTANCE       | someRepostError()
-    "2" | Classification.LunchPost.INSTANCE       | someRepostSuccess()
+    pid       | pname            | classification                          | repost
+    "100"     | null             | Classification.MissingKeywords.INSTANCE | Repost.Skip.INSTANCE
+    "XXX"     | "some page name" | Classification.LunchPost.INSTANCE       | Repost.Pending.INSTANCE
+    "some id" | null             | Classification.LunchPost.INSTANCE       | someRepostError()
+    "test"    | "some page name" | Classification.LunchPost.INSTANCE       | someRepostSuccess()
   }
 
   private static def somePageId() {
-    return new LunchPageId("1")
+    new LunchPageId("1")
+  }
+
+  private static def somePageName() {
+    new PageName("some name")
   }
 
   private static def someClassification() {
@@ -105,7 +113,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
   }
 
   private def someStoredSynchronizedPost() {
-    def storeData = new StoreData(somePageId(), somePost(), someClassification(), someRepost())
+    def storeData = new StoreData(somePageId(), somePageName(), somePost(), someClassification(), someRepost())
     repository.findExisting(repository.store(storeData))
   }
 
@@ -194,6 +202,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
 
     repository.findExisting(repository.store(new StoreData(
       somePageId,
+      somePageName(),
       somePost(externalId: "3", publishedAt: now.minusSeconds(300), content: "3"),
       someClassification(),
       someRepost()
@@ -201,6 +210,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
 
     def somePageExpectedLastSeen = repository.findExisting(repository.store(new StoreData(
       somePageId,
+      somePageName(),
       somePost(externalId: "1", publishedAt: now.minusSeconds(100), content: "1"),
       someClassification(),
       someRepost()
@@ -208,6 +218,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
 
     repository.findExisting(repository.store(new StoreData(
       somePageId,
+      somePageName(),
       somePost(externalId: "2", publishedAt: now.minusSeconds(200), content: "2"),
       someClassification(),
       someRepost()
@@ -215,6 +226,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
 
     def otherPageExpectedLastSeen = repository.findExisting(repository.store(new StoreData(
       otherPageId,
+      somePageName(),
       somePost(externalId: "4", publishedAt: now.minusSeconds(10), content: "4"),
       someClassification(),
       someRepost()
@@ -222,6 +234,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
 
     repository.findExisting(repository.store(new StoreData(
       otherPageId,
+      somePageName(),
       somePost(externalId: "5", publishedAt: now.minusSeconds(50), content: "5"),
       someClassification(),
       someRepost()
@@ -244,6 +257,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
       def i = it
       repository.findExisting(repository.store(new StoreData(
         somePageId(),
+        somePageName(),
         somePost(externalId: "$i", publishedAt: now.minusSeconds(i), content: "Content #$i"),
         someClassification(),
         someRepost()

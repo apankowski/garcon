@@ -57,6 +57,7 @@ class LunchServiceTest extends Specification {
       Instant.now(),
       Instant.now(),
       new LunchPageId("some id"),
+      null,
       lastSeen,
       Classification.LunchPost.INSTANCE,
       Repost.Skip.INSTANCE
@@ -72,6 +73,7 @@ class LunchServiceTest extends Specification {
   def "should save & repost fetched lunch posts"() {
     given:
     def pageConfig = somePageConfig()
+    def pageName = somePageName()
 
     def post = somePost()
     def classification = Classification.LunchPost.INSTANCE
@@ -83,7 +85,7 @@ class LunchServiceTest extends Specification {
     service.synchronize(pageConfig)
 
     then:
-    1 * repository.store(new StoreData(pageConfig.id, post, classification, Repost.Pending.INSTANCE))
+    1 * repository.store(new StoreData(pageConfig.id, pageName, post, classification, Repost.Pending.INSTANCE))
     1 * reposter.repost(post, pageConfig.id)
     1 * repository.updateExisting({ it.version == Version.first() && it.repost instanceof Repost.Success })
   }
@@ -91,6 +93,7 @@ class LunchServiceTest extends Specification {
   def "should save fetched non-lunch posts"() {
     given:
     def pageConfig = somePageConfig()
+    def pageName = somePageName()
 
     def post = somePost()
     def classification = Classification.MissingKeywords.INSTANCE
@@ -102,7 +105,7 @@ class LunchServiceTest extends Specification {
     service.synchronize(pageConfig)
 
     then:
-    1 * repository.store(new StoreData(pageConfig.id, post, classification, Repost.Skip.INSTANCE))
+    1 * repository.store(new StoreData(pageConfig.id, pageName, post, classification, Repost.Skip.INSTANCE))
     0 * reposter.repost(_, _)
     0 * repository.updateExisting(_)
   }

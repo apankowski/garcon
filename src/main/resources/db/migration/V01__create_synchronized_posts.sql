@@ -4,6 +4,7 @@ CREATE TABLE synchronized_posts (
   created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   page_id TEXT NOT NULL,
+  page_name TEXT,
   post_external_id TEXT NOT NULL,
   post_link TEXT NOT NULL,
   post_published_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
