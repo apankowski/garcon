@@ -38,7 +38,7 @@ class FacebookPostClientTest extends Specification {
     server.stop()
   }
 
-  def someLunchPageConfig() {
+  def somePageConfig() {
     new LunchPageConfig(
       new LunchPageId("LP1"),
       new URL("http://localhost:4321/posts")
@@ -53,14 +53,14 @@ class FacebookPostClientTest extends Specification {
     given:
     def clientConfig = new LunchClientConfig("Some User Agent", Duration.ofSeconds(5))
     def client = new FacebookPostClient(clientConfig)
-    def lunchPage = someLunchPageConfig()
+    def pageConfig = somePageConfig()
 
     and:
     server.givenThat(get("/posts")
       .willReturn(okHtml("<html><body>Some body</body></html>")))
 
     when:
-    client.fetch(lunchPage, null)
+    client.fetch(pageConfig, null)
 
     then:
     server.verify(getRequestedFor(urlEqualTo("/posts"))
@@ -75,14 +75,14 @@ class FacebookPostClientTest extends Specification {
     given:
     def clientConfig = new LunchClientConfig("Some User Agent", Duration.ofMillis(100))
     def client = new FacebookPostClient(clientConfig)
-    def lunchPage = someLunchPageConfig()
+    def pageConfig = somePageConfig()
 
     and:
     server.givenThat(get("/posts")
       .willReturn(ok().withFixedDelay(200)))
 
     when:
-    client.fetch(lunchPage, null)
+    client.fetch(pageConfig, null)
 
     then:
     thrown SocketTimeoutException
@@ -100,7 +100,7 @@ class FacebookPostClientTest extends Specification {
   def "should attempt retrieving given page 3 times in case of failure"() {
     given:
     def client = somePostClient()
-    def lunchPage = someLunchPageConfig()
+    def pageConfig = somePageConfig()
 
     and:
     server.givenThat(get("/posts")
@@ -121,11 +121,11 @@ class FacebookPostClientTest extends Specification {
       .willReturn(okHtml("<html><body>Some body</body></html>")))
 
     when:
-    def nameAndPosts = client.fetch(lunchPage, null)
+    def nameAndPosts = client.fetch(pageConfig, null)
 
     then:
     nameAndPosts == new Pair(
-      new PageName(lunchPage.id.value),
+      new PageName(pageConfig.id.value),
       [],
     )
   }
@@ -133,7 +133,7 @@ class FacebookPostClientTest extends Specification {
   def "should fail when all 3 attempts to retrieve given page fail"() {
     given:
     def client = somePostClient()
-    def lunchPage = someLunchPageConfig()
+    def pageConfig = somePageConfig()
 
     and:
     server.givenThat(get("/posts")
@@ -160,7 +160,7 @@ class FacebookPostClientTest extends Specification {
       .willReturn(okHtml("<html><body>Some body</body></html>")))
 
     when:
-    client.fetch(lunchPage, null)
+    client.fetch(pageConfig, null)
 
     then:
     thrown HttpStatusException
@@ -169,14 +169,14 @@ class FacebookPostClientTest extends Specification {
   def "should extract name from given page"() {
     given:
     def client = somePostClient()
-    def lunchPage = someLunchPageConfig()
+    def pageConfig = somePageConfig()
 
     and:
     server.givenThat(get("/posts")
       .willReturn(okHtml(htmlFrom("/lunch/facebook/page-name-extraction-test.html"))))
 
     when:
-    def nameAndPosts = client.fetch(lunchPage, null)
+    def nameAndPosts = client.fetch(pageConfig, null)
 
     then:
     nameAndPosts == new Pair(
@@ -188,18 +188,18 @@ class FacebookPostClientTest extends Specification {
   def "should fall back to page ID in case name can't be extracted"() {
     given:
     def client = somePostClient()
-    def lunchPage = someLunchPageConfig()
+    def pageConfig = somePageConfig()
 
     and:
     server.givenThat(get("/posts")
-      .willReturn(okHtml(htmlFrom("/lunch/facebook/unextractable-page-name-test.html"))))
+      .willReturn(okHtml(htmlFrom("/lunch/facebook/page-name-unextractable-test.html"))))
 
     when:
-    def nameAndPosts = client.fetch(lunchPage, null)
+    def nameAndPosts = client.fetch(pageConfig, null)
 
     then:
     nameAndPosts == new Pair(
-      new PageName(lunchPage.id.value),
+      new PageName(pageConfig.id.value),
       [],
     )
   }
@@ -207,18 +207,18 @@ class FacebookPostClientTest extends Specification {
   def "should extract posts from given page"() {
     given:
     def client = somePostClient()
-    def lunchPage = someLunchPageConfig()
+    def pageConfig = somePageConfig()
 
     and:
     server.givenThat(get("/posts")
       .willReturn(okHtml(htmlFrom("/lunch/facebook/post-extraction-test.html"))))
 
     when:
-    def nameAndPosts = client.fetch(lunchPage, null)
+    def nameAndPosts = client.fetch(pageConfig, null)
 
     then:
     nameAndPosts == new Pair(
-      new PageName(lunchPage.id.value),
+      new PageName(pageConfig.id.value),
       [
         new Post(
           new ExternalId("0"),
@@ -233,18 +233,18 @@ class FacebookPostClientTest extends Specification {
   def "should ignore unextractable posts"() {
     given:
     def client = somePostClient()
-    def lunchPage = someLunchPageConfig()
+    def pageConfig = somePageConfig()
 
     and:
     server.givenThat(get("/posts")
-      .willReturn(okHtml(htmlFrom("/lunch/facebook/unextractable-post-test.html"))))
+      .willReturn(okHtml(htmlFrom("/lunch/facebook/post-unextractable-test.html"))))
 
     when:
-    def nameAndPosts = client.fetch(lunchPage, null)
+    def nameAndPosts = client.fetch(pageConfig, null)
 
     then:
     nameAndPosts == new Pair(
-      new PageName(lunchPage.id.value),
+      new PageName(pageConfig.id.value),
       [],
     )
   }
@@ -252,18 +252,18 @@ class FacebookPostClientTest extends Specification {
   def "should return posts sorted by published date"() {
     given:
     def client = somePostClient()
-    def lunchPage = someLunchPageConfig()
+    def pageConfig = somePageConfig()
 
     and:
     server.givenThat(get("/posts")
       .willReturn(okHtml(htmlFrom("/lunch/facebook/post-sorting-test.html"))))
 
     when:
-    def nameAndPosts = client.fetch(lunchPage, null)
+    def nameAndPosts = client.fetch(pageConfig, null)
 
     then:
     nameAndPosts == new Pair(
-      new PageName(lunchPage.id.value),
+      new PageName(pageConfig.id.value),
       [
         new Post(
           new ExternalId("1"),
@@ -284,18 +284,18 @@ class FacebookPostClientTest extends Specification {
   def "should return posts newer than specified published date"() {
     given:
     def client = somePostClient()
-    def lunchPage = someLunchPageConfig()
+    def pageConfig = somePageConfig()
 
     and:
     server.givenThat(get("/posts")
       .willReturn(okHtml(htmlFrom("/lunch/facebook/post-sorting-test.html"))))
 
     when:
-    def nameAndPosts = client.fetch(lunchPage, Instant.ofEpochSecond(1))
+    def nameAndPosts = client.fetch(pageConfig, Instant.ofEpochSecond(1))
 
     then:
     nameAndPosts == new Pair(
-      new PageName(lunchPage.id.value),
+      new PageName(pageConfig.id.value),
       [
         new Post(
           new ExternalId("2"),
@@ -307,17 +307,17 @@ class FacebookPostClientTest extends Specification {
     )
   }
 
-  def "should extract posts from a real page dump"() {
+  def "should extract posts from a real page"() {
     given:
     def client = somePostClient()
-    def lunchPage = someLunchPageConfig()
+    def pageConfig = somePageConfig()
 
     and:
     server.givenThat(get("/posts")
-      .willReturn(okHtml(htmlFrom("/lunch/facebook/facebook-dump-test.html"))))
+      .willReturn(okHtml(htmlFrom("/lunch/facebook/real-page-test.html"))))
 
     when:
-    def nameAndPosts = client.fetch(lunchPage, null)
+    def nameAndPosts = client.fetch(pageConfig, null)
 
     then:
     nameAndPosts == new Pair(
