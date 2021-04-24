@@ -131,7 +131,6 @@ Specifically, information about the service & its health can be observed via the
 ## Possible further work
 
   * Slack webhook testing subcommand
-  * Fetch page name from metadata
   * Retry failed reposts
   * Update/delete reposts based on upstream
   * [Prometheus](https://prometheus.io/) metrics

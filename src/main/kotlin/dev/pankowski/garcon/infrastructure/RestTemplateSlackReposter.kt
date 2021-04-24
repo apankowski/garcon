@@ -19,7 +19,7 @@ class RestTemplateSlackReposter(private val lunchConfig: LunchConfig, restTempla
     log.debug("Reposting on Slack: {}", post)
     val text =
       """
-      |New <${post.link}|lunch post> from ${pageName.value} :tada:
+      |New <${post.link}|lunch post> from *${pageName.value}* :tada:
       |
       |>>>${post.content}
       """.trimMargin()

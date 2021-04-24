@@ -52,7 +52,7 @@ class RestTemplateSlackReposterTest extends Specification {
       .andExpect(content().json(
         """\
         |{
-        |"text":"New <https://www.facebook.com/post|lunch post> from Some page name :tada:\\n\\n>>>Some content"
+        |"text":"New <https://www.facebook.com/post|lunch post> from *Some page name* :tada:\\n\\n>>>Some content"
         |}""".stripMargin(),
         false
       ))
