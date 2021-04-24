@@ -33,7 +33,7 @@ class LunchService(
       val synchronizedPosts = synchronizePosts(page)
       synchronizedPosts
         .filter { it.repost != Repost.Skip }
-        .forEach(::attemptRepost)
+        .forEach(::repost)
     }
 
   private fun synchronizePosts(pageConfig: LunchPageConfig): List<SynchronizedPost> {
@@ -51,7 +51,10 @@ class LunchService(
 
     val synchronizedPostsToStore = posts.map { p ->
       val classification = lunchPostClassifier.classify(p)
-      val repost = decideOnRepost(classification)
+      val repost = when (classification) {
+        Classification.LunchPost -> Repost.Pending
+        Classification.MissingKeywords -> Repost.Skip
+      }
       log.info("Post $p classified as $classification, repost decision $repost")
       StoreData(pageConfig.id, pageName, p, classification, repost)
     }
@@ -61,37 +64,31 @@ class LunchService(
       .map(repository::findExisting)
   }
 
-  private fun decideOnRepost(c: Classification) =
-    when (c) {
-      Classification.LunchPost -> Repost.Pending
-      Classification.MissingKeywords -> Repost.Skip
-    }
+  private fun repost(p: SynchronizedPost) =
+    Mdc.SynchronizedPostId.having(p.id) {
+      when (p.repost) {
+        is Repost.Skip,
+        is Repost.Success ->
+          log.warn("Ignoring request to repost $p because of its repost decision")
+        is Repost.Pending,
+        is Repost.Error -> {
+          fun updateWith(r: Repost) =
+            repository.updateExisting(UpdateData(p.id, p.version, r))
 
-  private fun attemptRepost(p: SynchronizedPost) {
-    fun updateWith(r: Repost) =
-      repository.updateExisting(UpdateData(p.id, p.version, r))
-
-    when (p.repost) {
-      is Repost.Skip,
-      is Repost.Success ->
-        log.warn("Ignoring request to repost $p because of its repost")
-      is Repost.Pending,
-      is Repost.Error -> {
-        if (p.repost is Repost.Error && p.repost.errorCount > 3) return
-        try {
-          doRepost(p)
-          updateWith(Repost.Success(Instant.now()))
-        } catch (e: Exception) {
-          val newRepost = when (p.repost) {
-            is Repost.Pending -> Repost.Error(1, Instant.now())
-            is Repost.Error -> Repost.Error(p.repost.errorCount + 1, Instant.now())
-            else -> throw IllegalStateException("Unhandled repost ${p.repost}")
+          try {
+            doRepost(p)
+            updateWith(Repost.Success(Instant.now()))
+          } catch (e: Exception) {
+            val newRepost = when (p.repost) {
+              is Repost.Pending -> Repost.Error(1, Instant.now())
+              is Repost.Error -> Repost.Error(p.repost.errorCount + 1, Instant.now())
+              else -> throw IllegalStateException("Unhandled repost ${p.repost}")
+            }
+            updateWith(newRepost)
           }
-          updateWith(newRepost)
         }
       }
     }
-  }
 
   private fun doRepost(p: SynchronizedPost) =
     try {

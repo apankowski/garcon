@@ -6,30 +6,57 @@ import spock.lang.Specification
 
 class MdcTest extends Specification {
 
-  def "should allow setting PageId for a closure"() {
+  def "should allow setting page ID for a closure"() {
     given:
-    def pageId = new PageId("P1234")
+    def id = new PageId("1234")
 
     expect:
     MDC.get("pageId") == null
 
     when:
-    def capturedPageId = Mdc.PageId.INSTANCE.having(pageId, { MDC.get("pageId") })
+    def capturedValue = Mdc.PageId.INSTANCE.having(id, { MDC.get("pageId") })
 
     then:
-    capturedPageId == pageId.value
+    capturedValue == id.value
     MDC.get("pageId") == null
   }
 
-  def "should clear PageId when closure fails"() {
+  def "should clear page ID when closure fails"() {
     when:
     Mdc.PageId.INSTANCE.having(
-      new PageId("P1234"),
+      new PageId("1234"),
       { throw new RuntimeException("Something went wrong") }
     )
 
     then:
     thrown(RuntimeException)
     MDC.get("pageId") == null
+  }
+
+  def "should allow setting synchronized post ID for a closure"() {
+    given:
+    def id = new SynchronizedPostId("1234")
+
+    expect:
+    MDC.get("synchronizedPostId") == null
+
+    when:
+    def capturedValue = Mdc.SynchronizedPostId.INSTANCE.having(id, { MDC.get("synchronizedPostId") })
+
+    then:
+    capturedValue == id.value
+    MDC.get("synchronizedPostId") == null
+  }
+
+  def "should clear PageId when closure fails"() {
+    when:
+    Mdc.SynchronizedPostId.INSTANCE.having(
+      new SynchronizedPostId("1234"),
+      { throw new RuntimeException("Something went wrong") }
+    )
+
+    then:
+    thrown(RuntimeException)
+    MDC.get("synchronizedPostId") == null
   }
 }

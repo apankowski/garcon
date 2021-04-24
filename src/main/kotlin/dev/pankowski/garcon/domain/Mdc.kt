@@ -1,7 +1,8 @@
 package dev.pankowski.garcon.domain
 
 import org.slf4j.MDC
-import dev.pankowski.garcon.domain.PageId as PageIdValue
+import dev.pankowski.garcon.domain.PageId as PageIdData
+import dev.pankowski.garcon.domain.SynchronizedPostId as SynchronizedPostIdData
 
 sealed class Mdc(private val key: String) {
 
@@ -14,7 +15,12 @@ sealed class Mdc(private val key: String) {
     }
 
   object PageId : Mdc("pageId") {
-    fun <T> having(pageId: PageIdValue, f: () -> T): T =
+    fun <T> having(pageId: PageIdData, f: () -> T): T =
       having(pageId.value, f)
+  }
+
+  object SynchronizedPostId : Mdc("synchronizedPostId") {
+    fun <T> having(synchronizedPostId: SynchronizedPostIdData, f: () -> T): T =
+      having(synchronizedPostId.value, f)
   }
 }
