@@ -118,25 +118,15 @@ dockerCompose {
   useComposeFiles = listOf("docker-compose-integration-test.yml")
 }
 
-// Convenience task bringing up a clean, migrated database (e.g. for running integration tests in IDEA).
-val databaseUp = tasks.register("databaseUp")
+// DATABASE
 
-databaseUp {
+tasks.register("databaseUp") {
+  dependsOn(tasks.composeUp)
   dependsOn(tasks.flywayMigrate)
 }
 
-tasks.composeUp {
-  doLast {
-    // Don't run docker-compose cleanup if databaseUp task was requested.
-    if (gradle.taskGraph.allTasks.contains(databaseUp.get())) return@doLast
-
-    logger.info("Registering docker-compose cleanup")
-    gradle.taskGraph.afterTask {
-      val hasFailed = this.state.failure != null
-      val isLast = this == gradle.taskGraph.allTasks.last()
-      if (hasFailed || isLast) tasks.composeDown.get().down()
-    }
-  }
+tasks.register("databaseDown") {
+  dependsOn(tasks.composeDown)
 }
 
 // FLYWAY

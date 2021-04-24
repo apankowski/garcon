@@ -42,7 +42,7 @@ Useful commands:
   * `./gradlew bootRun` - build & run the service locally
   * `./gradlew jooq-codegen-database` - (re)generate Jooq classes
   * `./gradlew databaseUp` - run a local, empty, fully migrated PostgreSQL database (convenient for testing the service locally or running integration tests from IDE)
-  * `./gradlew composeDown` - shut down PostgreSQL database
+  * `./gradlew databaseDown` - shut down local PostgreSQL database
 
 During a build, a local, fully migrated PostgreSQL database is started and shut down after the build.
 
