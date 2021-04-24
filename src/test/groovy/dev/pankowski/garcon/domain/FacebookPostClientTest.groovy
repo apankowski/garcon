@@ -124,10 +124,7 @@ class FacebookPostClientTest extends Specification {
     def nameAndPosts = client.fetch(pageConfig, null)
 
     then:
-    nameAndPosts == new Pair(
-      new PageName(pageConfig.id.value),
-      [],
-    )
+    nameAndPosts == new Pair(null, [])
   }
 
   def "should fail when all 3 attempts to retrieve given page fail"() {
@@ -179,10 +176,7 @@ class FacebookPostClientTest extends Specification {
     def nameAndPosts = client.fetch(pageConfig, null)
 
     then:
-    nameAndPosts == new Pair(
-      new PageName("Some Lunch Page Name"),
-      [],
-    )
+    nameAndPosts == new Pair(new PageName("Some Lunch Page Name"), [])
   }
 
   def "should fall back to page ID in case name can't be extracted"() {
@@ -198,10 +192,7 @@ class FacebookPostClientTest extends Specification {
     def nameAndPosts = client.fetch(pageConfig, null)
 
     then:
-    nameAndPosts == new Pair(
-      new PageName(pageConfig.id.value),
-      [],
-    )
+    nameAndPosts == new Pair(null, [])
   }
 
   def "should extract posts from given page"() {
@@ -218,7 +209,7 @@ class FacebookPostClientTest extends Specification {
 
     then:
     nameAndPosts == new Pair(
-      new PageName(pageConfig.id.value),
+      null,
       [
         new Post(
           new ExternalId("0"),
@@ -243,10 +234,7 @@ class FacebookPostClientTest extends Specification {
     def nameAndPosts = client.fetch(pageConfig, null)
 
     then:
-    nameAndPosts == new Pair(
-      new PageName(pageConfig.id.value),
-      [],
-    )
+    nameAndPosts == new Pair(null, [])
   }
 
   def "should return posts sorted by published date"() {
@@ -263,7 +251,7 @@ class FacebookPostClientTest extends Specification {
 
     then:
     nameAndPosts == new Pair(
-      new PageName(pageConfig.id.value),
+      null,
       [
         new Post(
           new ExternalId("1"),
@@ -295,7 +283,7 @@ class FacebookPostClientTest extends Specification {
 
     then:
     nameAndPosts == new Pair(
-      new PageName(pageConfig.id.value),
+      null,
       [
         new Post(
           new ExternalId("2"),

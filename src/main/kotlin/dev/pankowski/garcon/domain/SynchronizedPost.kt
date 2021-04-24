@@ -6,7 +6,7 @@ enum class RepostStatus {
   SKIP,
   PENDING,
   SUCCESS,
-  ERROR
+  ERROR,
 }
 
 sealed class Repost(val status: RepostStatus) {
@@ -27,7 +27,7 @@ data class SynchronizedPostId(val value: String)
 
 enum class ClassificationStatus {
   LUNCH_POST,
-  MISSING_KEYWORDS
+  MISSING_KEYWORDS,
 }
 
 sealed class Classification(val status: ClassificationStatus) {
@@ -48,7 +48,7 @@ data class SynchronizedPost(
   val pageId: LunchPageId,
   val post: Post,
   val classification: Classification,
-  val repost: Repost
+  val repost: Repost,
 )
 
 typealias SynchronizationLog = List<SynchronizedPost>

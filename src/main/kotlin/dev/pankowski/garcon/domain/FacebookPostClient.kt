@@ -19,7 +19,7 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
 
   private val log: Logger = LoggerFactory.getLogger(javaClass)
 
-  fun fetch(pageConfig: LunchPageConfig, lastSeenPublishedAt: Instant?): Pair<PageName, Posts> {
+  fun fetch(pageConfig: LunchPageConfig, lastSeenPublishedAt: Instant?): Pair<PageName?, Posts> {
     val document = fetchDocument(pageConfig.url)
     val pageName = extractPageName(document, pageConfig)
     val posts = extractPosts(document)
@@ -50,16 +50,17 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
     return fetch()
   }
 
-  private fun extractPageName(document: Document, pageConfig: LunchPageConfig): PageName {
-    val openGraphTitle = document.select("head meta[property=og:title]")
+  private fun extractPageName(document: Document, pageConfig: LunchPageConfig): PageName? {
+    val pageName = document.select("head meta[property=og:title]")
       .attr("content")
       .emptyToNull()
+      ?.let(::PageName)
 
-    if (openGraphTitle == null) {
-      log.warn("Couldn't get facebook page title for ${pageConfig.url}")
+    if (pageName == null) {
+      log.warn("Couldn't get facebook page name for ${pageConfig.url}")
     }
 
-    return PageName(openGraphTitle ?: pageConfig.id.value)
+    return pageName
   }
 
   private fun extractPosts(document: Document) =
