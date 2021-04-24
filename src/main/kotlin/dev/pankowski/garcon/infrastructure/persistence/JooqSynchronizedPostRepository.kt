@@ -184,7 +184,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       ?.let(::toDomainObject)
 
   @Transactional(readOnly = true)
-  override fun getLog(count: Int): SynchronizationLog =
+  override fun getLastSeen(count: Int): SynchronizedPosts =
     context.selectFrom(SYNCHRONIZED_POSTS)
       .orderBy(SYNCHRONIZED_POSTS.POST_PUBLISHED_AT.desc())
       .limit(count)

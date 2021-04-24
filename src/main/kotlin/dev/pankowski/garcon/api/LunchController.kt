@@ -102,8 +102,8 @@ class LunchController(
       |
       """.trimMargin()
 
-    fun buildLog(logItems: SynchronizationLog): String {
-      return when (val lastSeenPublishedAt = logItems.firstOrNull()?.post?.publishedAt) {
+    fun buildLog(posts: SynchronizedPosts): String {
+      return when (val lastSeenPublishedAt = posts.firstOrNull()?.post?.publishedAt) {
         null -> "No posts seen so far"
         else ->
           """
@@ -111,7 +111,7 @@ class LunchController(
           |
           |Last synchronized posts:
           |
-          |${logItems.joinToString(separator = "\n", transform = ::buildItem)}
+          |${posts.joinToString(separator = "\n", transform = ::buildItem)}
           """.trimMargin()
       }
     }

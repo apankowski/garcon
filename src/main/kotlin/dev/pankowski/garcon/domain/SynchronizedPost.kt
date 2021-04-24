@@ -52,4 +52,4 @@ data class SynchronizedPost(
   val repost: Repost,
 )
 
-typealias SynchronizationLog = List<SynchronizedPost>
+typealias SynchronizedPosts = List<SynchronizedPost>

@@ -250,7 +250,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
     repository.findLastSeen(somePageId()) == null
   }
 
-  def "should stream synchronization log"() {
+  def "should return last seen posts"() {
     given:
     def now = Instant.now().truncatedTo(MICROS)
     def posts = (1..100).collect {
@@ -265,7 +265,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
     }
 
     when:
-    def actualLog = repository.getLog(20)
+    def actualLog = repository.getLastSeen(20)
 
     then:
     actualLog == posts.take(20)

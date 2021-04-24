@@ -114,7 +114,7 @@ class LunchServiceTest extends Specification {
     given:
     def log = []
 
-    repository.getLog(20) >> log
+    repository.getLastSeen(20) >> log
 
     expect:
     service.getLog().is(log)

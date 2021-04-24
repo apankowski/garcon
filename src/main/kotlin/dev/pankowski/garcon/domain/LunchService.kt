@@ -100,5 +100,5 @@ class LunchService(
     }
 
   fun getLog() =
-    repository.getLog(20)
+    repository.getLastSeen(20)
 }
