@@ -36,24 +36,25 @@ class LunchService(
         .forEach { attemptRepost(it, page.id) }
     }
 
-  private fun synchronizePosts(page: LunchPageConfig): List<SynchronizedPost> {
-    log.info("Synchronizing posts of {}", page)
+  private fun synchronizePosts(pageConfig: LunchPageConfig): List<SynchronizedPost> {
+    log.info("Synchronizing posts of {}", pageConfig)
 
-    val lastSeen = repository.findLastSeen(page.id)
-    val newPosts = postClient.fetch(page, lastSeen?.post?.publishedAt)
+    val lastSeen = repository.findLastSeen(pageConfig.id)
+    // TODO: Use extracted page name
+    val (_, posts) = postClient.fetch(pageConfig, lastSeen?.post?.publishedAt)
 
-    if (newPosts.isEmpty()) {
+    if (posts.isEmpty()) {
       log.info("No new posts")
       return emptyList()
     } else {
-      log.debug("Found new posts: {}", newPosts)
+      log.debug("Found new posts: {}", posts)
     }
 
-    val synchronizedPostsToStore = newPosts.map {
-      val classification = lunchPostClassifier.classify(it)
+    val synchronizedPostsToStore = posts.map { p ->
+      val classification = lunchPostClassifier.classify(p)
       val repost = decideOnRepost(classification)
-      log.info("Post $it classified as $classification, repost decision $repost")
-      StoreData(page.id, it, classification, repost)
+      log.info("Post $p classified as $classification, repost decision $repost")
+      StoreData(pageConfig.id, p, classification, repost)
     }
 
     return synchronizedPostsToStore

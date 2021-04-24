@@ -19,11 +19,14 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
 
   private val log: Logger = LoggerFactory.getLogger(javaClass)
 
-  fun fetch(pageConfig: LunchPageConfig, lastSeenPublishedAt: Instant?): Posts =
-    fetchDocument(pageConfig.url)
-      .let(::extractPosts)
+  fun fetch(pageConfig: LunchPageConfig, lastSeenPublishedAt: Instant?): Pair<PageName, Posts> {
+    val document = fetchDocument(pageConfig.url)
+    val pageName = extractPageName(document, pageConfig)
+    val posts = extractPosts(document)
       .sortedBy(Post::publishedAt)
       .filter { it.publishedAt > (lastSeenPublishedAt ?: Instant.MIN) }
+    return pageName to posts
+  }
 
   // We use retries as Facebook seems to be responding with 500 from time to time.
   private fun fetchDocument(url: URL): Document {
@@ -47,7 +50,19 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
     return fetch()
   }
 
-  private fun extractPosts(document: Document): Posts =
+  private fun extractPageName(document: Document, pageConfig: LunchPageConfig): PageName {
+    val openGraphTitle = document.select("head meta[property=og:title]")
+      .attr("content")
+      .emptyToNull()
+
+    if (openGraphTitle == null) {
+      log.warn("Couldn't get facebook page title for ${pageConfig.url}")
+    }
+
+    return PageName(openGraphTitle ?: pageConfig.id.value)
+  }
+
+  private fun extractPosts(document: Document) =
     document.select(".userContentWrapper").mapNotNull(::processContentWrapper)
 
   private fun processContentWrapper(e: Element): Post? {
@@ -84,14 +99,14 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
     return Post(facebookId, facebookLink, publishedAt, content)
   }
 
-  private fun getTimestampData(e: Element): Instant? =
+  private fun getTimestampData(e: Element) =
     e.attr("data-utime")
       ?.toLongOrNull()
       ?.let(Instant::ofEpochSecond)
 
   private fun String.emptyToNull() = takeUnless(String::isEmpty)
 
-  private fun getLink(e: Element): URI? =
+  private fun getLink(e: Element) =
     e.absUrl("href")
       ?.emptyToNull()
       ?.let(URI::create)

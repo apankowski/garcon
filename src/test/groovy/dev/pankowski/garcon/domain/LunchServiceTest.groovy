@@ -1,6 +1,7 @@
 package dev.pankowski.garcon.domain
 
 import dev.pankowski.garcon.infrastructure.persistence.InMemorySynchronizedPostRepository
+import kotlin.Pair
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -52,7 +53,7 @@ class LunchServiceTest extends Specification {
     service.synchronize(pageConfig)
 
     then:
-    1 * postClient.fetch(pageConfig, lastSeen.post.publishedAt) >> []
+    1 * postClient.fetch(pageConfig, lastSeen.post.publishedAt) >> new Pair(new PageName("some name"), [])
   }
 
   def "should save & repost fetched lunch posts"() {
@@ -64,7 +65,7 @@ class LunchServiceTest extends Specification {
       "Some content 1"
     )
 
-    postClient.fetch(pageConfig, _) >> [post]
+    postClient.fetch(pageConfig, _) >> new Pair(new PageName("some name"), [post])
     postClassifier.classify(post) >> Classification.LunchPost.INSTANCE
 
     when:
@@ -85,7 +86,7 @@ class LunchServiceTest extends Specification {
       "Some content 1"
     )
 
-    postClient.fetch(pageConfig, _) >> [post]
+    postClient.fetch(pageConfig, _) >> new Pair(new PageName("some name"), [post])
     postClassifier.classify(post) >> Classification.MissingKeywords.INSTANCE
 
     when:
