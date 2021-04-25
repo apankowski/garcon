@@ -4,7 +4,7 @@ import dev.pankowski.garcon.domain.*
 import dev.pankowski.garcon.infrastructure.persistence.generated.Tables.SYNCHRONIZED_POSTS
 import dev.pankowski.garcon.infrastructure.persistence.generated.tables.records.SynchronizedPostsRecord
 import org.jooq.DSLContext
-import org.jooq.impl.DSL
+import org.jooq.impl.DSL.selectFrom
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -73,7 +73,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       throwNotFound()
     }
 
-    if (!context.fetchExists(DSL.selectFrom(SYNCHRONIZED_POSTS).where(SYNCHRONIZED_POSTS.ID.equal(uuid))))
+    if (!context.fetchExists(selectFrom(SYNCHRONIZED_POSTS).where(SYNCHRONIZED_POSTS.ID.equal(uuid))))
       throwNotFound()
 
     val updateStatement = context.update(SYNCHRONIZED_POSTS)
@@ -184,10 +184,10 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       ?.let(::toDomainObject)
 
   @Transactional(readOnly = true)
-  override fun getLastSeen(count: Int): SynchronizedPosts =
+  override fun getLastSeen(limit: Int): SynchronizedPosts =
     context.selectFrom(SYNCHRONIZED_POSTS)
       .orderBy(SYNCHRONIZED_POSTS.POST_PUBLISHED_AT.desc())
-      .limit(count)
+      .limit(limit)
       .fetch()
       .map(::toDomainObject)
       .toList()

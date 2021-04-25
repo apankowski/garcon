@@ -46,6 +46,6 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
   override fun findLastSeen(pageId: PageId): SynchronizedPost? =
     posts.values.filter { it.pageId == pageId }.maxByOrNull { it.post.publishedAt }
 
-  override fun getLastSeen(count: Int): SynchronizedPosts =
+  override fun getLastSeen(limit: Int): SynchronizedPosts =
     TODO("Not implemented")
 }

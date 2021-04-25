@@ -27,5 +27,5 @@ interface SynchronizedPostRepository {
 
   fun findLastSeen(pageId: PageId): SynchronizedPost?
 
-  fun getLastSeen(count: Int): SynchronizedPosts
+  fun getLastSeen(limit: Int): SynchronizedPosts
 }
