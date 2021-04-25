@@ -47,7 +47,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
           // Nothing
         }
         is Repost.Error -> {
-          repostErrorCount = data.repost.errorCount
+          repostAttempts = data.repost.attempts
           repostLastAttemptAt = data.repost.lastAttemptAt
         }
         is Repost.Success ->
@@ -87,17 +87,17 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       is Repost.Skip,
       is Repost.Pending ->
         updateStatement
-          .setNull(SYNCHRONIZED_POSTS.REPOST_ERROR_COUNT)
+          .setNull(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS)
           .setNull(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT)
           .setNull(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT)
       is Repost.Error ->
         updateStatement
-          .set(SYNCHRONIZED_POSTS.REPOST_ERROR_COUNT, data.repost.errorCount)
+          .set(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS, data.repost.attempts)
           .set(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT, data.repost.lastAttemptAt)
           .setNull(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT)
       is Repost.Success ->
         updateStatement
-          .setNull(SYNCHRONIZED_POSTS.REPOST_ERROR_COUNT)
+          .setNull(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS)
           .setNull(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT)
           .set(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT, data.repost.repostedAt)
     }
@@ -132,7 +132,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
         RepostStatus.PENDING -> Repost.Pending
         RepostStatus.ERROR ->
           Repost.Error(
-            errorCount = r.repostErrorCount,
+            attempts = r.repostAttempts,
             lastAttemptAt = r.repostLastAttemptAt
           )
         RepostStatus.SUCCESS ->

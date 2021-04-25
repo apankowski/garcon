@@ -81,7 +81,7 @@ class LunchService(
           } catch (e: Exception) {
             val newRepost = when (p.repost) {
               is Repost.Pending -> Repost.Error(1, Instant.now())
-              is Repost.Error -> Repost.Error(p.repost.errorCount + 1, Instant.now())
+              is Repost.Error -> Repost.Error(p.repost.attempts + 1, Instant.now())
               else -> throw IllegalStateException("Unhandled repost ${p.repost}")
             }
             updateWith(newRepost)

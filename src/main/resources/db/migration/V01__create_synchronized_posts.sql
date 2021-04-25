@@ -11,7 +11,7 @@ CREATE TABLE synchronized_posts (
   post_content TEXT NOT NULL,
   classification_status TEXT NOT NULL,
   repost_status TEXT NOT NULL,
-  repost_error_count INTEGER,
+  repost_attempts INTEGER,
   repost_last_attempt_at TIMESTAMP WITH TIME ZONE,
   repost_reposted_at TIMESTAMP WITH TIME ZONE
 );

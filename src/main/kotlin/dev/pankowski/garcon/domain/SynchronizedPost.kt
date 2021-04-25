@@ -18,7 +18,7 @@ sealed class Repost(val status: RepostStatus) {
     override fun toString() = "Pending"
   }
 
-  data class Error(val errorCount: Int, val lastAttemptAt: Instant) : Repost(status = RepostStatus.ERROR)
+  data class Error(val attempts: Int, val lastAttemptAt: Instant) : Repost(status = RepostStatus.ERROR)
 
   data class Success(val repostedAt: Instant) : Repost(status = RepostStatus.SUCCESS)
 }
