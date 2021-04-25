@@ -169,9 +169,8 @@ jooqGenerator {
           excludes = "flyway_schema_history"
           forcedTypes {
             forcedType {
-              types = "timestamp\\ without\\ time\\ zone"
-              userType = "java.time.Instant"
-              converter = "dev.pankowski.garcon.infrastructure.persistence.InstantConverter"
+              types = "timestamp\\ with\\ time\\ zone"
+              name = "INSTANT"
             }
             forcedType {
               types = "integer"
