@@ -66,6 +66,7 @@ dependencyManagement {
     dependency("org.jsoup:jsoup:1.13.1")
     dependency("com.github.tomakehurst:wiremock:2.27.2")
     dependency("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
+    dependency("io.kotest:kotest-runner-junit5:4.4.3")
   }
 }
 
@@ -101,6 +102,8 @@ dependencies {
   testImplementation("com.github.tomakehurst:wiremock")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test")
   testRuntimeOnly("org.junit.vintage:junit-vintage-engine") // For Spock (relying on JUnit 4)
+
+  testImplementation("io.kotest:kotest-runner-junit5")
 
   // OTHER
   kapt("org.springframework.boot:spring-boot-configuration-processor")
