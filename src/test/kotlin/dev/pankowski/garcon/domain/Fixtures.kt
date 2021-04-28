@@ -15,3 +15,8 @@ fun somePost(
   publishedAt: Instant = Instant.now(),
   content: String = "some post content",
 ) = Post(externalId, link, publishedAt, content)
+
+fun somePageConfig(
+  pageId: PageId = PageId("PID1"),
+  url: URL = URL("http://localhost:4321/posts")
+) = LunchPageConfig(pageId, url)
