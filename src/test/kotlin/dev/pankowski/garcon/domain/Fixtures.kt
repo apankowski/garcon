@@ -1,6 +1,7 @@
 package dev.pankowski.garcon.domain
 
 import java.net.URL
+import java.time.Duration
 import java.time.Instant
 import java.util.*
 
@@ -20,3 +21,8 @@ fun somePageConfig(
   pageId: PageId = PageId("PID1"),
   url: URL = URL("http://localhost:4321/posts")
 ) = LunchPageConfig(pageId, url)
+
+fun someClientConfig(
+  userAgent: String = "Some User Agent",
+  timeout: Duration = Duration.ofSeconds(5)
+) = LunchClientConfig(userAgent, timeout)

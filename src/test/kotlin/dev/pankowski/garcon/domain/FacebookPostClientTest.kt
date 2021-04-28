@@ -25,7 +25,7 @@ class FacebookPostClientTest : FreeSpec({
 
   "should retrieve given page" {
     // given
-    val clientConfig = LunchClientConfig("Some User Agent", Duration.ofSeconds(5))
+    val clientConfig = someClientConfig(userAgent = "Some User Agent")
     val client = FacebookPostClient(clientConfig)
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
@@ -51,7 +51,7 @@ class FacebookPostClientTest : FreeSpec({
 
   "should honor specified timeout" {
     // given
-    val clientConfig = LunchClientConfig("Some User Agent", Duration.ofMillis(100))
+    val clientConfig = someClientConfig(timeout = Duration.ofMillis(100))
     val client = FacebookPostClient(clientConfig)
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
@@ -67,11 +67,6 @@ class FacebookPostClientTest : FreeSpec({
     }
   }
 
-  fun somePostClient(): FacebookPostClient {
-    val clientConfig = LunchClientConfig("Some User Agent", Duration.ofSeconds(5))
-    return FacebookPostClient(clientConfig)
-  }
-
   fun htmlFrom(file: String) =
     when (val url = javaClass.getResource(file)) {
       null -> throw IllegalArgumentException("$file classpath resource doesn't exist")
@@ -80,7 +75,7 @@ class FacebookPostClientTest : FreeSpec({
 
   "should attempt retrieving given page 3 times in case of failure" {
     // given
-    val client = somePostClient()
+    val client = FacebookPostClient(someClientConfig())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -118,7 +113,7 @@ class FacebookPostClientTest : FreeSpec({
 
   "should fail when all 3 attempts to retrieve given page fail" {
     // given
-    val client = somePostClient()
+    val client = FacebookPostClient(someClientConfig())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -163,7 +158,7 @@ class FacebookPostClientTest : FreeSpec({
 
   "should extract name from given page" {
     // given
-    val client = somePostClient()
+    val client = FacebookPostClient(someClientConfig())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -181,7 +176,7 @@ class FacebookPostClientTest : FreeSpec({
 
   "should fall back to page ID in case name can't be extracted" {
     // given
-    val client = somePostClient()
+    val client = FacebookPostClient(someClientConfig())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -199,7 +194,7 @@ class FacebookPostClientTest : FreeSpec({
 
   "should extract posts from given page" {
     // given
-    val client = somePostClient()
+    val client = FacebookPostClient(someClientConfig())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -227,7 +222,7 @@ class FacebookPostClientTest : FreeSpec({
 
   "should ignore unextractable posts" {
     // given
-    val client = somePostClient()
+    val client = FacebookPostClient(someClientConfig())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -245,7 +240,7 @@ class FacebookPostClientTest : FreeSpec({
 
   "should return posts sorted by published date" {
     // given
-    val client = somePostClient()
+    val client = FacebookPostClient(someClientConfig())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -279,7 +274,7 @@ class FacebookPostClientTest : FreeSpec({
 
   "should return posts newer than specified published date" {
     // given
-    val client = somePostClient()
+    val client = FacebookPostClient(someClientConfig())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -307,7 +302,7 @@ class FacebookPostClientTest : FreeSpec({
 
   "should extract posts from a real page" {
     // given
-    val client = somePostClient()
+    val client = FacebookPostClient(someClientConfig())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
