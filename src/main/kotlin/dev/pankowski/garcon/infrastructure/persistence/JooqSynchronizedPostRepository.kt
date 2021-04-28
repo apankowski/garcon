@@ -8,7 +8,7 @@ import org.jooq.impl.DSL.selectFrom
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
-import java.net.URI
+import java.net.URL
 import java.time.Instant
 import java.util.*
 
@@ -115,7 +115,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
     fun toFacebookPost(r: SynchronizedPostsRecord) =
       Post(
         externalId = ExternalId(r.postExternalId),
-        link = URI.create(r.postLink),
+        link = URL(r.postLink),
         publishedAt = r.postPublishedAt,
         content = r.postContent
       )

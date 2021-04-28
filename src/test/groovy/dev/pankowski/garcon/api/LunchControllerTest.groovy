@@ -135,7 +135,7 @@ class LunchControllerTest extends Specification {
         new PageName("Page name 1"),
         new Post(
           new ExternalId("FB1"),
-          new URI("https://facebook/1"),
+          new URL("https://facebook/1"),
           baseDateTime.plusDays(2).toInstant(),
           "Some post content 1"
         ),
@@ -151,7 +151,7 @@ class LunchControllerTest extends Specification {
         new PageName("Page name 2"),
         new Post(
           new ExternalId("FB2"),
-          new URI("https://facebook/2"),
+          new URL("https://facebook/2"),
           baseDateTime.plusDays(7).toInstant(),
           "Some post content 2"
         ),
@@ -167,7 +167,7 @@ class LunchControllerTest extends Specification {
         new PageName("Page name 3"),
         new Post(
           new ExternalId("FB3"),
-          new URI("https://facebook/3"),
+          new URL("https://facebook/3"),
           baseDateTime.plusDays(12).toInstant(),
           "Some post content 3"
         ),
@@ -183,7 +183,7 @@ class LunchControllerTest extends Specification {
         new PageName("Page name 4"),
         new Post(
           new ExternalId("FB4"),
-          new URI("https://facebook/4"),
+          new URL("https://facebook/4"),
           baseDateTime.plusDays(17).toInstant(),
           "Some post content 4"
         ),

@@ -4,7 +4,7 @@ import dev.pankowski.garcon.domain.*
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestController
-import java.net.URI
+import java.net.URL
 import java.time.Instant
 import java.util.concurrent.Executor
 import javax.servlet.http.HttpServletResponse
@@ -75,7 +75,7 @@ class LunchController(
       }
     }
 
-    fun Instant.toSlackDate(link: URI? = null) =
+    fun Instant.toSlackDate(link: URL? = null) =
       if (link == null) "<!date^${epochSecond}^{date_num} {time}|${this}>"
       else "<!date^${epochSecond}^{date_num} {time}^${link}|${this}>"
 

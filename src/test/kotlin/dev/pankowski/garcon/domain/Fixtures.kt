@@ -1,6 +1,6 @@
 package dev.pankowski.garcon.domain
 
-import java.net.URI
+import java.net.URL
 import java.time.Instant
 import java.util.*
 
@@ -11,7 +11,7 @@ fun somePostConfig(
 
 fun somePost(
   externalId: ExternalId = ExternalId("FBID1"),
-  link: URI = URI.create("https://facebook/post"),
+  link: URL = URL("https://facebook/post"),
   publishedAt: Instant = Instant.now(),
   content: String = "some post content",
 ) = Post(externalId, link, publishedAt, content)

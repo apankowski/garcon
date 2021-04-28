@@ -142,7 +142,7 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
   }
 
   private fun buildFacebookLink(id: ExternalId) =
-    URI.create("https://www.facebook.com/${id.id}")
+    URL("https://www.facebook.com/${id.id}")
 
   private fun extractContent(e: Element): String {
     // Remove the ellipsis & "show more" link from post's content.

@@ -38,7 +38,7 @@ class LunchServiceTest extends Specification {
   def somePost() {
     new Post(
       new ExternalId("some id"),
-      new URI("https://facebook/post"),
+      new URL("https://facebook/post"),
       Instant.now(),
       "some post content"
     )

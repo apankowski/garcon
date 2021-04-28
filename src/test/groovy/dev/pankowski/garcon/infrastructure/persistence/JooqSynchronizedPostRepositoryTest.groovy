@@ -47,7 +47,7 @@ class JooqSynchronizedPostRepositoryTest extends Specification {
 
     new Post(
       new ExternalId(arguments.externalId as String),
-      URI.create("https://www.facebook.com/" + arguments.externalId),
+      new URL("https://www.facebook.com/" + arguments.externalId),
       arguments.publishedAt as Instant,
       arguments.content as String
     )

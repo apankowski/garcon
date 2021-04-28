@@ -39,7 +39,7 @@ class RestTemplateSlackReposterTest extends Specification {
     given:
     def post = new Post(
       new ExternalId("SomeId"),
-      URI.create("https://www.facebook.com/post"),
+      new URL("https://www.facebook.com/post"),
       Instant.now(),
       "Some content"
     )
