@@ -17,6 +17,8 @@ fun somePost(
   content: String = "some post content",
 ) = Post(externalId, link, publishedAt, content)
 
+fun somePageName(name: String = "some name") = PageName(name)
+
 fun somePageConfig(
   pageId: PageId = PageId("PID1"),
   url: URL = URL("http://localhost:4321/posts")
@@ -26,3 +28,9 @@ fun someClientConfig(
   userAgent: String = "Some User Agent",
   timeout: Duration = Duration.ofSeconds(5)
 ) = LunchClientConfig(userAgent, timeout)
+
+fun someLunchConfig(
+  slackWebhookUrl: URL = URL("https://slack/webhook"),
+  syncInterval: Duration? = Duration.ofMinutes(5),
+  pages: List<LunchPageConfig> = emptyList()
+) = LunchConfig(slackWebhookUrl, syncInterval, pages,)

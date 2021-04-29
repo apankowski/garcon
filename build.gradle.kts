@@ -68,6 +68,7 @@ dependencyManagement {
     dependency("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
     dependency("io.kotest:kotest-runner-junit5:4.4.3")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.2")
+    dependency("io.mockk:mockk:1.11.0")
   }
 }
 
@@ -105,6 +106,7 @@ dependencies {
   testRuntimeOnly("org.junit.vintage:junit-vintage-engine") // For Spock (relying on JUnit 4)
 
   testImplementation("io.kotest:kotest-runner-junit5")
+  testImplementation("io.mockk:mockk")
   testImplementation("io.kotest.extensions:kotest-extensions-wiremock")
 
   // OTHER
