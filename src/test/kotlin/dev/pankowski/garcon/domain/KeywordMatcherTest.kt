@@ -7,7 +7,10 @@ import java.util.*
 
 class KeywordMatcherTest : FreeSpec({
 
-  data class TestCase(val text: String, val keyword: Keyword, val match: Boolean)
+  data class TestCase(val text: String, val keyword: Keyword, val match: Boolean) {
+    override fun toString() =
+      "text '$text' matches '${keyword.text}' with edit distance ${keyword.editDistance}: $match"
+  }
 
   "text matches keyword with edit distance" - {
     forAll(

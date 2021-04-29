@@ -6,7 +6,9 @@ import io.kotest.matchers.shouldBe
 
 class StringDistanceTest : FreeSpec({
 
-  data class TestCase(val a: String, val b: String, val distance: Int)
+  data class TestCase(val a: String, val b: String, val distance: Int) {
+    override fun toString() = "distance between '$a' and '$b' is $distance"
+  }
 
   "Levenshtein distance between two strings" - {
     forAll(
