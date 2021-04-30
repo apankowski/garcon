@@ -36,3 +36,15 @@ fun somePost(
 ) = Post(externalId, link, publishedAt, content)
 
 fun somePageName(name: String = "some name") = PageName(name)
+
+fun someSynchronizedPost(
+  id: SynchronizedPostId = SynchronizedPostId("Some Synchronized Post ID"),
+  version: Version = Version.first(),
+  createdAt: Instant = Instant.now(),
+  updatedAt: Instant = Instant.now(),
+  pageId: PageId = PageId("Some Page ID"),
+  pageName: PageName? = PageName("Some Page Name"),
+  post: Post = somePost(),
+  classification: Classification = Classification.LunchPost,
+  repost: Repost = Repost.Skip,
+) = SynchronizedPost(id, version, createdAt, updatedAt, pageId, pageName, post, classification, repost)
