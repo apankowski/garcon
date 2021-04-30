@@ -10,7 +10,6 @@ class KeywordMatcher private constructor(
 ) {
 
   companion object {
-    @JvmStatic
     fun onWordsOf(text: String, locale: Locale) =
       KeywordMatcher(text.toLowerCase(locale).extractWords(locale), locale)
   }
