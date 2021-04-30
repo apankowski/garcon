@@ -10,7 +10,7 @@ class VersionTest : FreeSpec({
     val version = Version.first()
 
     // expect
-    version.value shouldBe 1
+    version.number shouldBe 1
   }
 
   "next version should increment by 1" {
@@ -18,6 +18,6 @@ class VersionTest : FreeSpec({
     val version = Version(2)
 
     // expect
-    version.next().value shouldBe 3
+    version.next().number shouldBe 3
   }
 })
