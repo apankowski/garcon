@@ -26,6 +26,8 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
 
   val repository = JooqSynchronizedPostRepository(context)
 
+  fun SynchronizedPostRepository.storeAndRetrieve(data: StoreData) = findExisting(store(data))
+
   fun someRepostError() = Repost.Error(1, now())
 
   fun someRepostSuccess() = Repost.Success(now())
@@ -43,19 +45,19 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       PersistTestCase(PageName("some page name"), Classification.LunchPost, someRepostSuccess()),
     ) { (pageName, classification, repost) ->
       // given
-      val storeData = StoreData(PageId("some page id"), pageName, somePost(), classification, repost)
+      val storeData = someStoreData(
+        pageName = pageName,
+        classification = classification,
+        repost = repost
+      )
 
       // when
       val before = now()
-      val storedId = repository.store(storeData)
+      val retrieved = repository.storeAndRetrieve(storeData)
       val after = now()
-
-      // and
-      val retrieved = repository.findExisting(storedId)
 
       // then
       assertSoftly(retrieved) {
-        id shouldBe storedId
         this.pageName shouldBe storeData.pageName
         version shouldBe Version.first()
         createdAt shouldBe between(before, after)
@@ -68,18 +70,9 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
     }
   }
 
-  fun somePageId() = PageId("1")
-
-  fun somePageName() = PageName("some name")
-
-  fun someClassification() = Classification.LunchPost
-
   fun someRepost() = Repost.Pending
 
-  fun someStoredSynchronizedPost(): SynchronizedPost {
-    val storeData = StoreData(somePageId(), somePageName(), somePost(), someClassification(), someRepost())
-    return repository.findExisting(repository.store(storeData))
-  }
+  fun someStoredSynchronizedPost() = repository.storeAndRetrieve(someStoreData())
 
   "updating synchronized post" - {
     listOf(Repost.Skip, Repost.Pending, someRepostError(), someRepostSuccess()).forEach { newRepost ->
@@ -110,11 +103,15 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       }
     }
 
-    listOf("1", "a", randomUUID().toString()).forEach { nonexistentId ->
+    listOf(
+      SynchronizedPostId("1"),
+      SynchronizedPostId("a"),
+      SynchronizedPostId(randomUUID().toString())
+    ).forEach { nonexistentId ->
       "'not found' is returned when trying to update ID '$nonexistentId'" {
         // given
         val stored = someStoredSynchronizedPost()
-        val updateData = UpdateData(SynchronizedPostId(nonexistentId), stored.version, someRepost())
+        val updateData = UpdateData(nonexistentId, stored.version, someRepost())
 
         // expect
         shouldThrow<SynchronizedPostNotFound> {
@@ -123,11 +120,14 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       }
     }
 
-    listOf(0, 2).forEach { wrongVersion ->
+    listOf(
+      Version(0),
+      Version(2)
+    ).forEach { wrongVersion ->
       "'concurrent modification' is returned when trying to update wrong version '$wrongVersion'" {
         // given
         val stored = someStoredSynchronizedPost()
-        val updateData = UpdateData(stored.id, Version(wrongVersion), someRepost())
+        val updateData = UpdateData(stored.id, wrongVersion, someRepost())
 
         // expect
         shouldThrow<SynchronizedPostModifiedConcurrently> {
@@ -138,14 +138,18 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
   }
 
   "finding existing synchronized post" - {
-    listOf("1", "a", randomUUID().toString()).forEach { nonexistentId ->
+    listOf(
+      SynchronizedPostId("1"),
+      SynchronizedPostId("a"),
+      SynchronizedPostId(randomUUID().toString())
+    ).forEach { nonexistentId ->
       "'not found' is returned when trying to find ID '$nonexistentId'" {
         // given
         someStoredSynchronizedPost()
 
         // expect
         shouldThrow<SynchronizedPostNotFound> {
-          repository.findExisting(SynchronizedPostId(nonexistentId))
+          repository.findExisting(nonexistentId)
         }
       }
     }
@@ -153,67 +157,42 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
 
   "finding last seen synchronized post of a given page" {
     // given
-    val somePageId = PageId("1")
-    val otherPageId = PageId("2")
     val somePointInTime = Instant.parse("2000-01-01T00:00:00Z")
 
-    repository.findExisting(
-      repository.store(
-        StoreData(
-          somePageId,
-          somePageName(),
-          somePost(externalId = ExternalId("1"), publishedAt = somePointInTime.plus(1, HOURS), content = "3"),
-          someClassification(),
-          someRepost()
-        )
+    val somePageId = PageId("1")
+    repository.store(
+      someStoreData(
+        pageId = somePageId,
+        post = somePost(publishedAt = somePointInTime.plus(1, HOURS))
       )
     )
 
-    val somePageExpectedLastSeen = repository.findExisting(
-      repository.store(
-        StoreData(
-          somePageId,
-          somePageName(),
-          somePost(externalId = ExternalId("3"), publishedAt = somePointInTime.plus(3, HOURS), content = "1"),
-          someClassification(),
-          someRepost()
-        )
+    val somePageExpectedLastSeen = repository.storeAndRetrieve(
+      someStoreData(
+        pageId = somePageId,
+        post = somePost(publishedAt = somePointInTime.plus(3, HOURS))
       )
     )
 
-    repository.findExisting(
-      repository.store(
-        StoreData(
-          somePageId,
-          somePageName(),
-          somePost(externalId = ExternalId("2"), publishedAt = somePointInTime.plus(2, HOURS), content = "2"),
-          someClassification(),
-          someRepost()
-        )
+    repository.store(
+      someStoreData(
+        pageId = somePageId,
+        post = somePost(publishedAt = somePointInTime.plus(2, HOURS))
       )
     )
 
-    val otherPageExpectedLastSeen = repository.findExisting(
-      repository.store(
-        StoreData(
-          otherPageId,
-          somePageName(),
-          somePost(externalId = ExternalId("4"), publishedAt = somePointInTime.plus(2, HOURS), content = "4"),
-          someClassification(),
-          someRepost()
-        )
+    val otherPageId = PageId("2")
+    val otherPageExpectedLastSeen = repository.storeAndRetrieve(
+      someStoreData(
+        pageId = otherPageId,
+        post = somePost(publishedAt = somePointInTime.plus(2, HOURS))
       )
     )
 
-    repository.findExisting(
-      repository.store(
-        StoreData(
-          otherPageId,
-          somePageName(),
-          somePost(externalId = ExternalId("5"), publishedAt = somePointInTime.plus(1, HOURS), content = "5"),
-          someClassification(),
-          someRepost()
-        )
+    repository.store(
+      someStoreData(
+        pageId = otherPageId,
+        post = somePost(publishedAt = somePointInTime.plus(1, HOURS))
       )
     )
 
@@ -224,27 +203,15 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
 
   "should return null when trying to find last seen post among no posts" {
     // expect
-    repository.findLastSeen(somePageId()) should beNull()
+    repository.findLastSeen(PageId("some page id")) should beNull()
   }
 
   "getting last seen synchronized posts" {
     // given
     val now = now()
     val posts = (1..100).map { i ->
-      repository.findExisting(
-        repository.store(
-          StoreData(
-            somePageId(),
-            somePageName(),
-            somePost(
-              externalId = ExternalId("$i"),
-              publishedAt = now.minus(i.toLong(), HOURS),
-              content = "Content #$i"
-            ),
-            someClassification(),
-            someRepost()
-          )
-        )
+      repository.storeAndRetrieve(
+        someStoreData(post = somePost(publishedAt = now.minus(i.toLong(), HOURS)))
       )
     }
 
