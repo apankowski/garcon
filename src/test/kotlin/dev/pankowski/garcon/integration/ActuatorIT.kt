@@ -9,7 +9,7 @@ class ActuatorIT : CommonIT() {
   fun notEmpty() = not(emptyString())!!
 
   init {
-    "Actuator info endpoint contains git info" {
+    "info endpoint contains git info" {
       // given
       val specification = request()
         .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -31,7 +31,7 @@ class ActuatorIT : CommonIT() {
         .body("git.commit.time", notEmpty())
     }
 
-    "Actuator info endpoint contains build info" {
+    "info endpoint contains build info" {
       // given
       val specification = request()
         .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -55,7 +55,7 @@ class ActuatorIT : CommonIT() {
         .body("build.time", notEmpty())
     }
 
-    "Actuator health endpoint contains health details" {
+    "health endpoint contains health details" {
       // given
       val specification = request()
         .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -73,7 +73,10 @@ class ActuatorIT : CommonIT() {
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .and()
         .body("status", equalTo("UP"))
+        .body("components.db.status", equalTo("UP"))
         .body("components.diskSpace.status", equalTo("UP"))
+        .body("components.diskSpace.details.total", notEmpty())
+        .body("components.diskSpace.details.free", notEmpty())
     }
   }
 }

@@ -30,7 +30,7 @@ class ScheduledTaskIT(lunchService: LunchService) : CommonIT() {
   }
 
   init {
-    "checking for lunch post is called regularly" {
+    "post synchronization is called regularly" {
       // given
       val counter = AtomicInteger(0)
 

@@ -15,7 +15,7 @@ class LunchConfigIT(
   postConfig: LunchPostConfig,
 ) : CommonIT({
 
-  "lunch config should be set based on configuration properties" {
+  "lunch config is set based on configuration properties" {
     // expect
     assertSoftly(config) {
       slackWebhookUrl shouldBe URL("http://localhost:9876/lunch/slack/webhook")
@@ -27,7 +27,7 @@ class LunchConfigIT(
     }
   }
 
-  "client config should be set based on configuration properties" {
+  "client config is set based on configuration properties" {
     // expect
     assertSoftly(clientConfig) {
       userAgent shouldBe "Some user agent"
@@ -35,7 +35,7 @@ class LunchConfigIT(
     }
   }
 
-  "post config should be set based on configuration properties" {
+  "post config is set based on configuration properties" {
     // expect
     assertSoftly(postConfig) {
       locale shouldBe Locale("pl", "PL")
