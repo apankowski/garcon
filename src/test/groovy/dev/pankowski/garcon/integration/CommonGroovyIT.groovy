@@ -16,10 +16,9 @@ import spock.lang.Specification
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
-@Category(IntegrationTest)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("no-scheduled-tasks")
-abstract class CommonIT extends Specification {
+abstract class CommonGroovyIT extends Specification {
 
   @LocalServerPort
   int serverPort

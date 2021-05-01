@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger
     "spring.main.allow-bean-definition-overriding: true"
   ]
 )
-class LunchScheduledTaskIT extends CommonIT {
+class LunchScheduledTaskIT extends CommonGroovyIT {
 
   @Autowired
   LunchService service

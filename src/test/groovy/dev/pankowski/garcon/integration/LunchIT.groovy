@@ -7,7 +7,7 @@ import org.springframework.http.MediaType
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 
-class LunchIT extends CommonIT {
+class LunchIT extends CommonGroovyIT {
 
   def "should respond to /lunch log"() {
     given:
