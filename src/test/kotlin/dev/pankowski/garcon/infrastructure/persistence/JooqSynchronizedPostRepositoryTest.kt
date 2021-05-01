@@ -3,7 +3,6 @@ package dev.pankowski.garcon.infrastructure.persistence
 import dev.pankowski.garcon.domain.*
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.datatest.forAll
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.date.between
 import io.kotest.matchers.nulls.beNull
@@ -28,54 +27,55 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
 
   fun SynchronizedPostRepository.storeAndRetrieve(data: StoreData) = findExisting(store(data))
 
-  fun someRepostError() = Repost.Error(1, now())
-
-  fun someRepostSuccess() = Repost.Success(now())
-
   "persisting synchronized post" - {
     data class PersistTestCase(
       val pageName: PageName?,
       val classification: Classification,
       val repost: Repost
     )
-    forAll(
+    listOf(
       PersistTestCase(null, Classification.MissingKeywords, Repost.Skip),
       PersistTestCase(PageName("some page name"), Classification.LunchPost, Repost.Pending),
-      PersistTestCase(null, Classification.LunchPost, someRepostError()),
-      PersistTestCase(PageName("some page name"), Classification.LunchPost, someRepostSuccess()),
-    ) { (pageName, classification, repost) ->
-      // given
-      val storeData = someStoreData(
-        pageName = pageName,
-        classification = classification,
-        repost = repost
-      )
+      PersistTestCase(null, Classification.LunchPost, someErrorRepost()),
+      PersistTestCase(PageName("some page name"), Classification.LunchPost, someSuccessRepost()),
+    ).forEach { (pageName, classification, repost) ->
+      "synchronized post with page name $pageName, classification $classification and repost $repost can be persisted" {
+        // given
+        val storeData = someStoreData(
+          pageName = pageName,
+          classification = classification,
+          repost = repost
+        )
 
-      // when
-      val before = now()
-      val retrieved = repository.storeAndRetrieve(storeData)
-      val after = now()
+        // when
+        val before = now()
+        val retrieved = repository.storeAndRetrieve(storeData)
+        val after = now()
 
-      // then
-      assertSoftly(retrieved) {
-        this.pageName shouldBe storeData.pageName
-        version shouldBe Version.first()
-        createdAt shouldBe between(before, after)
-        updatedAt shouldBe createdAt
-        pageId shouldBe storeData.pageId
-        post shouldBe storeData.post
-        classification shouldBe storeData.classification
-        repost shouldBe storeData.repost
+        // then
+        assertSoftly(retrieved) {
+          this.pageName shouldBe storeData.pageName
+          version shouldBe Version.first()
+          createdAt shouldBe between(before, after)
+          updatedAt shouldBe createdAt
+          pageId shouldBe storeData.pageId
+          post shouldBe storeData.post
+          classification shouldBe storeData.classification
+          repost shouldBe storeData.repost
+        }
       }
     }
   }
 
-  fun someRepost() = Repost.Pending
-
   fun someStoredSynchronizedPost() = repository.storeAndRetrieve(someStoreData())
 
   "updating synchronized post" - {
-    listOf(Repost.Skip, Repost.Pending, someRepostError(), someRepostSuccess()).forEach { newRepost ->
+    listOf(
+      Repost.Skip,
+      Repost.Pending,
+      someErrorRepost(),
+      someSuccessRepost()
+    ).forEach { newRepost ->
       "synchronized post can be updated with $newRepost repost" {
         // given
         val stored = someStoredSynchronizedPost()
@@ -111,7 +111,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       "'not found' is returned when trying to update ID '$nonexistentId'" {
         // given
         val stored = someStoredSynchronizedPost()
-        val updateData = UpdateData(nonexistentId, stored.version, someRepost())
+        val updateData = UpdateData(nonexistentId, stored.version, someSuccessRepost())
 
         // expect
         shouldThrow<SynchronizedPostNotFound> {
@@ -127,7 +127,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       "'concurrent modification' is returned when trying to update wrong version '$wrongVersion'" {
         // given
         val stored = someStoredSynchronizedPost()
-        val updateData = UpdateData(stored.id, wrongVersion, someRepost())
+        val updateData = UpdateData(stored.id, wrongVersion, someSuccessRepost())
 
         // expect
         shouldThrow<SynchronizedPostModifiedConcurrently> {

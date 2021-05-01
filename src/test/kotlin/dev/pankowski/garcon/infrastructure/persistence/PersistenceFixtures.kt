@@ -9,3 +9,7 @@ fun someStoreData(
   classification: Classification = Classification.LunchPost,
   repost: Repost = Repost.Pending,
 ) = StoreData(pageId, pageName, post, classification, repost)
+
+fun someErrorRepost() = Repost.Error(10, now())
+
+fun someSuccessRepost() = Repost.Success(now())
