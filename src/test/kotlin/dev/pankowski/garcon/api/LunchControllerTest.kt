@@ -9,7 +9,7 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import java.net.URL
-import java.time.ZonedDateTime
+import java.time.Instant
 import java.time.temporal.ChronoUnit.DAYS
 import java.util.concurrent.Executor
 
@@ -143,7 +143,7 @@ class LunchControllerTest : FreeSpec({
 
     every { parser.parse(command) } returns LunchSubcommand.Log
 
-    val somePointInTime = ZonedDateTime.parse("2000-01-01T00:00:00Z").toInstant()
+    val somePointInTime = Instant.parse("2000-01-01T00:00:00Z")
 
     every { service.getLog() } returns listOf(
       someSynchronizedPost(
