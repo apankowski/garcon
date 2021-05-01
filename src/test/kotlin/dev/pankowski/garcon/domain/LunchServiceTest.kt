@@ -10,7 +10,30 @@ import io.mockk.*
 
 class LunchServiceTest : FreeSpec({
 
-  "should fetch new posts" {
+  "synchronizes all pages from config" {
+    // given
+    val pageConfig = somePageConfig()
+
+    val postClient = mockk<FacebookPostClient>()
+    val repository = mockk<SynchronizedPostRepository>()
+    val service = spyk(
+      LunchService(someLunchConfig(pages = listOf(pageConfig)), postClient, mockk(), mockk(), repository),
+      recordPrivateCalls = true
+    )
+
+    every { repository.findLastSeen(any()) } returns null
+    every { postClient.fetch(any(), any()) } returns Pair(null, emptyList())
+
+    // when
+    service.synchronizeAll()
+
+    // then
+    verify {
+      service.synchronize(pageConfig)
+    }
+  }
+
+  "fetches new posts" {
     // given
     val pageConfig = somePageConfig()
     val lastSeenPublishedAt = now()
@@ -49,7 +72,7 @@ class LunchServiceTest : FreeSpec({
     }
   }
 
-  "should save & repost fetched lunch posts" {
+  "saves & reposts fetched lunch posts" {
     // given
     val pageConfig = somePageConfig()
     val pageName = somePageName()
@@ -80,7 +103,7 @@ class LunchServiceTest : FreeSpec({
     updateDataSlot.captured.repost should beInstanceOf(Repost.Success::class)
   }
 
-  "should save fetched non-lunch posts" {
+  "saves fetched non-lunch posts" {
     // given
     val pageConfig = somePageConfig()
     val pageName = somePageName()
@@ -106,7 +129,7 @@ class LunchServiceTest : FreeSpec({
     }
   }
 
-  "should return synchronization log" {
+  "returns synchronization log" {
     // given
     val log = ArrayList<SynchronizedPost>()
 
