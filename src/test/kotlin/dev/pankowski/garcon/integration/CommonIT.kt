@@ -7,15 +7,11 @@ import io.kotest.core.test.TestCase
 import io.kotest.extensions.spring.SpringExtension
 import io.restassured.RestAssured
 import org.flywaydb.core.Flyway
-import org.junit.experimental.categories.Category
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
 
-interface IntegrationTest
-
-@Category(IntegrationTest::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("no-scheduled-tasks")
 class CommonIT(body: FreeSpec.() -> Unit = {}) : FreeSpec(body) {

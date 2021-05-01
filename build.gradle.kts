@@ -6,7 +6,6 @@ group = "dev.pankowski"
 // PLUGINS
 
 plugins {
-  groovy
   kotlin("jvm") version "1.4.32"
   kotlin("kapt") version "1.4.32"
   kotlin("plugin.spring") version "1.4.32"
@@ -39,12 +38,6 @@ tasks.withType<Test> {
   useJUnitPlatform()
 }
 
-// Needed because Spock tests depend on Kotlin test classes
-tasks.compileTestGroovy {
-  dependsOn(tasks.compileTestKotlin)
-  classpath += files(tasks.compileTestKotlin.get().destinationDir)
-}
-
 springBoot {
   buildInfo()
 }
@@ -61,8 +54,6 @@ repositories {
 
 dependencyManagement {
   dependencies {
-    dependency("org.spockframework:spock-spring:1.3-groovy-2.5")
-    dependency("org.spockframework:spock-core:1.3-groovy-2.5")
     dependency("org.jsoup:jsoup:1.13.1")
     dependency("com.github.tomakehurst:wiremock:2.27.2")
     dependency("io.kotest:kotest-runner-junit5:4.4.3")
@@ -99,10 +90,7 @@ dependencies {
     // We don't use XML path matching so let's just remove it altogether.
     exclude("io.rest-assured", "xml-path")
   }
-  testImplementation("org.spockframework:spock-spring")
-  testImplementation("org.spockframework:spock-core")
   testImplementation("com.github.tomakehurst:wiremock")
-  testRuntimeOnly("org.junit.vintage:junit-vintage-engine") // For Spock (relying on JUnit 4)
 
   testImplementation("io.mockk:mockk")
   testImplementation("io.kotest:kotest-runner-junit5")
