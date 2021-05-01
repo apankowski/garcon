@@ -1,7 +1,6 @@
 package dev.pankowski.garcon.infrastructure.persistence
 
 import dev.pankowski.garcon.domain.*
-import java.time.Instant
 import java.util.*
 
 open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
@@ -10,7 +9,7 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
 
   override fun store(data: StoreData): SynchronizedPostId {
     val synchronizedPostId = SynchronizedPostId(UUID.randomUUID().toString())
-    val now = Instant.now()
+    val now = now()
     val synchronizedPost = SynchronizedPost(
       synchronizedPostId,
       Version.first(),

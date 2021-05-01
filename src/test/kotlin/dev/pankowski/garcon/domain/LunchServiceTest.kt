@@ -7,14 +7,13 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.beInstanceOf
 import io.kotest.matchers.types.beTheSameInstanceAs
 import io.mockk.*
-import java.time.Instant
 
 class LunchServiceTest : FreeSpec({
 
   "should fetch new posts" {
     // given
     val pageConfig = somePageConfig()
-    val lastSeenPublishedAt = Instant.now()
+    val lastSeenPublishedAt = now()
     val lastSeen = somePost(publishedAt = lastSeenPublishedAt)
 
     val postClient = mockk<FacebookPostClient>()
@@ -27,8 +26,8 @@ class LunchServiceTest : FreeSpec({
       SynchronizedPost(
         SynchronizedPostId("some id"),
         Version(1),
-        Instant.now(),
-        Instant.now(),
+        now(),
+        now(),
         PageId("some id"),
         null,
         lastSeen,

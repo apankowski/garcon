@@ -2,7 +2,6 @@ package dev.pankowski.garcon.domain
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import java.time.Instant
 
 class RepostTest : FreeSpec({
 
@@ -28,7 +27,7 @@ class RepostTest : FreeSpec({
 
   "error repost should have error status" {
     // given
-    val error = Repost.Error(1, Instant.now())
+    val error = Repost.Error(1, now())
 
     // expect
     error.status shouldBe RepostStatus.ERROR
@@ -36,7 +35,7 @@ class RepostTest : FreeSpec({
 
   "successful repost should have success status" {
     // given
-    val success = Repost.Success(Instant.now())
+    val success = Repost.Success(now())
 
     // expect
     success.status shouldBe RepostStatus.SUCCESS
