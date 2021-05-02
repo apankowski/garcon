@@ -1,6 +1,8 @@
 package dev.pankowski.garcon.infrastructure.persistence
 
+import dev.pankowski.garcon.WithTestName
 import dev.pankowski.garcon.domain.*
+import dev.pankowski.garcon.forAll
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -28,41 +30,44 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
   fun SynchronizedPostRepository.storeAndRetrieve(data: StoreData) = findExisting(store(data))
 
   "persisting synchronized post" - {
+
     data class PersistTestCase(
       val pageName: PageName?,
       val classification: Classification,
       val repost: Repost
-    )
-    listOf(
+    ) : WithTestName {
+      override fun testName() =
+        "synchronized post with page name $pageName, classification $classification and repost $repost can be persisted"
+    }
+
+    forAll(
       PersistTestCase(null, Classification.MissingKeywords, Repost.Skip),
       PersistTestCase(PageName("some page name"), Classification.LunchPost, Repost.Pending),
       PersistTestCase(null, Classification.LunchPost, someErrorRepost()),
       PersistTestCase(PageName("some page name"), Classification.LunchPost, someSuccessRepost()),
-    ).forEach { (pageName, classification, repost) ->
-      "synchronized post with page name $pageName, classification $classification and repost $repost can be persisted" {
-        // given
-        val storeData = someStoreData(
-          pageName = pageName,
-          classification = classification,
-          repost = repost
-        )
+    ) { (pageName, classification, repost) ->
+      // given
+      val storeData = someStoreData(
+        pageName = pageName,
+        classification = classification,
+        repost = repost
+      )
 
-        // when
-        val before = now()
-        val retrieved = repository.storeAndRetrieve(storeData)
-        val after = now()
+      // when
+      val before = now()
+      val retrieved = repository.storeAndRetrieve(storeData)
+      val after = now()
 
-        // then
-        assertSoftly(retrieved) {
-          this.pageName shouldBe storeData.pageName
-          version shouldBe Version.first()
-          createdAt shouldBe between(before, after)
-          updatedAt shouldBe createdAt
-          pageId shouldBe storeData.pageId
-          post shouldBe storeData.post
-          classification shouldBe storeData.classification
-          repost shouldBe storeData.repost
-        }
+      // then
+      assertSoftly(retrieved) {
+        this.pageName shouldBe storeData.pageName
+        version shouldBe Version.first()
+        createdAt shouldBe between(before, after)
+        updatedAt shouldBe createdAt
+        pageId shouldBe storeData.pageId
+        post shouldBe storeData.post
+        classification shouldBe storeData.classification
+        repost shouldBe storeData.repost
       }
     }
   }
@@ -70,36 +75,39 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
   fun someStoredSynchronizedPost() = repository.storeAndRetrieve(someStoreData())
 
   "updating synchronized post" - {
-    listOf(
-      Repost.Skip,
-      Repost.Pending,
-      someErrorRepost(),
-      someSuccessRepost()
-    ).forEach { newRepost ->
-      "synchronized post can be updated with $newRepost repost" {
-        // given
-        val stored = someStoredSynchronizedPost()
-        val updateData = UpdateData(stored.id, stored.version, newRepost)
 
-        // when
-        val before = now()
-        repository.updateExisting(updateData)
-        val after = now()
+    data class UpdateTestCase(val repost: Repost) : WithTestName {
+      override fun testName() = "synchronized post can be updated with $repost repost"
+    }
 
-        // and
-        val updated = repository.findExisting(stored.id)
+    forAll(
+      UpdateTestCase(Repost.Skip),
+      UpdateTestCase(Repost.Pending),
+      UpdateTestCase(someErrorRepost()),
+      UpdateTestCase(someSuccessRepost())
+    ) { (repost) ->
+      // given
+      val stored = someStoredSynchronizedPost()
+      val updateData = UpdateData(stored.id, stored.version, repost)
 
-        // then
-        assertSoftly(updated) {
-          id shouldBe stored.id
-          version shouldBe stored.version.next()
-          createdAt shouldBe stored.createdAt
-          updatedAt shouldBe between(before, after)
-          pageId shouldBe stored.pageId
-          post shouldBe stored.post
-          classification shouldBe stored.classification
-          repost shouldBe updateData.repost
-        }
+      // when
+      val before = now()
+      repository.updateExisting(updateData)
+      val after = now()
+
+      // and
+      val updated = repository.findExisting(stored.id)
+
+      // then
+      assertSoftly(updated) {
+        id shouldBe stored.id
+        version shouldBe stored.version.next()
+        createdAt shouldBe stored.createdAt
+        updatedAt shouldBe between(before, after)
+        pageId shouldBe stored.pageId
+        post shouldBe stored.post
+        classification shouldBe stored.classification
+        this.repost shouldBe updateData.repost
       }
     }
 
