@@ -1,13 +1,14 @@
 package dev.pankowski.garcon.domain
 
-import io.kotest.core.datatest.forAll
+import dev.pankowski.garcon.WithTestName
+import dev.pankowski.garcon.forAll
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 
 class StringDistanceTest : FreeSpec({
 
-  data class TestCase(val a: String, val b: String, val distance: Int) {
-    override fun toString() = "distance between '$a' and '$b' is $distance"
+  data class TestCase(val a: String, val b: String, val distance: Int) : WithTestName {
+    override fun testName() = "distance between '$a' and '$b' is $distance"
   }
 
   "Levenshtein distance between two strings" - {
