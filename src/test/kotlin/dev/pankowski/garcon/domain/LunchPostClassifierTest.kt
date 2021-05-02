@@ -1,63 +1,65 @@
 package dev.pankowski.garcon.domain
 
-import io.kotest.core.datatest.forAll
+import dev.pankowski.garcon.WithTestName
+import dev.pankowski.garcon.forAll
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.core.spec.style.scopes.FreeScope
 import io.kotest.matchers.shouldBe
 
 class LunchPostClassifierTest : FreeSpec({
 
-  val classifier = LunchPostClassifier(somePostConfig())
-
-  "should reject post having content without lunch keyword" - {
-    forAll(
-      "Some text",
-      "Zapraszamy na pyszną świeżą sielawę",
-    ) { postContent ->
-      // given
-      val post = somePost(content = postContent)
-
-      // when
-      val result = classifier.classify(post)
-
-      // then
-      result shouldBe Classification.MissingKeywords
-    }
+  data class TestCase(val content: String, val classification: Classification) : WithTestName {
+    override fun testName() = "classifies '$content' as $classification"
   }
 
-  "should accept post having content with lunch keyword" - {
-    forAll(
-      "Lunch wtorek",
-      "jemy lunch",
-      "dzisiejsza oferta lunchowa",
-      "lunch!!!",
-      "**Lunch**",
-      "😆😆😆lunch😆😆😆",
-    ) { postContent ->
+  suspend fun FreeScope.verifyClassifications(postConfig: LunchPostConfig, vararg testCases: TestCase) =
+    forAll(*testCases) { (content, classification) ->
       // given
-      val post = somePost(content = postContent)
+      val post = somePost(content = content)
+      val classifier = LunchPostClassifier(postConfig)
 
       // when
       val result = classifier.classify(post)
 
       // then
-      result shouldBe Classification.LunchPost
+      result shouldBe classification
     }
+
+  "classifies post without lunch keyword as 'missing keywords'" - {
+    verifyClassifications(
+      somePostConfig(
+        locale = PolishLocale,
+        keywords = listOf(Keyword("lunch", 1)),
+      ),
+      TestCase("Some text", Classification.MissingKeywords),
+      TestCase("Zapraszamy na pyszną świeżą sielawę", Classification.MissingKeywords),
+    )
+  }
+
+  "classifies post with lunch keyword as 'lunch post'" - {
+    verifyClassifications(
+      somePostConfig(
+        locale = PolishLocale,
+        keywords = listOf(Keyword("lunch", 1), Keyword("lunchowa", 2)),
+      ),
+      TestCase("Lunch wtorek", Classification.LunchPost),
+      TestCase("jemy lunch", Classification.LunchPost),
+      TestCase("dzisiejsza oferta lunchowa", Classification.LunchPost),
+      TestCase("lunch!!!", Classification.LunchPost),
+      TestCase("**Lunch**", Classification.LunchPost),
+      TestCase("😆😆😆lunch😆😆😆", Classification.LunchPost),
+    )
   }
 
   "should accept post having content with misspelled lunch keyword" - {
-    forAll(
-      "luunch",
-      "Lnuch",
-      "dzisiejsza oferta lunhcowa",
-    ) { postContent ->
-      // given
-      val post = somePost(content = postContent)
-
-      // when
-      val result = classifier.classify(post)
-
-      // then
-      result shouldBe Classification.LunchPost
-    }
+    verifyClassifications(
+      somePostConfig(
+        locale = PolishLocale,
+        keywords = listOf(Keyword("lunch", 1), Keyword("lunchowa", 2)),
+      ),
+      TestCase("luunch", Classification.LunchPost),
+      TestCase("Lnuch", Classification.LunchPost),
+      TestCase("dzisiejsza oferta lunhcowa", Classification.LunchPost),
+    )
   }
 })
