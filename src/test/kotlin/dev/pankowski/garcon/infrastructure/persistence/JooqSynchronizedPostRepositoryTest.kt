@@ -116,7 +116,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       SynchronizedPostId("a"),
       SynchronizedPostId(randomUUID().toString())
     ).forEach { nonexistentId ->
-      "'not found' is returned when trying to update ID '$nonexistentId'" {
+      "'not found' is returned when trying to update nonexistent $nonexistentId" {
         // given
         val stored = someStoredSynchronizedPost()
         val updateData = UpdateData(nonexistentId, stored.version, someSuccessRepost())
@@ -132,7 +132,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       Version(0),
       Version(2)
     ).forEach { wrongVersion ->
-      "'concurrent modification' is returned when trying to update wrong version '$wrongVersion'" {
+      "'concurrent modification' is returned when trying to update wrong $wrongVersion" {
         // given
         val stored = someStoredSynchronizedPost()
         val updateData = UpdateData(stored.id, wrongVersion, someSuccessRepost())
@@ -151,7 +151,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       SynchronizedPostId("a"),
       SynchronizedPostId(randomUUID().toString())
     ).forEach { nonexistentId ->
-      "'not found' is returned when trying to find ID '$nonexistentId'" {
+      "'not found' is returned when trying to find nonexistent $nonexistentId" {
         // given
         someStoredSynchronizedPost()
 
