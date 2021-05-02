@@ -10,6 +10,8 @@ import java.util.*
 // The goal is to make JVM-generated Instants compatible with Postgres so we can compare them by equality.
 fun now() = Instant.now().truncatedTo(MICROS)!!
 
+val PolishLocale = Locale("pl", "PL")
+
 // Configs
 fun someLunchConfig(
   slackWebhookUrl: URL = URL("https://slack/webhook"),
@@ -28,7 +30,7 @@ fun somePageConfig(
 ) = LunchPageConfig(pageId, url)
 
 fun somePostConfig(
-  locale: Locale = Locale("pl", "PL"),
+  locale: Locale = PolishLocale,
   keywords: List<Keyword> = listOf(Keyword("lunch", 1), Keyword("lunchowa", 2)),
 ) = LunchPostConfig(locale, keywords)
 
