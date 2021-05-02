@@ -7,7 +7,6 @@ import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import java.net.URL
 import java.time.Duration
-import java.util.*
 
 class LunchConfigIT(
   config: LunchConfig,
@@ -38,7 +37,7 @@ class LunchConfigIT(
   "post config is set based on configuration properties" {
     // expect
     assertSoftly(postConfig) {
-      locale shouldBe Locale("pl", "PL")
+      locale shouldBe PolishLocale
       keywords shouldBe listOf(
         Keyword("lunch", 1),
         Keyword("lunchowa", 2),
