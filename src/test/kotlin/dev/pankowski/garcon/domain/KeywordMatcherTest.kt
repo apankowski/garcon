@@ -1,15 +1,15 @@
 package dev.pankowski.garcon.domain
 
-import io.kotest.core.datatest.forAll
+import dev.pankowski.garcon.WithTestName
+import dev.pankowski.garcon.forAll
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import java.util.*
 
 class KeywordMatcherTest : FreeSpec({
 
-  data class TestCase(val text: String, val keyword: Keyword, val match: Boolean) {
-    override fun toString() =
-      "text '$text' matches '${keyword.text}' with edit distance ${keyword.editDistance}: $match"
+  data class TestCase(val text: String, val keyword: Keyword, val match: Boolean) : WithTestName {
+    override fun testName() = "text '$text' matches '${keyword.text}' with edit distance ${keyword.editDistance}: $match"
   }
 
   "text matches keyword with edit distance" - {
