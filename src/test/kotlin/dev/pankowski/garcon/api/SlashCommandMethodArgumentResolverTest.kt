@@ -1,5 +1,7 @@
 package dev.pankowski.garcon.api
 
+import dev.pankowski.garcon.WithTestName
+import dev.pankowski.garcon.forAll
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.withClue
@@ -34,20 +36,24 @@ class SlashCommandMethodArgumentResolverTest : FreeSpec({
   }
 
   "supported types" - {
-    listOf(
-      SlashCommand::class to true,
-      String::class to false,
-      Int::class to false,
-      Any::class to false,
-      ArrayList::class to false,
-    ).forEach { (type, isSupported) ->
-      "${if (isSupported) "supports" else "doesn't support"} argument of type ${type.simpleName}" {
-        // given
-        val parameter = someMethodParameter(type)
 
-        // expect
-        resolver.supportsParameter(parameter) shouldBe isSupported
-      }
+    data class SupportedTypeTestCase(val type: KClass<*>, val isSupported: Boolean) : WithTestName {
+      override fun testName() =
+        "${if (isSupported) "supports" else "doesn't support"} argument of type ${type.simpleName}"
+    }
+
+    forAll(
+      SupportedTypeTestCase(SlashCommand::class, true),
+      SupportedTypeTestCase(String::class, false),
+      SupportedTypeTestCase(Int::class, false),
+      SupportedTypeTestCase(Any::class, false),
+      SupportedTypeTestCase(ArrayList::class, false),
+    ) { (type, isSupported) ->
+      // given
+      val parameter = someMethodParameter(type)
+
+      // expect
+      resolver.supportsParameter(parameter) shouldBe isSupported
     }
   }
 
@@ -73,52 +79,71 @@ class SlashCommandMethodArgumentResolverTest : FreeSpec({
     }
 
   "required request params" - {
-    listOf("command", "user_id", "channel_id").forEach { requestParam ->
-      "request param '$requestParam' is required" {
-        // given
-        val methodParameter = someMethodParameter(SlashCommand::class)
-        val mockRequest = someMockRequestWithAllParameters()
-        mockRequest.removeParameter(requestParam)
 
-        // expect
-        shouldThrow<MissingServletRequestParameterException> {
-          resolver.resolveArgument(methodParameter, null, ServletWebRequest(mockRequest), null)
-        }
+    data class RequiredRequestParamTestCase(val requestParam: String) : WithTestName {
+      override fun testName() = "request param '$requestParam' is required"
+    }
+
+    forAll(
+      RequiredRequestParamTestCase("command"),
+      RequiredRequestParamTestCase("user_id"),
+      RequiredRequestParamTestCase("channel_id"),
+    ) { (requestParam) ->
+      // given
+      val methodParameter = someMethodParameter(SlashCommand::class)
+      val mockRequest = someMockRequestWithAllParameters()
+      mockRequest.removeParameter(requestParam)
+
+      // expect
+      shouldThrow<MissingServletRequestParameterException> {
+        resolver.resolveArgument(methodParameter, null, ServletWebRequest(mockRequest), null)
       }
     }
   }
 
-  "non-required request params" - {
-    listOf("text", "response_url", "trigger_id", "team_id", "enterprise_id").forEach { requestParam ->
-      "request param '$requestParam' is not required" {
-        // given
-        val methodParameter = someMethodParameter(SlashCommand::class)
-        val mockRequest = someMockRequestWithAllParameters()
-        mockRequest.removeParameter(requestParam)
+  "optional request params" - {
 
-        // expect
-        shouldNotThrowAny {
-          resolver.resolveArgument(methodParameter, null, ServletWebRequest(mockRequest), null)
-        }
+    data class OptionalRequestParamTestCase(val requestParam: String) : WithTestName {
+      override fun testName() = "request param '$requestParam' is optional"
+    }
+
+    forAll(
+      OptionalRequestParamTestCase("text"),
+      OptionalRequestParamTestCase("response_url"),
+      OptionalRequestParamTestCase("trigger_id"),
+      OptionalRequestParamTestCase("team_id"),
+      OptionalRequestParamTestCase("enterprise_id"),
+    ) { (requestParam) ->
+      // given
+      val methodParameter = someMethodParameter(SlashCommand::class)
+      val mockRequest = someMockRequestWithAllParameters()
+      mockRequest.removeParameter(requestParam)
+
+      // expect
+      shouldNotThrowAny {
+        resolver.resolveArgument(methodParameter, null, ServletWebRequest(mockRequest), null)
       }
     }
   }
 
   "invalid request param values" - {
-    listOf(
-      "response_url" to "not a url",
-      "response_url" to "1",
-    ).forEach { (requestParam, value) ->
-      "request param '$requestParam' = '$value' is invalid" {
-        // given
-        val methodParameter = someMethodParameter(SlashCommand::class)
-        val mockRequest = someMockRequestWithAllParameters()
-        mockRequest.setParameter(requestParam, value)
 
-        // expect
-        shouldThrow<ServletRequestBindingException> {
-          resolver.resolveArgument(methodParameter, null, ServletWebRequest(mockRequest), null)
-        }
+    data class InvalidRequestParamValueTestCase(val requestParam: String, val value: String) : WithTestName {
+      override fun testName() = "request param '$requestParam' = '$value' is invalid"
+    }
+
+    forAll(
+      InvalidRequestParamValueTestCase("response_url", "not a url"),
+      InvalidRequestParamValueTestCase("response_url", "1"),
+    ) { (requestParam, value) ->
+      // given
+      val methodParameter = someMethodParameter(SlashCommand::class)
+      val mockRequest = someMockRequestWithAllParameters()
+      mockRequest.setParameter(requestParam, value)
+
+      // expect
+      shouldThrow<ServletRequestBindingException> {
+        resolver.resolveArgument(methodParameter, null, ServletWebRequest(mockRequest), null)
       }
     }
   }
