@@ -1,5 +1,7 @@
 package dev.pankowski.garcon.domain
 
+import java.time.Duration
+
 class SynchronizedPostNotFound(message: String) : RuntimeException(message)
 class SynchronizedPostModifiedConcurrently(message: String) : RuntimeException(message)
 
@@ -28,4 +30,6 @@ interface SynchronizedPostRepository {
   fun findLastSeen(pageId: PageId): SynchronizedPost?
 
   fun getLastSeen(limit: Int): SynchronizedPosts
+
+  fun getRetryable(baseDelay: Duration, maxAttempts: Int, limit: Int): SynchronizedPosts
 }

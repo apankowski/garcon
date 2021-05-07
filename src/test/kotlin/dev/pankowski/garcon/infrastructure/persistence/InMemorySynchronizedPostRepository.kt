@@ -1,6 +1,7 @@
 package dev.pankowski.garcon.infrastructure.persistence
 
 import dev.pankowski.garcon.domain.*
+import java.time.Duration
 import java.util.*
 
 open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
@@ -46,5 +47,8 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
     posts.values.filter { it.pageId == pageId }.maxByOrNull { it.post.publishedAt }
 
   override fun getLastSeen(limit: Int): SynchronizedPosts =
+    TODO("Not implemented")
+
+  override fun getRetryable(baseDelay: Duration, maxAttempts: Int, limit: Int): SynchronizedPosts =
     TODO("Not implemented")
 }

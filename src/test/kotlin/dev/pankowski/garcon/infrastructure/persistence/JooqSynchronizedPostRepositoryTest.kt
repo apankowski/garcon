@@ -6,6 +6,7 @@ import dev.pankowski.garcon.forAll
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.collections.beEmpty
 import io.kotest.matchers.date.between
 import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.should
@@ -13,7 +14,9 @@ import io.kotest.matchers.shouldBe
 import org.flywaydb.core.Flyway
 import org.jooq.DSLContext
 import org.springframework.boot.test.autoconfigure.jooq.JooqTest
+import java.time.Duration
 import java.time.Instant
+import java.time.temporal.ChronoUnit.DAYS
 import java.time.temporal.ChronoUnit.HOURS
 import java.util.UUID.randomUUID
 
@@ -209,7 +212,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
     repository.findLastSeen(otherPageId) shouldBe otherPageExpectedLastSeen
   }
 
-  "should return null when trying to find last seen post among no posts" {
+  "trying to find last seen post among no posts" {
     // expect
     repository.findLastSeen(PageId("some page id")) should beNull()
   }
@@ -228,5 +231,60 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
 
     // then
     actualLog shouldBe posts.take(20)
+  }
+
+  "getting retryable posts" - {
+    listOf(
+      Repost.Skip,
+      Repost.Pending,
+      someSuccessRepost()
+    ).forEach { repost ->
+      "post with repost status $repost is not considered retryable" {
+        // given
+        repository.store(someStoreData(post = somePost(publishedAt = now()), repost = repost))
+
+        // expect
+        repository.getRetryable(Duration.ofMinutes(1), 10, 10) should beEmpty()
+      }
+    }
+
+    "appropriate retryable posts are returned" {
+      // given
+      val now = now()
+      val dayAgo = now.minus(1, DAYS)
+      val baseDelay = Duration.ofMinutes(1)
+
+      val qualifyingPosts = mutableListOf<SynchronizedPost>()
+      for (i in 1..5) {
+        val requiredWaitTime = baseDelay.multipliedBy((1 shl (i - 1)).toLong()) // = baseDelay * 2 ^ (attempt - 1)
+
+        qualifyingPosts += repository.storeAndRetrieve(
+          someStoreData(
+            post = somePost(publishedAt = dayAgo.plus(i.toLong(), HOURS), content = "post $i"),
+            repost = Repost.Error(i, now - requiredWaitTime)
+          )
+        )
+
+        // Not enough time has passed for below post to qualify as retryable
+        repository.storeAndRetrieve(
+          someStoreData(
+            post = somePost(publishedAt = dayAgo.plus(i.toLong(), HOURS), content = "post $i, not qualifying"),
+            repost = Repost.Error(i, now - requiredWaitTime + Duration.ofMinutes(1)),
+          )
+        )
+      }
+
+      // when
+      var retryable = repository.getRetryable(baseDelay, 10, 4)
+
+      // then
+      retryable shouldBe qualifyingPosts.take(4)
+
+      // when
+      retryable = repository.getRetryable(baseDelay, 4, 10)
+
+      // then
+      retryable shouldBe qualifyingPosts.take(3)
+    }
   }
 })
