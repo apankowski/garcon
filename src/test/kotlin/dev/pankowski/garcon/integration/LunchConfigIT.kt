@@ -10,9 +10,9 @@ import java.time.Duration
 
 class LunchConfigIT(
   config: LunchConfig,
+  syncConfig: LunchSyncConfig,
   clientConfig: LunchClientConfig,
   postConfig: LunchPostConfig,
-  syncConfig: LunchSyncConfig,
 ) : CommonIT({
 
   "lunch config is set based on configuration properties" {
