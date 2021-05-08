@@ -196,7 +196,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       .toList()
 
   @Transactional(readOnly = true)
-  override fun getRetryable(baseDelay: Duration, maxAttempts: Int, limit: Int): SynchronizedPosts =
+  override fun streamRetryable(baseDelay: Duration, maxAttempts: Int, block: (SynchronizedPost) -> Unit) =
     context.selectFrom(SYNCHRONIZED_POSTS)
       .where(SYNCHRONIZED_POSTS.REPOST_STATUS.equal(RepostStatus.ERROR))
       .and(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS.lessThan(maxAttempts))
@@ -210,8 +210,9 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
           .lessThan(Instant.now())
       )
       .orderBy(SYNCHRONIZED_POSTS.POST_PUBLISHED_AT.asc())
-      .limit(limit)
-      .fetch()
-      .map(::toDomainObject)
-      .toList()
+      .fetchSize(50)
+      .stream()
+      .use {
+        it.map(::toDomainObject).forEach(block)
+      }
 }

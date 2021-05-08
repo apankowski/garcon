@@ -49,6 +49,6 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
   override fun getLastSeen(limit: Int): SynchronizedPosts =
     TODO("Not implemented")
 
-  override fun getRetryable(baseDelay: Duration, maxAttempts: Int, limit: Int): SynchronizedPosts =
+  override fun streamRetryable(baseDelay: Duration, maxAttempts: Int, block: (SynchronizedPost) -> Unit) =
     TODO("Not implemented")
 }

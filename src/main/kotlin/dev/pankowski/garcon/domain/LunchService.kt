@@ -70,11 +70,11 @@ class LunchService(
         is Repost.Skip,
         is Repost.Success ->
           log.warn("Ignoring request to repost $p because of its repost decision")
+
         is Repost.Pending,
         is Repost.Error -> {
           fun updateWith(r: Repost) =
             repository.updateExisting(UpdateData(p.id, p.version, r))
-
           try {
             doRepost(p)
             updateWith(Repost.Success(Instant.now()))

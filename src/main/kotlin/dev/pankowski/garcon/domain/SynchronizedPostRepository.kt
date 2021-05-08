@@ -31,5 +31,5 @@ interface SynchronizedPostRepository {
 
   fun getLastSeen(limit: Int): SynchronizedPosts
 
-  fun getRetryable(baseDelay: Duration, maxAttempts: Int, limit: Int): SynchronizedPosts
+  fun streamRetryable(baseDelay: Duration, maxAttempts: Int, block: (SynchronizedPost) -> Unit)
 }

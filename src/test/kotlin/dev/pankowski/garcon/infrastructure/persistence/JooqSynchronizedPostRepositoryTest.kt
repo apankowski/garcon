@@ -243,8 +243,12 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
         // given
         repository.store(someStoreData(post = somePost(publishedAt = now()), repost = repost))
 
-        // expect
-        repository.getRetryable(Duration.ofMinutes(1), 10, 10) should beEmpty()
+        // when
+        val retryable = mutableListOf<SynchronizedPost>()
+        repository.streamRetryable(Duration.ofMinutes(1), 10, retryable::add)
+
+        // then
+        retryable should beEmpty()
       }
     }
 
@@ -275,13 +279,15 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       }
 
       // when
-      var retryable = repository.getRetryable(baseDelay, 10, 4)
+      val retryable = mutableListOf<SynchronizedPost>()
+      repository.streamRetryable(baseDelay, 10, retryable::add)
 
       // then
-      retryable shouldBe qualifyingPosts.take(4)
+      retryable shouldBe qualifyingPosts
 
       // when
-      retryable = repository.getRetryable(baseDelay, 4, 10)
+      retryable.clear()
+      repository.streamRetryable(baseDelay, 4, retryable::add)
 
       // then
       retryable shouldBe qualifyingPosts.take(3)
