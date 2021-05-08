@@ -1,7 +1,7 @@
 package dev.pankowski.garcon.configuration
 
 import dev.pankowski.garcon.domain.LunchService
-import dev.pankowski.garcon.domain.someLunchConfig
+import dev.pankowski.garcon.domain.someSyncConfig
 import io.kotest.core.spec.style.FreeSpec
 import io.mockk.*
 import org.springframework.scheduling.TaskScheduler
@@ -12,11 +12,11 @@ class ScheduledTaskInitializerTest : FreeSpec({
   "should schedule synchronization of posts when sync interval is set" {
     // given
     val syncInterval = Duration.ofSeconds(17)
-    val config = someLunchConfig(syncInterval = syncInterval)
+    val syncConfig = someSyncConfig(interval = syncInterval)
 
     val taskScheduler = mockk<TaskScheduler>()
     val service = mockk<LunchService>()
-    val initializer = ScheduledTaskInitializer(taskScheduler, service, config)
+    val initializer = ScheduledTaskInitializer(taskScheduler, service, syncConfig)
 
     every { taskScheduler.scheduleWithFixedDelay(any(), any<Duration>()) } returns mockk()
     every { service.synchronizeAll() } returns Unit
@@ -40,11 +40,11 @@ class ScheduledTaskInitializerTest : FreeSpec({
 
   "should *not* schedule synchronization of posts when sync interval is *not* set" {
     // given
-    val config = someLunchConfig(syncInterval = null)
+    val syncConfig = someSyncConfig(interval = null)
 
     val taskScheduler = mockk<TaskScheduler>()
     val service = mockk<LunchService>()
-    val initializer = ScheduledTaskInitializer(taskScheduler, service, config)
+    val initializer = ScheduledTaskInitializer(taskScheduler, service, syncConfig)
 
     // when
     initializer.run()

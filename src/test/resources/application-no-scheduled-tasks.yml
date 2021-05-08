@@ -1,6 +1,7 @@
 lunch:
   slack-webhook-url: http://localhost:9876/lunch/slack/webhook
-  sync-interval: null
+  sync:
+    interval: null
   client:
     user-agent: "Some user agent"
     timeout: PT100S

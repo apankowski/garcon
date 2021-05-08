@@ -19,11 +19,6 @@ data class LunchConfig(
   val slackWebhookUrl: URL,
 
   /**
-   * Interval between consecutive checks for lunch posts.
-   */
-  val syncInterval: Duration?,
-
-  /**
    * Lunch pages.
    */
   val pages: List<LunchPageConfig> = emptyList(),
@@ -43,6 +38,19 @@ data class LunchPageConfig(
    * URL of Facebook post page containing lunch posts.
    */
   val url: URL,
+)
+
+/**
+ * Configuration of synchronization of lunch posts.
+ */
+@ConstructorBinding
+@ConfigurationProperties("lunch.sync")
+data class LunchSyncConfig(
+
+  /**
+   * Interval between consecutive checks for lunch posts.
+   */
+  val interval: Duration?,
 )
 
 /**

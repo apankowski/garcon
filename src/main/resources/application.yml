@@ -38,4 +38,5 @@ management:
       show-details: always
 
 lunch:
-  sync-interval: ${LUNCH_SYNC_INTERVAL:PT5M}
+  sync:
+    interval: ${LUNCH_SYNC_INTERVAL:PT5M}

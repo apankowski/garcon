@@ -1,7 +1,7 @@
 package dev.pankowski.garcon.configuration
 
-import dev.pankowski.garcon.domain.LunchConfig
 import dev.pankowski.garcon.domain.LunchService
+import dev.pankowski.garcon.domain.LunchSyncConfig
 import org.springframework.boot.CommandLineRunner
 import org.springframework.scheduling.TaskScheduler
 import org.springframework.stereotype.Component
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component
 class ScheduledTaskInitializer(
   private val taskScheduler: TaskScheduler,
   private val service: LunchService,
-  private val config: LunchConfig,
+  private val syncConfig: LunchSyncConfig,
 ) : CommandLineRunner {
 
   override fun run(vararg args: String?) {
-    if (config.syncInterval != null)
-      taskScheduler.scheduleWithFixedDelay(service::synchronizeAll, config.syncInterval)
+    if (syncConfig.interval != null)
+      taskScheduler.scheduleWithFixedDelay(service::synchronizeAll, syncConfig.interval)
   }
 }

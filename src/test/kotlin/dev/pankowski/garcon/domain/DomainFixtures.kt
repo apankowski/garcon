@@ -15,19 +15,22 @@ val PolishLocale = Locale("pl", "PL")
 // Configs
 fun someLunchConfig(
   slackWebhookUrl: URL = URL("https://slack/webhook"),
-  syncInterval: Duration? = Duration.ofMinutes(5),
   pages: List<LunchPageConfig> = emptyList()
-) = LunchConfig(slackWebhookUrl, syncInterval, pages,)
-
-fun someClientConfig(
-  userAgent: String = "Some User Agent",
-  timeout: Duration = Duration.ofSeconds(5)
-) = LunchClientConfig(userAgent, timeout)
+) = LunchConfig(slackWebhookUrl, pages)
 
 fun somePageConfig(
   pageId: PageId = PageId("PID1"),
   url: URL = URL("http://localhost:4321/posts")
 ) = LunchPageConfig(pageId, url)
+
+fun someSyncConfig(
+  interval: Duration? = Duration.ofMinutes(5),
+) = LunchSyncConfig(interval)
+
+fun someClientConfig(
+  userAgent: String = "Some User Agent",
+  timeout: Duration = Duration.ofSeconds(5)
+) = LunchClientConfig(userAgent, timeout)
 
 fun somePostConfig(
   locale: Locale = PolishLocale,

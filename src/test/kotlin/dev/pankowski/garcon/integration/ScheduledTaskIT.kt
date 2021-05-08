@@ -15,7 +15,7 @@ import kotlin.time.seconds
 
 @TestPropertySource(
   properties = [
-    "lunch.sync-interval: PT0.2S",
+    "lunch.sync.interval: PT0.2S",
     "spring.main.allow-bean-definition-overriding: true"
   ]
 )
