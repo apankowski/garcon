@@ -73,7 +73,7 @@ class LunchService(
           log.warn("Ignoring request to repost $p because of its repost decision")
 
         is Repost.Pending,
-        is Repost.Error -> {
+        is Repost.Failed -> {
           fun updateWith(r: Repost) =
             repository.updateExisting(UpdateData(p.id, p.version, r))
           try {
@@ -81,8 +81,8 @@ class LunchService(
             updateWith(Repost.Success(Instant.now()))
           } catch (e: Exception) {
             val newRepost = when (p.repost) {
-              is Repost.Pending -> Repost.Error(1, Instant.now())
-              is Repost.Error -> Repost.Error(p.repost.attempts + 1, Instant.now())
+              is Repost.Pending -> Repost.Failed(1, Instant.now())
+              is Repost.Failed -> Repost.Failed(p.repost.attempts + 1, Instant.now())
               else -> throw IllegalStateException("Unhandled repost ${p.repost}")
             }
             updateWith(newRepost)

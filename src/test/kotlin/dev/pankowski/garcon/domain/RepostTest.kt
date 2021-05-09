@@ -25,12 +25,12 @@ class RepostTest : FreeSpec({
     Repost.Pending.status shouldBe RepostStatus.PENDING
   }
 
-  "error repost should have error status" {
+  "failed repost should have error status" {
     // given
-    val error = Repost.Error(1, now())
+    val failed = Repost.Failed(1, now())
 
     // expect
-    error.status shouldBe RepostStatus.ERROR
+    failed.status shouldBe RepostStatus.FAILED
   }
 
   "successful repost should have success status" {

@@ -3,7 +3,7 @@ package dev.pankowski.garcon.domain
 import dev.pankowski.garcon.WithTestName
 import dev.pankowski.garcon.forAll
 import dev.pankowski.garcon.infrastructure.persistence.InMemorySynchronizedPostRepository
-import dev.pankowski.garcon.infrastructure.persistence.someErrorRepost
+import dev.pankowski.garcon.infrastructure.persistence.someFailedRepost
 import dev.pankowski.garcon.infrastructure.persistence.someSuccessRepost
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
@@ -188,7 +188,7 @@ class LunchServiceTest : FreeSpec({
 
     forAll(
       RetryTestCase(Repost.Pending),
-      RetryTestCase(someErrorRepost()),
+      RetryTestCase(someFailedRepost()),
     ) { (r) ->
       // given
       val post = someSynchronizedPost(repost = r)
@@ -227,7 +227,7 @@ class LunchServiceTest : FreeSpec({
 
     forAll(
       FailedRetryTestCase(Repost.Pending, 1),
-      FailedRetryTestCase(someErrorRepost(attempts = 2), 3),
+      FailedRetryTestCase(someFailedRepost(attempts = 2), 3),
     ) { (r, newAttempts) ->
       // given
       val post = someSynchronizedPost(repost = r)
@@ -253,8 +253,8 @@ class LunchServiceTest : FreeSpec({
       assertSoftly(updateDataSlot.captured) {
         id shouldBe post.id
         version shouldBe post.version
-        repost should beInstanceOf<Repost.Error>()
-        assertSoftly(repost as Repost.Error) {
+        repost should beInstanceOf<Repost.Failed>()
+        assertSoftly(repost as Repost.Failed) {
           attempts shouldBe newAttempts
           lastAttemptAt shouldBe between(before, after)
         }

@@ -49,7 +49,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
         is Repost.Pending -> {
           // Nothing
         }
-        is Repost.Error -> {
+        is Repost.Failed -> {
           repostAttempts = data.repost.attempts
           repostLastAttemptAt = data.repost.lastAttemptAt
         }
@@ -93,7 +93,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
           .setNull(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS)
           .setNull(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT)
           .setNull(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT)
-      is Repost.Error ->
+      is Repost.Failed ->
         updateStatement
           .set(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS, data.repost.attempts)
           .set(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT, data.repost.lastAttemptAt)
@@ -133,8 +133,8 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       when (r.repostStatus!!) {
         RepostStatus.SKIP -> Repost.Skip
         RepostStatus.PENDING -> Repost.Pending
-        RepostStatus.ERROR ->
-          Repost.Error(
+        RepostStatus.FAILED ->
+          Repost.Failed(
             attempts = r.repostAttempts,
             lastAttemptAt = r.repostLastAttemptAt
           )
@@ -198,7 +198,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
   @Transactional(readOnly = true)
   override fun streamRetryable(baseDelay: Duration, maxAttempts: Int, block: (SynchronizedPost) -> Unit) =
     context.selectFrom(SYNCHRONIZED_POSTS)
-      .where(SYNCHRONIZED_POSTS.REPOST_STATUS.equal(RepostStatus.ERROR))
+      .where(SYNCHRONIZED_POSTS.REPOST_STATUS.equal(RepostStatus.FAILED))
       .and(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS.lessThan(maxAttempts))
       .and(
         timestampAdd(

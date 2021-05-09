@@ -11,9 +11,9 @@ fun someStoreData(
   repost: Repost = Repost.Pending,
 ) = StoreData(pageId, pageName, post, classification, repost)
 
-fun someErrorRepost(
+fun someFailedRepost(
   attempts: Int = 10,
   lastAttemptAt: Instant = now(),
-) = Repost.Error(attempts, lastAttemptAt)
+) = Repost.Failed(attempts, lastAttemptAt)
 
 fun someSuccessRepost() = Repost.Success(now())

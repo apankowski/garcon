@@ -46,7 +46,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
     forAll(
       PersistTestCase(null, Classification.MissingKeywords, Repost.Skip),
       PersistTestCase(PageName("some page name"), Classification.LunchPost, Repost.Pending),
-      PersistTestCase(null, Classification.LunchPost, someErrorRepost()),
+      PersistTestCase(null, Classification.LunchPost, someFailedRepost()),
       PersistTestCase(PageName("some page name"), Classification.LunchPost, someSuccessRepost()),
     ) { (pageName, classification, repost) ->
       // given
@@ -86,7 +86,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
     forAll(
       UpdateTestCase(Repost.Skip),
       UpdateTestCase(Repost.Pending),
-      UpdateTestCase(someErrorRepost()),
+      UpdateTestCase(someFailedRepost()),
       UpdateTestCase(someSuccessRepost())
     ) { (repost) ->
       // given
@@ -265,7 +265,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
         qualifyingPosts += repository.storeAndRetrieve(
           someStoreData(
             post = somePost(publishedAt = dayAgo.plus(i.toLong(), HOURS), content = "post $i"),
-            repost = Repost.Error(i, now - requiredWaitTime)
+            repost = Repost.Failed(i, now - requiredWaitTime)
           )
         )
 
@@ -273,7 +273,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
         repository.storeAndRetrieve(
           someStoreData(
             post = somePost(publishedAt = dayAgo.plus(i.toLong(), HOURS), content = "post $i, not qualifying"),
-            repost = Repost.Error(i, now - requiredWaitTime + Duration.ofMinutes(1)),
+            repost = Repost.Failed(i, now - requiredWaitTime + Duration.ofMinutes(1)),
           )
         )
       }

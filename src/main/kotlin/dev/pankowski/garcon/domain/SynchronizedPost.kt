@@ -6,7 +6,7 @@ enum class RepostStatus {
   SKIP,
   PENDING,
   SUCCESS,
-  ERROR,
+  FAILED,
 }
 
 sealed class Repost(val status: RepostStatus) {
@@ -18,7 +18,7 @@ sealed class Repost(val status: RepostStatus) {
     override fun toString() = "Pending"
   }
 
-  data class Error(val attempts: Int, val lastAttemptAt: Instant) : Repost(status = RepostStatus.ERROR)
+  data class Failed(val attempts: Int, val lastAttemptAt: Instant) : Repost(status = RepostStatus.FAILED)
 
   data class Success(val repostedAt: Instant) : Repost(status = RepostStatus.SUCCESS)
 }

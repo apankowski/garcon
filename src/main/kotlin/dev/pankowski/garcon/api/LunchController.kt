@@ -90,7 +90,7 @@ class LunchController(
         is Repost.Skip -> ":heavy_minus_sign:"
         is Repost.Pending -> ":heavy_plus_sign:"
         is Repost.Success -> ":heavy_check_mark: ${r.repostedAt.toSlackDate()}"
-        is Repost.Error -> "${r.attempts}:heavy_multiplication_x: last attempt at ${r.lastAttemptAt.toSlackDate()}"
+        is Repost.Failed -> "${r.attempts}:heavy_multiplication_x: last attempt at ${r.lastAttemptAt.toSlackDate()}"
       }
 
     fun buildItem(p: SynchronizedPost) =
