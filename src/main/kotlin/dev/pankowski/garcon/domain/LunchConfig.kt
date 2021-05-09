@@ -66,3 +66,18 @@ data class SlackConfig(
   /** URL of Slack's Incoming Webhook that will be used to send lunch messages. */
   val webhookUrl: URL,
 )
+
+/** Configuration of retrying failed reposts. */
+@ConstructorBinding
+@ConfigurationProperties("lunch.repost.retry")
+data class RetryConfig(
+
+  /** Interval between consecutive attempts to retry failed reposts. */
+  val interval: Duration?,
+
+  /** Base delay in the exponential backoff between consecutive retries of a single post */
+  val baseDelay: Duration = Duration.ofMinutes(1),
+
+  /** Max repost attempts for a single post. */
+  val maxAttempts: Int = 10,
+)

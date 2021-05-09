@@ -2,16 +2,16 @@ package dev.pankowski.garcon.domain
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import java.time.Duration
 import java.time.Instant
 
 @Component
 class LunchService(
   private val lunchConfig: LunchConfig,
+  private val retryConfig: RetryConfig,
+  private val repository: SynchronizedPostRepository,
   private val postClient: FacebookPostClient,
   private val lunchPostClassifier: LunchPostClassifier,
   private val reposter: SlackReposter,
-  private val repository: SynchronizedPostRepository,
 ) {
 
   private val log = LoggerFactory.getLogger(javaClass)
@@ -104,5 +104,5 @@ class LunchService(
     repository.getLastSeen(20)
 
   fun retryFailedReposts() =
-    repository.streamRetryable(Duration.ofMinutes(1), 10, ::repost)
+    repository.streamRetryable(retryConfig.baseDelay, retryConfig.maxAttempts, ::repost)
 }

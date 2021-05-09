@@ -13,7 +13,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.beInstanceOf
 import io.kotest.matchers.types.beTheSameInstanceAs
 import io.mockk.*
-import java.time.Duration
 
 class LunchServiceTest : FreeSpec({
 
@@ -24,7 +23,7 @@ class LunchServiceTest : FreeSpec({
     val postClient = mockk<FacebookPostClient>()
     val repository = mockk<SynchronizedPostRepository>()
     val service = spyk(
-      LunchService(someLunchConfig(pages = listOf(pageConfig)), postClient, mockk(), mockk(), repository)
+      LunchService(someLunchConfig(pages = listOf(pageConfig)), mockk(), repository, postClient, mockk(), mockk())
     )
 
     every { repository.findLastSeen(any()) } returns null
@@ -49,7 +48,7 @@ class LunchServiceTest : FreeSpec({
     val postClassifier = mockk<LunchPostClassifier>()
     val reposter = mockk<SlackReposter>()
     val repository = mockk<SynchronizedPostRepository>()
-    val service = LunchService(someLunchConfig(), postClient, postClassifier, reposter, repository)
+    val service = LunchService(someLunchConfig(), mockk(), repository, postClient, postClassifier, reposter)
 
     every { repository.findLastSeen(any()) } returns
       SynchronizedPost(
@@ -89,7 +88,7 @@ class LunchServiceTest : FreeSpec({
     val postClassifier = mockk<LunchPostClassifier>()
     val reposter = mockk<SlackReposter>()
     val repository = spyk(InMemorySynchronizedPostRepository())
-    val service = LunchService(someLunchConfig(), postClient, postClassifier, reposter, repository)
+    val service = LunchService(someLunchConfig(), mockk(), repository, postClient, postClassifier, reposter)
 
     every { postClient.fetch(pageConfig, any()) } returns Pair(pageName, listOf(post))
     every { postClassifier.classify(post) } returns classification
@@ -120,7 +119,7 @@ class LunchServiceTest : FreeSpec({
     val postClassifier = mockk<LunchPostClassifier>()
     val reposter = mockk<SlackReposter>()
     val repository = spyk(InMemorySynchronizedPostRepository())
-    val service = LunchService(someLunchConfig(), postClient, postClassifier, reposter, repository)
+    val service = LunchService(someLunchConfig(), mockk(), repository, postClient, postClassifier, reposter)
 
     every { postClient.fetch(pageConfig, any()) } returns Pair(somePageName(), listOf(post))
     every { postClassifier.classify(post) } returns classification
@@ -140,7 +139,7 @@ class LunchServiceTest : FreeSpec({
     val log = ArrayList<SynchronizedPost>()
 
     val repository = mockk<SynchronizedPostRepository>()
-    val service = LunchService(someLunchConfig(), mockk(), mockk(), mockk(), repository)
+    val service = LunchService(someLunchConfig(), mockk(), repository, mockk(), mockk(), mockk())
 
     every { repository.getLastSeen(20) } returns log
 
@@ -149,9 +148,6 @@ class LunchServiceTest : FreeSpec({
   }
 
   "retries failed reposts" - {
-
-    val baseDelay = Duration.ofMinutes(1)
-    val maxAttempts = 10
 
     data class NoRetryTestCase(val repost: Repost) : WithTestName {
       override fun testName() = "doesn't retry ${repost::class.simpleName} repost"
@@ -163,13 +159,14 @@ class LunchServiceTest : FreeSpec({
     ) { (r) ->
       // given
       val post = someSynchronizedPost(repost = r)
+      val retryConfig = someRetryConfig()
 
       val reposter = mockk<SlackReposter>()
       val repository = mockk<SynchronizedPostRepository>()
-      val service = LunchService(someLunchConfig(), mockk(), mockk(), reposter, repository)
+      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), mockk(), reposter)
 
       excludeRecords { repository.streamRetryable(any(), any(), any()) }
-      every { repository.streamRetryable(baseDelay, maxAttempts, captureLambda()) } answers
+      every { repository.streamRetryable(retryConfig.baseDelay, retryConfig.maxAttempts, captureLambda()) } answers
         { lambda<(SynchronizedPost) -> Unit>().invoke(post) }
 
       // when
@@ -192,12 +189,13 @@ class LunchServiceTest : FreeSpec({
     ) { (r) ->
       // given
       val post = someSynchronizedPost(repost = r)
+      val retryConfig = someRetryConfig()
 
       val reposter = mockk<SlackReposter>()
       val repository = mockk<SynchronizedPostRepository>()
-      val service = LunchService(someLunchConfig(), mockk(), mockk(), reposter, repository)
+      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), mockk(), reposter)
 
-      every { repository.streamRetryable(baseDelay, maxAttempts, captureLambda()) } answers
+      every { repository.streamRetryable(retryConfig.baseDelay, retryConfig.maxAttempts, captureLambda()) } answers
         { lambda<(SynchronizedPost) -> Unit>().invoke(post) }
       every { reposter.repost(post.post, any()) } returns Unit
       every { repository.updateExisting(any()) } returns Unit
@@ -231,12 +229,13 @@ class LunchServiceTest : FreeSpec({
     ) { (r, newAttempts) ->
       // given
       val post = someSynchronizedPost(repost = r)
+      val retryConfig = someRetryConfig()
 
       val reposter = mockk<SlackReposter>()
       val repository = mockk<SynchronizedPostRepository>()
-      val service = LunchService(someLunchConfig(), mockk(), mockk(), reposter, repository)
+      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), mockk(), reposter)
 
-      every { repository.streamRetryable(baseDelay, maxAttempts, captureLambda()) } answers
+      every { repository.streamRetryable(retryConfig.baseDelay, retryConfig.maxAttempts, captureLambda()) } answers
         { lambda<(SynchronizedPost) -> Unit>().invoke(post) }
       every { reposter.repost(post.post, any()) } throws RuntimeException("something went wrong")
       every { repository.updateExisting(any()) } returns Unit

@@ -19,3 +19,7 @@ lunch:
   repost:
     slack:
       webhook-url: http://localhost:9876/lunch/slack/webhook
+    retry:
+      interval: null
+      base-delay: PT10S
+      max-attempts: 5

@@ -40,6 +40,12 @@ fun someSlackConfig(
   webhookUrl: URL = URL("https://slack/webhook"),
 ) = SlackConfig(webhookUrl)
 
+fun someRetryConfig(
+  interval: Duration? = Duration.ofMinutes(10),
+  baseDelay: Duration = Duration.ofMinutes(1),
+  maxAttempts: Int = 10,
+) = RetryConfig(interval, baseDelay, maxAttempts)
+
 // Domain
 fun somePost(
   externalId: ExternalId = ExternalId("FBID1"),

@@ -40,3 +40,6 @@ management:
 lunch:
   sync:
     interval: ${LUNCH_SYNC_INTERVAL:PT5M}
+  repost:
+    retry:
+      interval: ${LUNCH_REPOST_RETRY_INTERVAL:PT10M}

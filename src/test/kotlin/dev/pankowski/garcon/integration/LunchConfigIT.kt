@@ -11,6 +11,7 @@ class LunchConfigIT(
   clientConfig: LunchClientConfig,
   postConfig: LunchPostConfig,
   slackConfig: SlackConfig,
+  retryConfig: RetryConfig,
 ) : CommonIT({
 
   "lunch config is set based on configuration properties" {
@@ -53,6 +54,15 @@ class LunchConfigIT(
     // expect
     slackConfig shouldBe SlackConfig(
       webhookUrl = URL("http://localhost:9876/lunch/slack/webhook"),
+    )
+  }
+
+  "retry config is set based on configuration properties" {
+    // expect
+    retryConfig shouldBe RetryConfig(
+      interval = null,
+      baseDelay = Duration.ofSeconds(10),
+      maxAttempts = 5,
     )
   }
 })
