@@ -32,15 +32,15 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
 
   fun SynchronizedPostRepository.storeAndRetrieve(data: StoreData) = findExisting(store(data))
 
-  "persisting synchronized post" - {
+  "persists synchronized post" - {
 
     data class PersistTestCase(
       val pageName: PageName?,
       val classification: Classification,
       val repost: Repost
     ) : WithTestName {
-      override fun testName() =
-        "synchronized post with page name $pageName, classification $classification and repost $repost can be persisted"
+      override fun testName() = "persists synchronized post with $classification classification " +
+        "and ${repost::class.simpleName} repost"
     }
 
     forAll(
@@ -77,10 +77,10 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
 
   fun someStoredSynchronizedPost() = repository.storeAndRetrieve(someStoreData())
 
-  "updating synchronized post" - {
+  "updates synchronized post" - {
 
     data class UpdateTestCase(val repost: Repost) : WithTestName {
-      override fun testName() = "synchronized post can be updated with $repost repost"
+      override fun testName() = "updates synchronized post with $repost repost"
     }
 
     forAll(
@@ -119,7 +119,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       SynchronizedPostId("a"),
       SynchronizedPostId(randomUUID().toString())
     ).forEach { nonexistentId ->
-      "'not found' is returned when trying to update nonexistent $nonexistentId" {
+      "returns 'not found' when trying to update nonexistent $nonexistentId" {
         // given
         val stored = someStoredSynchronizedPost()
         val updateData = UpdateData(nonexistentId, stored.version, someSuccessRepost())
@@ -135,7 +135,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       Version(0),
       Version(2)
     ).forEach { wrongVersion ->
-      "'concurrent modification' is returned when trying to update wrong $wrongVersion" {
+      "returns 'concurrent modification' when trying to update wrong $wrongVersion" {
         // given
         val stored = someStoredSynchronizedPost()
         val updateData = UpdateData(stored.id, wrongVersion, someSuccessRepost())
@@ -148,13 +148,13 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
     }
   }
 
-  "finding existing synchronized post" - {
+  "finds existing synchronized post" - {
     listOf(
       SynchronizedPostId("1"),
       SynchronizedPostId("a"),
       SynchronizedPostId(randomUUID().toString())
     ).forEach { nonexistentId ->
-      "'not found' is returned when trying to find nonexistent $nonexistentId" {
+      "returns 'not found' when trying to find nonexistent $nonexistentId" {
         // given
         someStoredSynchronizedPost()
 
@@ -166,7 +166,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
     }
   }
 
-  "finding last seen synchronized post of a given page" {
+  "finds last seen synchronized post of a given page" {
     // given
     val somePointInTime = Instant.parse("2000-01-01T00:00:00Z")
 
@@ -212,12 +212,12 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
     repository.findLastSeen(otherPageId) shouldBe otherPageExpectedLastSeen
   }
 
-  "trying to find last seen post among no posts" {
+  "finds no last seen synchronized post when there are no posts" {
     // expect
     repository.findLastSeen(PageId("some page id")) should beNull()
   }
 
-  "getting last seen synchronized posts" {
+  "gets last seen synchronized posts" {
     // given
     val now = now()
     val posts = (1..100).map { i ->
@@ -233,13 +233,13 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
     actualLog shouldBe posts.take(20)
   }
 
-  "getting retryable posts" - {
+  "streams retryable posts" - {
     listOf(
       Repost.Skip,
       Repost.Pending,
       someSuccessRepost()
     ).forEach { repost ->
-      "post with repost status $repost is not considered retryable" {
+      "doesn't consider post with ${repost::class.simpleName} repost as retryable" {
         // given
         repository.store(someStoreData(post = somePost(publishedAt = now()), repost = repost))
 
@@ -252,7 +252,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       }
     }
 
-    "appropriate retryable posts are returned" {
+    "streams failed reposts for which required delay has elapsed" {
       // given
       val now = now()
       val dayAgo = now.minus(1, DAYS)

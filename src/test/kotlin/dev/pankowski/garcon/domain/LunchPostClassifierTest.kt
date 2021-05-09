@@ -51,7 +51,7 @@ class LunchPostClassifierTest : FreeSpec({
     )
   }
 
-  "should accept post having content with misspelled lunch keyword" - {
+  "classifies post with misspelled lunch keyword as 'lunch post'" - {
     verifyClassifications(
       somePostConfig(
         locale = PolishLocale,

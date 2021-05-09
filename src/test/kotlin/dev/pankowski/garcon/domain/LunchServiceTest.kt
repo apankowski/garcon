@@ -222,7 +222,7 @@ class LunchServiceTest : FreeSpec({
     }
 
     data class FailedRetryTestCase(val repost: Repost, val newAttempts: Int) : WithTestName {
-      override fun testName() = "increments number of attempts after failed retry of $repost repost"
+      override fun testName() = "increments number of attempts after failed retry of ${repost::class.simpleName} repost"
     }
 
     forAll(

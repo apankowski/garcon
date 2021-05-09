@@ -9,10 +9,10 @@ import java.util.*
 class KeywordMatcherTest : FreeSpec({
 
   data class TestCase(val text: String, val keyword: Keyword, val match: Boolean) : WithTestName {
-    override fun testName() = "text '$text' matches '${keyword.text}' with edit distance ${keyword.editDistance}: $match"
+    override fun testName() = "'$text' matches '${keyword.text}' with edit distance ${keyword.editDistance}: $match"
   }
 
-  "text matches keyword with edit distance" - {
+  "text matches keyword" - {
     forAll(
       TestCase("some text", Keyword("some", 0), true),
       TestCase("some text", Keyword("smoe", 1), true),

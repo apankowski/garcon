@@ -20,7 +20,7 @@ class LunchSubcommandParserTest : FreeSpec({
       }
     }
 
-  "should fail for wrong command" {
+  "fails for wrong command" {
     // given
     val command = someLunchCommand(command = "/wrong-command")
 
@@ -30,23 +30,23 @@ class LunchSubcommandParserTest : FreeSpec({
     }
   }
 
-  "should handle commands with no words" - {
+  "handles commands with no words" - {
     verifyParsing(LunchSubcommand.CheckForLunchPost, "", " ", "\t", "\n", ".", "  ,@% ")
   }
 
-  "should handle 'help' commands" - {
+  "handles 'help' commands" - {
     verifyParsing(LunchSubcommand.Help, "help", "  Help  ", "help!", "Hlep", "hlp.")
   }
 
-  "should handle 'log' commands" - {
+  "handles 'log' commands" - {
     verifyParsing(LunchSubcommand.Log, "log", "  Log  ", "log!", "lgo", ".og")
   }
 
-  "should handle 'check' commands" - {
+  "handles 'check' commands" - {
     verifyParsing(LunchSubcommand.CheckForLunchPost, "check", "  Check  ", "check!", "Chcek", "chk.")
   }
 
-  "should handle unrecognized commands" - {
+  "handles unrecognized commands" - {
     verifyParsing(
       LunchSubcommand.Unrecognized,
       "l",

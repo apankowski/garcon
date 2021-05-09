@@ -5,7 +5,7 @@ import io.kotest.matchers.shouldBe
 
 class VersionTest : FreeSpec({
 
-  "first version should be 1" {
+  "first version is 1" {
     // given
     val version = Version.first()
 
@@ -13,7 +13,7 @@ class VersionTest : FreeSpec({
     version.number shouldBe 1
   }
 
-  "next version should increment by 1" {
+  "next version is incremented by 1" {
     // given
     val version = Version(2)
 

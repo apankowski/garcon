@@ -15,7 +15,7 @@ import java.util.concurrent.Executor
 
 class LunchControllerTest : FreeSpec({
 
-  "should handle 'help' subcommand" {
+  "handles 'help' subcommand" {
     // given
     val command = someLunchCommand()
 
@@ -40,7 +40,7 @@ class LunchControllerTest : FreeSpec({
       """.trimMargin()
   }
 
-  "should handle unrecognized subcommand" {
+  "handles unrecognized subcommand" {
     // given
     val command = someLunchCommand(text = "some command text")
 
@@ -67,7 +67,7 @@ class LunchControllerTest : FreeSpec({
       """.trimMargin()
   }
 
-  "should handle 'check' subcommand" {
+  "handles 'check' subcommand" {
     // given
     val command = someLunchCommand()
 
@@ -92,7 +92,7 @@ class LunchControllerTest : FreeSpec({
     result.text shouldBe "Checking..."
   }
 
-  "should respond with error when scheduling of checking for lunch posts fails" {
+  "responds with error when scheduling of checking for lunch posts fails" {
     // given
     val command = someLunchCommand()
 
@@ -112,7 +112,7 @@ class LunchControllerTest : FreeSpec({
     result.text shouldBe "Error while scheduling synchronization :frowning:"
   }
 
-  "should handle 'log' subcommand - no synchronized posts" {
+  "handles 'log' subcommand - no synchronized posts" {
     // given
     val command = someLunchCommand()
 
@@ -132,7 +132,7 @@ class LunchControllerTest : FreeSpec({
     result.text shouldBe "No posts seen so far"
   }
 
-  "should handle 'log' subcommand - some synchronized posts" {
+  "handles 'log' subcommand - some synchronized posts" {
     // given
     val command = someLunchCommand()
 

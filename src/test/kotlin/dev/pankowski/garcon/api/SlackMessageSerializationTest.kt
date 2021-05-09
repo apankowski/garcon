@@ -19,7 +19,7 @@ class SlackMessageSerializationTest : FreeSpec() {
   lateinit var tester: JacksonTester<SlackMessage>
 
   init {
-    "serialized form should be compliant with API documentation" {
+    "serialized form is compliant with API documentation" {
       // given
       val message = SlackMessage(
         "some message text",

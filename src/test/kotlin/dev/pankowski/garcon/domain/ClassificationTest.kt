@@ -5,22 +5,22 @@ import io.kotest.matchers.shouldBe
 
 class ClassificationTest : FreeSpec({
 
-  "'lunch post' classification should have proper string representation" {
+  "'lunch post' classification has proper string representation" {
     // expect
     Classification.LunchPost.toString() shouldBe "LunchPost"
   }
 
-  "'lunch post' classification should have proper status" {
+  "'lunch post' classification has proper status" {
     // expect
     Classification.LunchPost.status shouldBe ClassificationStatus.LUNCH_POST
   }
 
-  "'missing keywords' classification should have proper string representation" {
+  "'missing keywords' classification has proper string representation" {
     // expect
     Classification.MissingKeywords.toString() shouldBe "MissingKeywords"
   }
 
-  "'missing keywords' classification should have proper status" {
+  "'missing keywords' classification has proper status" {
     // expect
     Classification.MissingKeywords.status shouldBe ClassificationStatus.MISSING_KEYWORDS
   }

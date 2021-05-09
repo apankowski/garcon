@@ -9,7 +9,7 @@ import java.time.Duration
 
 class ScheduledTaskInitializerTest : FreeSpec({
 
-  "should schedule synchronization of posts when sync interval is set" {
+  "schedules synchronization of posts when sync interval is set" {
     // given
     val syncInterval = Duration.ofSeconds(17)
     val syncConfig = someSyncConfig(interval = syncInterval)
@@ -38,7 +38,7 @@ class ScheduledTaskInitializerTest : FreeSpec({
     }
   }
 
-  "should *not* schedule synchronization of posts when sync interval is *not* set" {
+  "doesn't schedule synchronization of posts when sync interval is not set" {
     // given
     val syncConfig = someSyncConfig(interval = null)
 

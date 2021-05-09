@@ -9,7 +9,7 @@ import org.slf4j.MDC
 
 class MdcTest : FreeSpec({
 
-  "should allow setting page ID for a closure" {
+  "allows setting page ID for a closure" {
     // given
     val id = PageId("1234")
     MDC.get("pageId") should beNull()
@@ -22,7 +22,7 @@ class MdcTest : FreeSpec({
     MDC.get("pageId") should beNull()
   }
 
-  "should clear page ID when closure fails" {
+  "clears page ID when closure fails" {
     // when
     shouldThrowAny {
       Mdc.PageId.having(PageId("1234")) {
@@ -34,7 +34,7 @@ class MdcTest : FreeSpec({
     MDC.get("pageId") should beNull()
   }
 
-  "should allow setting synchronized post ID for a closure" {
+  "allows setting synchronized post ID for a closure" {
     // given
     val id = SynchronizedPostId("1234")
     MDC.get("synchronizedPostId") should beNull()
@@ -47,7 +47,7 @@ class MdcTest : FreeSpec({
     MDC.get("synchronizedPostId") should beNull()
   }
 
-  "should clear PageId when closure fails" {
+  "clears PageId when closure fails" {
     // when
     shouldThrowAny {
       Mdc.SynchronizedPostId.having(SynchronizedPostId("1234")) {
