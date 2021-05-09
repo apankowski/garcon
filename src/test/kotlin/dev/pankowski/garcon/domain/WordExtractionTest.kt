@@ -3,7 +3,7 @@ package dev.pankowski.garcon.domain
 import dev.pankowski.garcon.WithTestName
 import dev.pankowski.garcon.forAll
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.core.spec.style.scopes.FreeScope
+import io.kotest.core.spec.style.scopes.ContainerContext
 import io.kotest.matchers.shouldBe
 import java.util.*
 import java.util.Locale.ENGLISH as EnglishLocale
@@ -14,7 +14,7 @@ class WordExtractionTest : FreeSpec({
     override fun testName() = "words extracted from '$text' are $words"
   }
 
-  suspend fun FreeScope.verifyExtractions(locale: Locale, vararg testCases: TestCase) =
+  suspend fun ContainerContext.verifyExtractions(locale: Locale, vararg testCases: TestCase) =
     forAll(*testCases) { (text, words) ->
       // expect
       text.extractWords(locale) shouldBe words

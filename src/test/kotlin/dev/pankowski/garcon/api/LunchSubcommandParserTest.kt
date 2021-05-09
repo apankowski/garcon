@@ -3,14 +3,13 @@ package dev.pankowski.garcon.api
 import dev.pankowski.garcon.domain.LunchSubcommand
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.core.spec.style.scopes.FreeScope
 import io.kotest.matchers.shouldBe
 
 class LunchSubcommandParserTest : FreeSpec({
 
   val parser = LunchSubcommandParser()
 
-  suspend fun FreeScope.verifyParsing(subcommand: LunchSubcommand, vararg texts: String) =
+  fun verifyParsing(subcommand: LunchSubcommand, vararg texts: String) =
     texts.forEach { text ->
       "text '$text' is parsed as $subcommand" {
         // given

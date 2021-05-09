@@ -3,7 +3,7 @@ package dev.pankowski.garcon.domain
 import dev.pankowski.garcon.WithTestName
 import dev.pankowski.garcon.forAll
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.core.spec.style.scopes.FreeScope
+import io.kotest.core.spec.style.scopes.ContainerContext
 import io.kotest.matchers.shouldBe
 
 class LunchPostClassifierTest : FreeSpec({
@@ -12,7 +12,7 @@ class LunchPostClassifierTest : FreeSpec({
     override fun testName() = "classifies '$content' as $classification"
   }
 
-  suspend fun FreeScope.verifyClassifications(postConfig: LunchPostConfig, vararg testCases: TestCase) =
+  suspend fun ContainerContext.verifyClassifications(postConfig: LunchPostConfig, vararg testCases: TestCase) =
     forAll(*testCases) { (content, classification) ->
       // given
       val post = somePost(content = content)
