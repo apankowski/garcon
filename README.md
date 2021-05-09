@@ -100,7 +100,7 @@ Create an empty PostgreSQL database for the bot with UTF-8 encoding to support e
 | `LUNCH_POST_LOCALE` | Locale of text of posts used while extracting their keywords. | ✗ | `Locale.ENGLISH` |
 | `LUNCH_POST_KEYWORDS_<INDEX>_TEXT`, e.g. `LUNCH_POST_KEYWORDS_0_TEXT` | The keyword that makes a post be considered as a lunch post, e.g. `lunch` or `menu`. | ✗ | `lunch` |
 | `LUNCH_POST_KEYWORDS_<INDEX>_EDIT_DISTANCE`, e.g. `LUNCH_POST_KEYWORDS_0_EDIT_DISTANCE` | Maximum allowed [Damerau-Levenshtein distance](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance) between any word from a post and the lunch keyword. Typically `1` or `2`. | ✗ | `1` |
-| `LUNCH_REPOST_SLACK_WEBHOOK_URL` | URL of Slack's Incoming Webhook that will be used to repost lunch offers. | ✗ | `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX` |
+| `LUNCH_REPOST_SLACK_WEBHOOK_URL` | URL of Slack's Incoming Webhook that will be used to repost lunch offers. | ✓ | `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX` |
 
 ### Heroku
 
