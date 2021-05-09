@@ -103,6 +103,6 @@ class LunchService(
   fun getLog() =
     repository.getLastSeen(20)
 
-  fun retryFailed() =
+  fun retryFailedReposts() =
     repository.streamRetryable(Duration.ofMinutes(1), 10, ::repost)
 }

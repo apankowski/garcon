@@ -173,7 +173,7 @@ class LunchServiceTest : FreeSpec({
         { lambda<(SynchronizedPost) -> Unit>().invoke(post) }
 
       // when
-      service.retryFailed()
+      service.retryFailedReposts()
 
       // then
       verify {
@@ -204,7 +204,7 @@ class LunchServiceTest : FreeSpec({
 
       // when
       val before = now()
-      service.retryFailed()
+      service.retryFailedReposts()
       val after = now()
 
       // then
@@ -243,7 +243,7 @@ class LunchServiceTest : FreeSpec({
 
       // when
       val before = now()
-      service.retryFailed()
+      service.retryFailedReposts()
       val after = now()
 
       // then
