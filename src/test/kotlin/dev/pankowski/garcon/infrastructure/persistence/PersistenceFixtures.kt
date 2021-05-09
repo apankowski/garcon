@@ -1,6 +1,7 @@
 package dev.pankowski.garcon.infrastructure.persistence
 
 import dev.pankowski.garcon.domain.*
+import java.time.Instant
 
 fun someStoreData(
   pageId: PageId = PageId("some page id"),
@@ -10,6 +11,9 @@ fun someStoreData(
   repost: Repost = Repost.Pending,
 ) = StoreData(pageId, pageName, post, classification, repost)
 
-fun someErrorRepost() = Repost.Error(10, now())
+fun someErrorRepost(
+  attempts: Int = 10,
+  lastAttemptAt: Instant = now(),
+) = Repost.Error(attempts, lastAttemptAt)
 
 fun someSuccessRepost() = Repost.Success(now())

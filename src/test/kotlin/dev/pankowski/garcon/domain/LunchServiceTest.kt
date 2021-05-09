@@ -1,12 +1,19 @@
 package dev.pankowski.garcon.domain
 
+import dev.pankowski.garcon.WithTestName
+import dev.pankowski.garcon.forAll
 import dev.pankowski.garcon.infrastructure.persistence.InMemorySynchronizedPostRepository
+import dev.pankowski.garcon.infrastructure.persistence.someErrorRepost
+import dev.pankowski.garcon.infrastructure.persistence.someSuccessRepost
+import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.date.between
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.beInstanceOf
 import io.kotest.matchers.types.beTheSameInstanceAs
 import io.mockk.*
+import java.time.Duration
 
 class LunchServiceTest : FreeSpec({
 
@@ -139,5 +146,119 @@ class LunchServiceTest : FreeSpec({
 
     // expect
     service.getLog() should beTheSameInstanceAs(log)
+  }
+
+  "retries failed reposts" - {
+
+    val baseDelay = Duration.ofMinutes(1)
+    val maxAttempts = 10
+
+    data class NoRetryTestCase(val repost: Repost) : WithTestName {
+      override fun testName() = "doesn't retry ${repost::class.simpleName} repost"
+    }
+
+    forAll(
+      NoRetryTestCase(Repost.Skip),
+      NoRetryTestCase(someSuccessRepost()),
+    ) { (r) ->
+      // given
+      val post = someSynchronizedPost(repost = r)
+
+      val reposter = mockk<SlackReposter>()
+      val repository = mockk<SynchronizedPostRepository>()
+      val service = LunchService(someLunchConfig(), mockk(), mockk(), reposter, repository)
+
+      excludeRecords { repository.streamRetryable(any(), any(), any()) }
+      every { repository.streamRetryable(baseDelay, maxAttempts, captureLambda()) } answers
+        { lambda<(SynchronizedPost) -> Unit>().invoke(post) }
+
+      // when
+      service.retryFailed()
+
+      // then
+      verify {
+        repository wasNot Called
+        reposter wasNot Called
+      }
+    }
+
+    data class RetryTestCase(val repost: Repost) : WithTestName {
+      override fun testName() = "retries ${repost::class.simpleName} repost"
+    }
+
+    forAll(
+      RetryTestCase(Repost.Pending),
+      RetryTestCase(someErrorRepost()),
+    ) { (r) ->
+      // given
+      val post = someSynchronizedPost(repost = r)
+
+      val reposter = mockk<SlackReposter>()
+      val repository = mockk<SynchronizedPostRepository>()
+      val service = LunchService(someLunchConfig(), mockk(), mockk(), reposter, repository)
+
+      every { repository.streamRetryable(baseDelay, maxAttempts, captureLambda()) } answers
+        { lambda<(SynchronizedPost) -> Unit>().invoke(post) }
+      every { reposter.repost(post.post, any()) } returns Unit
+      every { repository.updateExisting(any()) } returns Unit
+
+      // when
+      val before = now()
+      service.retryFailed()
+      val after = now()
+
+      // then
+      val updateDataSlot = slot<UpdateData>()
+      verify { repository.updateExisting(capture(updateDataSlot)) }
+
+      assertSoftly(updateDataSlot.captured) {
+        id shouldBe post.id
+        version shouldBe post.version
+        repost should beInstanceOf<Repost.Success>()
+        assertSoftly(repost as Repost.Success) {
+          repostedAt shouldBe between(before, after)
+        }
+      }
+    }
+
+    data class FailedRetryTestCase(val repost: Repost, val newAttempts: Int) : WithTestName {
+      override fun testName() = "increments number of attempts after failed retry of $repost repost"
+    }
+
+    forAll(
+      FailedRetryTestCase(Repost.Pending, 1),
+      FailedRetryTestCase(someErrorRepost(attempts = 2), 3),
+    ) { (r, newAttempts) ->
+      // given
+      val post = someSynchronizedPost(repost = r)
+
+      val reposter = mockk<SlackReposter>()
+      val repository = mockk<SynchronizedPostRepository>()
+      val service = LunchService(someLunchConfig(), mockk(), mockk(), reposter, repository)
+
+      every { repository.streamRetryable(baseDelay, maxAttempts, captureLambda()) } answers
+        { lambda<(SynchronizedPost) -> Unit>().invoke(post) }
+      every { reposter.repost(post.post, any()) } throws RuntimeException("something went wrong")
+      every { repository.updateExisting(any()) } returns Unit
+
+      // when
+      val before = now()
+      service.retryFailed()
+      val after = now()
+
+      // then
+      val updateDataSlot = slot<UpdateData>()
+      verify { repository.updateExisting(capture(updateDataSlot)) }
+
+      assertSoftly(updateDataSlot.captured) {
+        id shouldBe post.id
+        version shouldBe post.version
+        repost should beInstanceOf<Repost.Error>()
+        assertSoftly(repost as Repost.Error) {
+          attempts shouldBe newAttempts
+          lastAttemptAt shouldBe between(before, after)
+        }
+      }
+    }
   }
 })

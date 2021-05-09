@@ -2,6 +2,7 @@ package dev.pankowski.garcon.domain
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import java.time.Duration
 import java.time.Instant
 
 @Component
@@ -101,4 +102,7 @@ class LunchService(
 
   fun getLog() =
     repository.getLastSeen(20)
+
+  fun retryFailed() =
+    repository.streamRetryable(Duration.ofMinutes(1), 10, ::repost)
 }
