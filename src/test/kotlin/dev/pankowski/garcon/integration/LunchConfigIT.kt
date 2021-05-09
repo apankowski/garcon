@@ -13,17 +13,15 @@ class LunchConfigIT(
   syncConfig: LunchSyncConfig,
   clientConfig: LunchClientConfig,
   postConfig: LunchPostConfig,
+  slackConfig: SlackConfig,
 ) : CommonIT({
 
   "lunch config is set based on configuration properties" {
     // expect
-    assertSoftly(config) {
-      slackWebhookUrl shouldBe URL("http://localhost:9876/lunch/slack/webhook")
-      pages shouldBe listOf(
-        LunchPageConfig(PageId("PŻPS"), URL("http://localhost:9876/lunch/facebook/pzps/posts")),
-        LunchPageConfig(PageId("WegeGuru"), URL("http://localhost:9876/lunch/facebook/wegeguru/posts"))
-      )
-    }
+    config.pages shouldBe listOf(
+      LunchPageConfig(PageId("PŻPS"), URL("http://localhost:9876/lunch/facebook/pzps/posts")),
+      LunchPageConfig(PageId("WegeGuru"), URL("http://localhost:9876/lunch/facebook/wegeguru/posts"))
+    )
   }
 
   "sync config is set based on configuration properties" {
@@ -48,5 +46,10 @@ class LunchConfigIT(
         Keyword("lunchowa", 2),
       )
     }
+  }
+
+  "slack config is set based on configuration properties" {
+    // expect
+    slackConfig.webhookUrl shouldBe URL("http://localhost:9876/lunch/slack/webhook")
   }
 })

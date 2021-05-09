@@ -1,8 +1,8 @@
 package dev.pankowski.garcon.infrastructure
 
 import dev.pankowski.garcon.domain.PageName
-import dev.pankowski.garcon.domain.someLunchConfig
 import dev.pankowski.garcon.domain.somePost
+import dev.pankowski.garcon.domain.someSlackConfig
 import io.kotest.core.spec.style.FreeSpec
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpMethod
@@ -17,21 +17,18 @@ class RestTemplateSlackReposterTest : FreeSpec({
 
   "synchronized post is reposted via incoming webhook" {
     // given
+    val pageName = PageName("Some page name")
     val post = somePost(
       link = URL("https://www.facebook.com/post"),
       content = "Some post content",
     )
 
-    val pageName = PageName("Some page name")
+    val slackConfig = someSlackConfig(webhookUrl = URL("https://slack/webhook"))
 
-    val lunchConfig = someLunchConfig(
-      slackWebhookUrl = URL("https://slack/webhook")
-    )
-
-    val repostingClient = RestTemplateSlackReposter(lunchConfig, RestTemplateBuilder())
+    val repostingClient = RestTemplateSlackReposter(slackConfig, RestTemplateBuilder())
     val mockServer = MockRestServiceServer.createServer(repostingClient.restTemplate)
 
-    mockServer.expect(requestTo(lunchConfig.slackWebhookUrl.toURI()))
+    mockServer.expect(requestTo(slackConfig.webhookUrl.toURI()))
       .andExpect(method(HttpMethod.POST))
       .andExpect(content().contentType(MediaType.APPLICATION_JSON))
       .andExpect(

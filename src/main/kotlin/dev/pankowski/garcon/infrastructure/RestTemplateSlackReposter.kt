@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 
 @Component
-class RestTemplateSlackReposter(private val lunchConfig: LunchConfig, restTemplateBuilder: RestTemplateBuilder) :
+class RestTemplateSlackReposter(private val slackConfig: SlackConfig, restTemplateBuilder: RestTemplateBuilder) :
   SlackReposter {
 
   private val log = getLogger(javaClass)
@@ -26,6 +26,6 @@ class RestTemplateSlackReposter(private val lunchConfig: LunchConfig, restTempla
 
     val message = SlackMessage(text = text)
 
-    restTemplate.postForLocation(lunchConfig.slackWebhookUrl.toURI(), message)
+    restTemplate.postForLocation(slackConfig.webhookUrl.toURI(), message)
   }
 }

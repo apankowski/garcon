@@ -11,9 +11,6 @@ import java.util.*
 @ConfigurationProperties("lunch")
 data class LunchConfig(
 
-  /** URL of Slack's Incoming Webhook that will be used to send lunch messages. */
-  val slackWebhookUrl: URL,
-
   /** Lunch pages. */
   val pages: List<LunchPageConfig> = emptyList(),
 )
@@ -59,4 +56,13 @@ data class LunchPostConfig(
 
   /** Lunch post keywords. */
   val keywords: List<Keyword> = listOf(Keyword("lunch", 1)),
+)
+
+/** Configuration of Slack reposter. */
+@ConstructorBinding
+@ConfigurationProperties("lunch.repost.slack")
+data class SlackConfig(
+
+  /** URL of Slack's Incoming Webhook that will be used to send lunch messages. */
+  val webhookUrl: URL,
 )

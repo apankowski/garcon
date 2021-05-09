@@ -1,5 +1,4 @@
 lunch:
-  slack-webhook-url: http://localhost:9876/lunch/slack/webhook
   sync:
     interval: null
   client:
@@ -17,3 +16,6 @@ lunch:
       edit-distance: 1
     - text: "lunchowa"
       edit-distance: 2
+  repost:
+    slack:
+      webhook-url: http://localhost:9876/lunch/slack/webhook

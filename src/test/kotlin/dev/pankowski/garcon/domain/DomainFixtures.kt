@@ -14,9 +14,8 @@ val PolishLocale = Locale("pl", "PL")
 
 // Configs
 fun someLunchConfig(
-  slackWebhookUrl: URL = URL("https://slack/webhook"),
   pages: List<LunchPageConfig> = emptyList()
-) = LunchConfig(slackWebhookUrl, pages)
+) = LunchConfig(pages)
 
 fun somePageConfig(
   pageId: PageId = PageId("PID1"),
@@ -36,6 +35,10 @@ fun somePostConfig(
   locale: Locale = PolishLocale,
   keywords: List<Keyword> = listOf(Keyword("lunch", 1), Keyword("lunchowa", 2)),
 ) = LunchPostConfig(locale, keywords)
+
+fun someSlackConfig(
+  webhookUrl: URL = URL("https://slack/webhook"),
+) = SlackConfig(webhookUrl)
 
 // Domain
 fun somePost(
