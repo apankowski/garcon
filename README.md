@@ -92,7 +92,7 @@ Create an empty PostgreSQL database for the bot with UTF-8 encoding to support e
 | `JDBC_DATABASE_URL` | JDBC URL to the database | ✗ | `jdbc:postgresql://localhost:5432/garcon` |
 | `JDBC_DATABASE_USERNAME` | Username used to connect to the database | ✗ | `garcon` |
 | `JDBC_DATABASE_PASSWORD` | Password used to connect to the database | ✗ | `garcon` |
-| `LUNCH_SYNC_INTERVAL` | Interval between consecutive checks for lunch posts. | ✗ | `PT5M` |
+| `LUNCH_SYNC_INTERVAL` | Interval between consecutive synchronizations of lunch posts. | ✗ | `PT5M` |
 | `LUNCH_CLIENT_USER_AGENT` | User agent by which the client identifies itself when fetching lunch pages. | ✗ | `Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:80.0) Gecko/20100101 Firefox/80.0` |
 | `LUNCH_CLIENT_TIMEOUT` | Max time to wait for the lunch page to be fetched (expressed as ISO 8601 time duration). | ✗ | `PT10S` |
 | `LUNCH_PAGES_<INDEX>_ID`, e.g. `LUNCH_PAGES_0_ID` | Textual identifier of the lunch page presented as the name of the page when reposting. Should not change once assigned. | ✓ | `PŻPS` |

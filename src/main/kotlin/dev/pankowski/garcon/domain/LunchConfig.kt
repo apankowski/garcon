@@ -30,7 +30,7 @@ data class LunchPageConfig(
 @ConfigurationProperties("lunch.sync")
 data class LunchSyncConfig(
 
-  /** Interval between consecutive checks for lunch posts. */
+  /** Interval between consecutive synchronizations of lunch posts. */
   val interval: Duration?,
 )
 
