@@ -17,8 +17,7 @@ class LunchServiceTest : FreeSpec({
     val postClient = mockk<FacebookPostClient>()
     val repository = mockk<SynchronizedPostRepository>()
     val service = spyk(
-      LunchService(someLunchConfig(pages = listOf(pageConfig)), postClient, mockk(), mockk(), repository),
-      recordPrivateCalls = true
+      LunchService(someLunchConfig(pages = listOf(pageConfig)), postClient, mockk(), mockk(), repository)
     )
 
     every { repository.findLastSeen(any()) } returns null
