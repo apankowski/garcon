@@ -42,7 +42,7 @@ class LunchServiceTest : FreeSpec({
     val postClient = mockk<FacebookPostClient>()
     val postClassifier = mockk<LunchPostClassifier>()
     val reposter = mockk<SlackReposter>()
-    val repository = spyk(InMemorySynchronizedPostRepository())
+    val repository = mockk<SynchronizedPostRepository>()
     val service = LunchService(someLunchConfig(), postClient, postClassifier, reposter, repository)
 
     every { repository.findLastSeen(any()) } returns
@@ -136,7 +136,7 @@ class LunchServiceTest : FreeSpec({
     val postClient = mockk<FacebookPostClient>()
     val postClassifier = mockk<LunchPostClassifier>()
     val reposter = mockk<SlackReposter>()
-    val repository = spyk(InMemorySynchronizedPostRepository())
+    val repository = mockk<SynchronizedPostRepository>()
     val service = LunchService(someLunchConfig(), postClient, postClassifier, reposter, repository)
 
     every { repository.getLastSeen(20) } returns log
