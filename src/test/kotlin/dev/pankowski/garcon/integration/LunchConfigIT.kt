@@ -1,9 +1,6 @@
 package dev.pankowski.garcon.integration
 
 import dev.pankowski.garcon.domain.*
-import io.kotest.assertions.assertSoftly
-import io.kotest.matchers.nulls.beNull
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import java.net.URL
 import java.time.Duration
@@ -18,38 +15,44 @@ class LunchConfigIT(
 
   "lunch config is set based on configuration properties" {
     // expect
-    config.pages shouldBe listOf(
-      LunchPageConfig(PageId("PŻPS"), URL("http://localhost:9876/lunch/facebook/pzps/posts")),
-      LunchPageConfig(PageId("WegeGuru"), URL("http://localhost:9876/lunch/facebook/wegeguru/posts"))
+    config shouldBe LunchConfig(
+      pages = listOf(
+        LunchPageConfig(PageId("PŻPS"), URL("http://localhost:9876/lunch/facebook/pzps/posts")),
+        LunchPageConfig(PageId("WegeGuru"), URL("http://localhost:9876/lunch/facebook/wegeguru/posts"))
+      ),
     )
   }
 
   "sync config is set based on configuration properties" {
     // expect
-    syncConfig.interval should beNull()
+    syncConfig shouldBe LunchSyncConfig(
+      interval = null,
+    )
   }
 
   "client config is set based on configuration properties" {
     // expect
-    assertSoftly(clientConfig) {
-      userAgent shouldBe "Some user agent"
-      timeout shouldBe Duration.parse("PT100S")
-    }
+    clientConfig shouldBe LunchClientConfig(
+      userAgent = "Some user agent",
+      timeout = Duration.parse("PT100S"),
+    )
   }
 
   "post config is set based on configuration properties" {
     // expect
-    assertSoftly(postConfig) {
-      locale shouldBe PolishLocale
-      keywords shouldBe listOf(
+    postConfig shouldBe LunchPostConfig(
+      locale = PolishLocale,
+      keywords = listOf(
         Keyword("lunch", 1),
         Keyword("lunchowa", 2),
-      )
-    }
+      ),
+    )
   }
 
   "slack config is set based on configuration properties" {
     // expect
-    slackConfig.webhookUrl shouldBe URL("http://localhost:9876/lunch/slack/webhook")
+    slackConfig shouldBe SlackConfig(
+      webhookUrl = URL("http://localhost:9876/lunch/slack/webhook"),
+    )
   }
 })
