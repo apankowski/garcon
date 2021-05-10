@@ -75,9 +75,9 @@ data class RetryConfig(
   /** Interval between consecutive attempts to retry failed reposts. */
   val interval: Duration?,
 
-  /** Base delay in the exponential backoff between consecutive retries of a single post */
+  /** Base delay in the exponential backoff between consecutive retries of a failed repost. */
   val baseDelay: Duration = Duration.ofMinutes(1),
 
-  /** Max repost attempts for a single post. */
+  /** Max retry attempts for a failed repost. */
   val maxAttempts: Int = 10,
 )

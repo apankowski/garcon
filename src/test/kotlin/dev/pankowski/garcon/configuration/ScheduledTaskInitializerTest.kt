@@ -1,6 +1,7 @@
 package dev.pankowski.garcon.configuration
 
 import dev.pankowski.garcon.domain.LunchService
+import dev.pankowski.garcon.domain.someRetryConfig
 import dev.pankowski.garcon.domain.someSyncConfig
 import io.kotest.core.spec.style.FreeSpec
 import io.mockk.*
@@ -16,24 +17,20 @@ class ScheduledTaskInitializerTest : FreeSpec({
 
     val taskScheduler = mockk<TaskScheduler>()
     val service = mockk<LunchService>()
-    val initializer = ScheduledTaskInitializer(taskScheduler, service, syncConfig)
+    val initializer = ScheduledTaskInitializer(taskScheduler, service, syncConfig, someRetryConfig(interval = null))
 
-    every { taskScheduler.scheduleWithFixedDelay(any(), any<Duration>()) } returns mockk()
     every { service.synchronizeAll() } returns Unit
+    every { taskScheduler.scheduleWithFixedDelay(any(), syncConfig.interval!!) } answers {
+      firstArg<Runnable>().run()
+      mockk()
+    }
 
     // when
     initializer.run()
 
-    val scheduledRunnableSlot = slot<Runnable>()
-    verify {
-      taskScheduler.scheduleWithFixedDelay(capture(scheduledRunnableSlot), syncInterval)
-      service wasNot Called
-    }
-
-    // Comparison of lambdas doesn't work: https://stackoverflow.com/a/24098805/1820695 so we can't compare
-    // it with service::synchronizeAll. Instead we stick to invoking it and observing the effects.
-    scheduledRunnableSlot.captured.run()
-    verify {
+    // then
+    verify(exactly = 1) {
+      taskScheduler.scheduleWithFixedDelay(any(), any<Duration>())
       service.synchronizeAll()
     }
   }
@@ -44,7 +41,49 @@ class ScheduledTaskInitializerTest : FreeSpec({
 
     val taskScheduler = mockk<TaskScheduler>()
     val service = mockk<LunchService>()
-    val initializer = ScheduledTaskInitializer(taskScheduler, service, syncConfig)
+    val initializer = ScheduledTaskInitializer(taskScheduler, service, syncConfig, someRetryConfig(interval = null))
+
+    // when
+    initializer.run()
+
+    // then
+    verify {
+      taskScheduler wasNot Called
+      service wasNot Called
+    }
+  }
+
+  "schedules retrying of failed reposts when retry interval is set" {
+    // given
+    val retryConfig = someRetryConfig(interval = Duration.ofSeconds(42))
+
+    val taskScheduler = mockk<TaskScheduler>()
+    val service = mockk<LunchService>()
+    val initializer = ScheduledTaskInitializer(taskScheduler, service, someSyncConfig(interval = null), retryConfig)
+
+    every { service.retryFailedReposts() } returns Unit
+    every { taskScheduler.scheduleWithFixedDelay(any(), retryConfig.interval!!) } answers {
+      firstArg<Runnable>().run()
+      mockk()
+    }
+
+    // when
+    initializer.run()
+
+    // then
+    verify(exactly = 1) {
+      taskScheduler.scheduleWithFixedDelay(any(), any<Duration>())
+      service.retryFailedReposts()
+    }
+  }
+
+  "doesn't schedule retrying of failed reposts when retry interval is not set" {
+    // given
+    val retryConfig = someRetryConfig(interval = null)
+
+    val taskScheduler = mockk<TaskScheduler>()
+    val service = mockk<LunchService>()
+    val initializer = ScheduledTaskInitializer(taskScheduler, service, someSyncConfig(interval = null), retryConfig)
 
     // when
     initializer.run()

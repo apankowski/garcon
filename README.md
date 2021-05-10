@@ -101,6 +101,9 @@ Create an empty PostgreSQL database for the bot with UTF-8 encoding to support e
 | `LUNCH_POST_KEYWORDS_<INDEX>_TEXT`, e.g. `LUNCH_POST_KEYWORDS_0_TEXT` | The keyword that makes a post be considered as a lunch post, e.g. `lunch` or `menu`. | ✗ | `lunch` |
 | `LUNCH_POST_KEYWORDS_<INDEX>_EDIT_DISTANCE`, e.g. `LUNCH_POST_KEYWORDS_0_EDIT_DISTANCE` | Maximum allowed [Damerau-Levenshtein distance](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance) between any word from a post and the lunch keyword. Typically `1` or `2`. | ✗ | `1` |
 | `LUNCH_REPOST_SLACK_WEBHOOK_URL` | URL of Slack's Incoming Webhook that will be used to repost lunch offers. | ✓ | `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX` |
+| `LUNCH_REPOST_RETRY_INTERVAL` | Interval between consecutive attempts to retry failed reposts. | ✗ | `PT10M` |
+| `LUNCH_REPOST_RETRY_BASE_DELAY` | Base delay in the exponential backoff between consecutive retries of a failed repost. | ✗ | `PT1M` |
+| `LUNCH_REPOST_RETRY_MAX_ATTEMPTS` | Max retry attempts for a failed repost. | ✗ | `10` |
 
 ### Heroku
 
@@ -131,7 +134,6 @@ Specifically, information about the service & its health can be observed via the
 ## Possible further work
 
   * Slack webhook testing subcommand
-  * Retry failed reposts
   * Update/delete reposts based on upstream
   * [Prometheus](https://prometheus.io/) metrics
   * [Instagram](https://www.instagram.com/) support

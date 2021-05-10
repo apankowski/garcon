@@ -16,11 +16,12 @@ import kotlin.time.seconds
 @TestPropertySource(
   properties = [
     "lunch.sync.interval: PT0.2S",
+    "lunch.repost.retry.interval: PT0.2S",
     "spring.main.allow-bean-definition-overriding: true"
   ]
 )
 @ExperimentalTime
-class ScheduledTaskIT(lunchService: LunchService) : CommonIT() {
+class ScheduledTaskIT(private val lunchService: LunchService) : CommonIT() {
 
   // Maybe use https://github.com/Ninja-Squad/springmockk ?
   @TestConfiguration
@@ -35,6 +36,18 @@ class ScheduledTaskIT(lunchService: LunchService) : CommonIT() {
       val counter = AtomicInteger(0)
 
       every { lunchService.synchronizeAll() } answers { counter.incrementAndGet() }
+
+      // expect
+      eventually(10.seconds) {
+        counter shouldBe beGreaterThan(2)
+      }
+    }
+
+    "retrying of failed reposts is called regularly" {
+      // given
+      val counter = AtomicInteger(0)
+
+      every { lunchService.retryFailedReposts() } answers { counter.incrementAndGet() }
 
       // expect
       eventually(10.seconds) {
