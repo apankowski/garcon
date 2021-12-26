@@ -13,7 +13,7 @@ plugins {
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
   id("com.gorylenko.gradle-git-properties") version "2.2.4"
   id("com.adarshr.test-logger") version "3.1.0"
-  id("com.avast.gradle.docker-compose") version "0.14.3"
+  id("com.avast.gradle.docker-compose") version "0.14.11"
   id("org.flywaydb.flyway") version "8.3.0"
   id("com.rohanprabhu.kotlin-dsl-jooq") version "0.4.6"
 }
@@ -110,7 +110,7 @@ val isCiEnv = System.getenv("CI") == "true"
 // DOCKER COMPOSE
 
 dockerCompose {
-  useComposeFiles = listOf("docker-compose-integration-test.yml")
+  useComposeFiles.set(listOf("docker-compose-integration-test.yml"))
 }
 
 // DATABASE
