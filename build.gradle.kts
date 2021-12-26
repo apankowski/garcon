@@ -55,11 +55,11 @@ repositories {
 dependencyManagement {
   dependencies {
     dependency("org.jsoup:jsoup:1.14.3")
-    dependency("com.github.tomakehurst:wiremock:2.27.2")
+    dependency("com.github.tomakehurst:wiremock-jre8:2.32.0")
     dependency("io.kotest:kotest-runner-junit5:4.5.0")
-    dependency("io.kotest.extensions:kotest-extensions-spring:1.0.0")
-    dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.2")
-    dependency("io.mockk:mockk:1.11.0")
+    dependency("io.kotest.extensions:kotest-extensions-spring:1.0.1")
+    dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.3")
+    dependency("io.mockk:mockk:1.12.1")
   }
 }
 
@@ -90,7 +90,7 @@ dependencies {
     // We don't use XML path matching so let's just remove it altogether.
     exclude("io.rest-assured", "xml-path")
   }
-  testImplementation("com.github.tomakehurst:wiremock")
+  testImplementation("com.github.tomakehurst:wiremock-jre8")
 
   testImplementation("io.mockk:mockk")
   testImplementation("io.kotest:kotest-runner-junit5")
