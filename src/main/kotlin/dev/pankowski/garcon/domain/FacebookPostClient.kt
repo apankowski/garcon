@@ -4,7 +4,7 @@ import org.jsoup.Jsoup
 import org.jsoup.helper.HttpConnection
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import org.jsoup.safety.Whitelist
+import org.jsoup.safety.Safelist
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -102,14 +102,14 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
 
   private fun getTimestampData(e: Element) =
     e.attr("data-utime")
-      ?.toLongOrNull()
+      .toLongOrNull()
       ?.let(Instant::ofEpochSecond)
 
   private fun String.emptyToNull() = takeUnless(String::isEmpty)
 
   private fun getLink(e: Element) =
     e.absUrl("href")
-      ?.emptyToNull()
+      .emptyToNull()
       ?.let(URI::create)
 
   private fun extractFacebookId(uri: URI): ExternalId? {
@@ -146,17 +146,17 @@ class FacebookPostClient(private val clientConfig: LunchClientConfig) {
 
   private fun extractContent(e: Element): String {
     // Remove the ellipsis & "show more" link from post's content.
-    e.select(".text_exposed_hide")?.remove()
-    e.select(".text_exposed_show")?.unwrap()
+    e.select(".text_exposed_hide").remove()
+    e.select(".text_exposed_show").unwrap()
     e.select("br").after("\n")
     e.select("p").before("\n\n")
 
     // Switch off pretty-printing to preserve manually added newlines.
     val outputSettings = Document.OutputSettings().prettyPrint(false)
-    e.ownerDocument().outputSettings(outputSettings)
+    e.ownerDocument()?.outputSettings(outputSettings)
 
     val dirty = e.html()
-    val clean = Jsoup.clean(dirty, e.baseUri(), Whitelist.none(), outputSettings)
+    val clean = Jsoup.clean(dirty, e.baseUri(), Safelist.none(), outputSettings)
 
     // Remove surrounding newlines & whitespace surrounding each individual line.
     return clean.trim().lines().joinToString(transform = String::trim, separator = "\n")

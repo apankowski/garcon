@@ -54,7 +54,7 @@ repositories {
 
 dependencyManagement {
   dependencies {
-    dependency("org.jsoup:jsoup:1.13.1")
+    dependency("org.jsoup:jsoup:1.14.3")
     dependency("com.github.tomakehurst:wiremock:2.27.2")
     dependency("io.kotest:kotest-runner-junit5:4.5.0")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.0.0")
