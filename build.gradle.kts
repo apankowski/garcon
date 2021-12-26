@@ -11,7 +11,7 @@ plugins {
   kotlin("plugin.spring") version "1.4.32"
   id("org.springframework.boot") version "2.4.5"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
-  id("com.gorylenko.gradle-git-properties") version "2.2.4"
+  id("com.gorylenko.gradle-git-properties") version "2.3.2"
   id("com.adarshr.test-logger") version "3.1.0"
   id("com.avast.gradle.docker-compose") version "0.14.11"
   id("org.flywaydb.flyway") version "8.3.0"
