@@ -1,5 +1,7 @@
 # Garçon
 
+[![CodeScene Code Health](https://codescene.io/projects/22033/status-badges/code-health)](https://codescene.io/projects/22033)
+
 Simple PoC ("toy" if you will) of a [Slack](https://slack.com/) bot that re-posts lunch offers from chosen Facebook pages.
 
 It doesn't use the [Graph API](https://developers.facebook.com/docs/graph-api/) to get the offers as the Graph API doesn't allow accessing content of Facebook pages willy-nilly and that is exactly what I want to do. Instead, it extracts necessary data directly from Facebook page's DOM.
@@ -66,7 +68,7 @@ Configure _Incoming Webhooks_ and _Slash Commands_ for the app:
 
 ### Docker image
 
- 1. As described in [Building & Running](#BuildingRunning) section create the fat JAR:
+ 1. As described in [Building & Running](#building--running-locally) section create the fat JAR:
 
     ```
     ./gradlew bootJar
@@ -78,7 +80,7 @@ Configure _Incoming Webhooks_ and _Slash Commands_ for the app:
     docker build -t garcon .
     ```
 
- 1. Push built image to the docker registry of your choosing & deploy to your target environment. If you're going with Heroku, see the [respective section](#Heroku).
+ 1. Push built image to the docker registry of your choosing & deploy to your target environment. If you're going with Heroku, see the [respective section](#heroku).
 
 ### PostgreSQL database
 
