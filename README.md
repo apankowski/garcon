@@ -29,7 +29,7 @@ The service is written in Kotlin and uses the following stack:
   * Spring Boot 2
   * Kotest and KockK for tests
   * Jooq for database access
-  * PostgreSQL
+  * PostgreSQL 10+
 
 ## Building & running locally
 

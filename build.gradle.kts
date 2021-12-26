@@ -14,7 +14,7 @@ plugins {
   id("com.gorylenko.gradle-git-properties") version "2.2.4"
   id("com.adarshr.test-logger") version "3.0.0"
   id("com.avast.gradle.docker-compose") version "0.14.3"
-  id("org.flywaydb.flyway") version "7.8.2"
+  id("org.flywaydb.flyway") version "8.3.0"
   id("com.rohanprabhu.kotlin-dsl-jooq") version "0.4.6"
 }
 
