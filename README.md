@@ -24,10 +24,10 @@ To protect certain things the original git commit history had to be wiped out.
 
 The service is written in Kotlin and uses the following stack:
 
-  * Kotlin 1.4 on Java 15
+  * Kotlin 1.6 on Java 15
   * Gradle 7.3 (with build script in Kotlin)
-  * Spring Boot 2
-  * Kotest and KockK for tests
+  * Spring Boot 2.6
+  * Kotest 5.0 and KockK 1.12 for tests
   * Jooq for database access
   * PostgreSQL 10+
 
