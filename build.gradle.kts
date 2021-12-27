@@ -23,14 +23,14 @@ tasks.wrapper {
 }
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_15
-  targetCompatibility = JavaVersion.VERSION_15
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
 }
 
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     freeCompilerArgs = listOf("-Xjsr305=strict") // Enable strict null-safety for Kotlin project
-    jvmTarget = "15"
+    jvmTarget = "17"
   }
 }
 
