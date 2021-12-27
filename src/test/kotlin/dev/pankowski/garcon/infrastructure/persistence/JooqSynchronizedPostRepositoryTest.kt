@@ -79,16 +79,13 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
 
   "updates synchronized post" - {
 
-    data class UpdateTestCase(val repost: Repost) : WithDataTestName {
-      override fun dataTestName() = "updates synchronized post with $repost repost"
-    }
-
-    withData(
-      UpdateTestCase(Repost.Skip),
-      UpdateTestCase(Repost.Pending),
-      UpdateTestCase(someFailedRepost()),
-      UpdateTestCase(someSuccessRepost())
-    ) { (repost) ->
+    withData<Repost>(
+      { "updates synchronized post with $it repost" },
+      Repost.Skip,
+      Repost.Pending,
+      someFailedRepost(),
+      someSuccessRepost()
+    ) { repost ->
       // given
       val stored = someStoredSynchronizedPost()
       val updateData = UpdateData(stored.id, stored.version, repost)

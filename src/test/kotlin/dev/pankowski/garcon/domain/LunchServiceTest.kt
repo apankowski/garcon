@@ -149,14 +149,11 @@ class LunchServiceTest : FreeSpec({
 
   "retries failed reposts" - {
 
-    data class NoRetryTestCase(val repost: Repost) : WithDataTestName {
-      override fun dataTestName() = "doesn't retry ${repost::class.simpleName} repost"
-    }
-
-    withData(
-      NoRetryTestCase(Repost.Skip),
-      NoRetryTestCase(someSuccessRepost()),
-    ) { (r) ->
+    withData<Repost>(
+      { "doesn't retry ${it::class.simpleName} repost" },
+      Repost.Skip,
+      someSuccessRepost(),
+    ) { r ->
       // given
       val post = someSynchronizedPost(repost = r)
       val retryConfig = someRetryConfig()
@@ -179,14 +176,11 @@ class LunchServiceTest : FreeSpec({
       }
     }
 
-    data class RetryTestCase(val repost: Repost) : WithDataTestName {
-      override fun dataTestName() = "retries ${repost::class.simpleName} repost"
-    }
-
-    withData(
-      RetryTestCase(Repost.Pending),
-      RetryTestCase(someFailedRepost()),
-    ) { (r) ->
+    withData<Repost>(
+      { "retries ${it::class.simpleName} repost" },
+      Repost.Pending,
+      someFailedRepost(),
+    ) { r ->
       // given
       val post = someSynchronizedPost(repost = r)
       val retryConfig = someRetryConfig()
@@ -220,7 +214,8 @@ class LunchServiceTest : FreeSpec({
     }
 
     data class FailedRetryTestCase(val repost: Repost, val newAttempts: Int) : WithDataTestName {
-      override fun dataTestName() = "increments number of attempts after failed retry of ${repost::class.simpleName} repost"
+      override fun dataTestName() =
+        "increments number of attempts after failed retry of ${repost::class.simpleName} repost"
     }
 
     withData(

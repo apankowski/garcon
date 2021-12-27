@@ -80,15 +80,12 @@ class SlashCommandMethodArgumentResolverTest : FreeSpec({
 
   "required request params" - {
 
-    data class RequiredRequestParamTestCase(val requestParam: String) : WithDataTestName {
-      override fun dataTestName() = "request param '$requestParam' is required"
-    }
-
-    withData(
-      RequiredRequestParamTestCase("command"),
-      RequiredRequestParamTestCase("user_id"),
-      RequiredRequestParamTestCase("channel_id"),
-    ) { (requestParam) ->
+    withData<String>(
+      { "request param '$it' is required" },
+      "command",
+      "user_id",
+      "channel_id",
+    ) { requestParam ->
       // given
       val methodParameter = someMethodParameter(SlashCommand::class)
       val mockRequest = someMockRequestWithAllParameters()
@@ -103,17 +100,14 @@ class SlashCommandMethodArgumentResolverTest : FreeSpec({
 
   "optional request params" - {
 
-    data class OptionalRequestParamTestCase(val requestParam: String) : WithDataTestName {
-      override fun dataTestName() = "request param '$requestParam' is optional"
-    }
-
-    withData(
-      OptionalRequestParamTestCase("text"),
-      OptionalRequestParamTestCase("response_url"),
-      OptionalRequestParamTestCase("trigger_id"),
-      OptionalRequestParamTestCase("team_id"),
-      OptionalRequestParamTestCase("enterprise_id"),
-    ) { (requestParam) ->
+    withData<String>(
+      { "request param '$it' is optional" },
+      "text",
+      "response_url",
+      "trigger_id",
+      "team_id",
+      "enterprise_id",
+    ) { requestParam ->
       // given
       val methodParameter = someMethodParameter(SlashCommand::class)
       val mockRequest = someMockRequestWithAllParameters()
@@ -169,7 +163,8 @@ class SlashCommandMethodArgumentResolverTest : FreeSpec({
     command shouldBe SlashCommand(
       "/command",
       "some text",
-      URL("https://www.slack.com/some-response-link"),
+      // Silence warning about URL constructor (which is based on it throwing IOException)
+      @Suppress("BlockingMethodInNonBlockingContext") URL("https://www.slack.com/some-response-link"),
       TriggerId("some trigger id"),
       UserId("some user id"),
       ChannelId("some channel id"),
