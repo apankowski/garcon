@@ -6,10 +6,10 @@ group = "dev.pankowski"
 // PLUGINS
 
 plugins {
-  kotlin("jvm") version "1.4.32"
-  kotlin("kapt") version "1.4.32"
-  kotlin("plugin.spring") version "1.4.32"
-  id("org.springframework.boot") version "2.4.5"
+  kotlin("jvm") version "1.5.32"
+  kotlin("kapt") version "1.5.32"
+  kotlin("plugin.spring") version "1.5.32"
+  id("org.springframework.boot") version "2.5.8"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
   id("com.gorylenko.gradle-git-properties") version "2.3.2"
   id("com.adarshr.test-logger") version "3.1.0"
@@ -56,7 +56,7 @@ dependencyManagement {
   dependencies {
     dependency("org.jsoup:jsoup:1.14.3")
     dependency("com.github.tomakehurst:wiremock-jre8:2.32.0")
-    dependency("io.kotest:kotest-runner-junit5:4.5.0")
+    dependency("io.kotest:kotest-runner-junit5:4.6.4")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.0.1")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.3")
     dependency("io.mockk:mockk:1.12.1")
@@ -83,13 +83,7 @@ dependencies {
 
   // TESTS
   testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("io.rest-assured:rest-assured") {
-    // io.rest-assured:xml-path uses an older version of com.sun.xml.bind:jaxb-osgi which causes the following error:
-    // 'dependencyManagement.dependencies.dependency.systemPath' for com.sun:tools:jar must specify an absolute
-    //   path but is ${tools.jar} in com.sun.xml.bind:jaxb-osgi:2.2.10
-    // We don't use XML path matching so let's just remove it altogether.
-    exclude("io.rest-assured", "xml-path")
-  }
+  testImplementation("io.rest-assured:rest-assured")
   testImplementation("com.github.tomakehurst:wiremock-jre8")
 
   testImplementation("io.mockk:mockk")

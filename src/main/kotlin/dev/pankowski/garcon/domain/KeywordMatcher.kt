@@ -11,11 +11,11 @@ class KeywordMatcher private constructor(
 
   companion object {
     fun onWordsOf(text: String, locale: Locale) =
-      KeywordMatcher(text.toLowerCase(locale).extractWords(locale), locale)
+      KeywordMatcher(text.lowercase(locale).extractWords(locale), locale)
   }
 
   fun matches(keyword: Keyword) =
     words.any {
-      damerauLevenshtein(it, keyword.text.toLowerCase(locale)) <= keyword.editDistance
+      damerauLevenshtein(it, keyword.text.lowercase(locale)) <= keyword.editDistance
     }
 }
