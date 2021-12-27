@@ -141,6 +141,7 @@ tasks.flywayMigrate {
 
 jooqGenerator {
   jooqVersion = "3.14.15"
+  //jooqVersion = "3.15.0"
   configuration("database", sourceSets.main.get()) {
     databaseSources {
       + "${project.projectDir}/src/main/resources/db/migration"
