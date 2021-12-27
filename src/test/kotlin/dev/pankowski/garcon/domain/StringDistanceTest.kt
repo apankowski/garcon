@@ -1,18 +1,18 @@
 package dev.pankowski.garcon.domain
 
-import dev.pankowski.garcon.WithTestName
-import dev.pankowski.garcon.forAll
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.datatest.WithDataTestName
+import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
 
 class StringDistanceTest : FreeSpec({
 
-  data class TestCase(val a: String, val b: String, val distance: Int) : WithTestName {
-    override fun testName() = "distance between '$a' and '$b' is $distance"
+  data class TestCase(val a: String, val b: String, val distance: Int) : WithDataTestName {
+    override fun dataTestName() = "distance between '$a' and '$b' is $distance"
   }
 
   "Levenshtein distance between two strings" - {
-    forAll(
+    withData(
       TestCase("", "", 0),
       TestCase("abc", "abc", 0),
       TestCase("abc", "ab", 1),
@@ -31,7 +31,7 @@ class StringDistanceTest : FreeSpec({
   }
 
   "Damerau-Levenshtein distance between two strings" - {
-    forAll(
+    withData(
       TestCase("", "", 0),
       TestCase("", "abc", 3),
       TestCase("b", "abc", 2),

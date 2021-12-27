@@ -1,11 +1,11 @@
 package dev.pankowski.garcon.infrastructure.persistence
 
-import dev.pankowski.garcon.WithTestName
 import dev.pankowski.garcon.domain.*
-import dev.pankowski.garcon.forAll
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.datatest.WithDataTestName
+import io.kotest.datatest.withData
 import io.kotest.matchers.collections.beEmpty
 import io.kotest.matchers.date.between
 import io.kotest.matchers.nulls.beNull
@@ -38,12 +38,12 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       val pageName: PageName?,
       val classification: Classification,
       val repost: Repost
-    ) : WithTestName {
-      override fun testName() = "persists synchronized post with $classification classification " +
+    ) : WithDataTestName {
+      override fun dataTestName() = "persists synchronized post with $classification classification " +
         "and ${repost::class.simpleName} repost"
     }
 
-    forAll(
+    withData(
       PersistTestCase(null, Classification.MissingKeywords, Repost.Skip),
       PersistTestCase(PageName("some page name"), Classification.LunchPost, Repost.Pending),
       PersistTestCase(null, Classification.LunchPost, someFailedRepost()),
@@ -79,11 +79,11 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
 
   "updates synchronized post" - {
 
-    data class UpdateTestCase(val repost: Repost) : WithTestName {
-      override fun testName() = "updates synchronized post with $repost repost"
+    data class UpdateTestCase(val repost: Repost) : WithDataTestName {
+      override fun dataTestName() = "updates synchronized post with $repost repost"
     }
 
-    forAll(
+    withData(
       UpdateTestCase(Repost.Skip),
       UpdateTestCase(Repost.Pending),
       UpdateTestCase(someFailedRepost()),

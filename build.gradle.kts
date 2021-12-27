@@ -6,10 +6,10 @@ group = "dev.pankowski"
 // PLUGINS
 
 plugins {
-  kotlin("jvm") version "1.5.32"
-  kotlin("kapt") version "1.5.32"
-  kotlin("plugin.spring") version "1.5.32"
-  id("org.springframework.boot") version "2.5.8"
+  kotlin("jvm") version "1.6.10"
+  kotlin("kapt") version "1.6.10"
+  kotlin("plugin.spring") version "1.6.10"
+  id("org.springframework.boot") version "2.6.2"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
   id("com.gorylenko.gradle-git-properties") version "2.3.2"
   id("com.adarshr.test-logger") version "3.1.0"
@@ -56,8 +56,9 @@ dependencyManagement {
   dependencies {
     dependency("org.jsoup:jsoup:1.14.3")
     dependency("com.github.tomakehurst:wiremock-jre8:2.32.0")
-    dependency("io.kotest:kotest-runner-junit5:4.6.4")
-    dependency("io.kotest.extensions:kotest-extensions-spring:1.0.1")
+    dependency("io.kotest:kotest-runner-junit5:5.0.3")
+    dependency("io.kotest:kotest-framework-datatest:5.0.3")
+    dependency("io.kotest.extensions:kotest-extensions-spring:1.1.0")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.3")
     dependency("io.mockk:mockk:1.12.1")
   }
@@ -88,6 +89,7 @@ dependencies {
 
   testImplementation("io.mockk:mockk")
   testImplementation("io.kotest:kotest-runner-junit5")
+  testImplementation("io.kotest:kotest-framework-datatest")
   testImplementation("io.kotest.extensions:kotest-extensions-wiremock")
   testImplementation("io.kotest.extensions:kotest-extensions-spring")
 
