@@ -140,12 +140,13 @@ tasks.flywayMigrate {
 // JOOQ
 
 jooqGenerator {
-  jooqVersion = "3.14.3"
+  jooqVersion = "3.14.15"
   configuration("database", sourceSets.main.get()) {
     databaseSources {
       + "${project.projectDir}/src/main/resources/db/migration"
     }
     configuration = jooqCodegenConfiguration {
+      logging = org.jooq.meta.jaxb.Logging.WARN
       jdbc {
         driver = "org.postgresql.Driver"
         url = dbUrl
@@ -160,22 +161,22 @@ jooqGenerator {
           excludes = "flyway_schema_history"
           forcedTypes {
             forcedType {
-              types = "timestamp\\ with\\ time\\ zone"
+              includeTypes = "timestamp\\ with\\ time\\ zone"
               name = "INSTANT"
             }
             forcedType {
-              types = "integer"
-              expression = "version"
+              includeTypes = "integer"
+              includeExpression = "version"
               userType = "dev.pankowski.garcon.domain.Version"
               converter = "dev.pankowski.garcon.infrastructure.persistence.VersionConverter"
             }
             forcedType {
-              expression = "classification_status"
+              includeExpression = "classification_status"
               userType = "dev.pankowski.garcon.domain.ClassificationStatus"
               isEnumConverter = true
             }
             forcedType {
-              expression = "repost_status"
+              includeExpression = "repost_status"
               userType = "dev.pankowski.garcon.domain.RepostStatus"
               isEnumConverter = true
             }
@@ -186,7 +187,7 @@ jooqGenerator {
             // so Jooq treats this as CLOB (mapped to String on Java side), but I don't want the JDBC
             // CLOB infrastructure to be involved for these fields.
             forcedType {
-              types = "text"
+              includeTypes = "text"
               name = "varchar"
             }
           }
