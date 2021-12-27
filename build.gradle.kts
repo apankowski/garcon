@@ -207,10 +207,12 @@ jooqGenerator {
   }
 }
 
-val `jooq-codegen-database` by project.tasks
+val jooqCodegen = tasks.named("jooq-codegen-database")
 
-`jooq-codegen-database`.dependsOn(tasks.flywayMigrate)
+jooqCodegen {
+  dependsOn(tasks.flywayMigrate)
+}
 
 tasks.compileKotlin {
-  mustRunAfter(`jooq-codegen-database`)
+  mustRunAfter(jooqCodegen)
 }
