@@ -1,5 +1,6 @@
-import com.rohanprabhu.gradle.plugins.kdjooq.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jooq.meta.jaxb.ForcedType
+import org.jooq.meta.jaxb.Logging
 
 group = "dev.pankowski"
 
@@ -15,7 +16,7 @@ plugins {
   id("com.adarshr.test-logger") version "3.1.0"
   id("com.avast.gradle.docker-compose") version "0.14.11"
   id("org.flywaydb.flyway") version "8.3.0"
-  id("com.rohanprabhu.kotlin-dsl-jooq") version "0.4.6"
+  id("nu.studer.jooq") version "6.0.1"
 }
 
 tasks.wrapper {
@@ -96,7 +97,7 @@ dependencies {
   // OTHER
   kapt("org.springframework.boot:spring-boot-configuration-processor")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
-  jooqGeneratorRuntime("org.postgresql:postgresql")
+  jooqGenerator("org.postgresql:postgresql")
 }
 
 // CI
@@ -139,80 +140,79 @@ tasks.flywayMigrate {
 
 // JOOQ
 
-jooqGenerator {
-  jooqVersion = "3.15.5"
-  configuration("database", sourceSets.main.get()) {
-    databaseSources {
-      + "${project.projectDir}/src/main/resources/db/migration"
-    }
-    configuration = jooqCodegenConfiguration {
-      logging = org.jooq.meta.jaxb.Logging.WARN
-      jdbc {
-        driver = "org.postgresql.Driver"
-        url = dbUrl
-        user = dbUser
-        password = dbPassword
-      }
-      generator {
-        database {
-          name = "org.jooq.meta.postgres.PostgresDatabase"
-          inputSchema = "public"
-          // `flyway_schema_history` is a Flyway table.
-          excludes = "flyway_schema_history"
-          forcedTypes {
-            forcedType {
-              includeTypes = "timestamp\\ with\\ time\\ zone"
-              name = "INSTANT"
-            }
-            forcedType {
-              includeTypes = "integer"
-              includeExpression = "version"
-              userType = "dev.pankowski.garcon.domain.Version"
-              converter = "dev.pankowski.garcon.infrastructure.persistence.VersionConverter"
-            }
-            forcedType {
-              includeExpression = "classification_status"
-              userType = "dev.pankowski.garcon.domain.ClassificationStatus"
-              isEnumConverter = true
-            }
-            forcedType {
-              includeExpression = "repost_status"
-              userType = "dev.pankowski.garcon.domain.RepostStatus"
-              isEnumConverter = true
-            }
-            // Jooq applies the first matching conversion it encounters.
-            // For columns holding enum values both below and enum converters match.
-            // We want enum converters to win, so conversion below must be specified after them.
-            // We need this because PostgreSQL `text` type doesn't have length restrictions,
-            // so Jooq treats this as CLOB (mapped to String on Java side), but I don't want the JDBC
-            // CLOB infrastructure to be involved for these fields.
-            forcedType {
-              includeTypes = "text"
-              name = "varchar"
-            }
+jooq {
+  version.set("3.15.5")
+
+  configurations {
+    create("main") {
+
+      jooqConfiguration.apply {
+        logging = Logging.WARN
+        jdbc.apply {
+          driver = "org.postgresql.Driver"
+          url = dbUrl
+          user = dbUser
+          password = dbPassword
+        }
+        generator.apply {
+          name = "org.jooq.codegen.DefaultGenerator"
+          database.apply {
+            name = "org.jooq.meta.postgres.PostgresDatabase"
+            inputSchema = "public"
+            // `flyway_schema_history` is a Flyway table.
+            excludes = "flyway_schema_history"
+            forcedTypes.addAll(listOf(
+              ForcedType().apply {
+                includeTypes = "timestamp\\ with\\ time\\ zone"
+                name = "INSTANT"
+              },
+              ForcedType().apply {
+                includeTypes = "integer"
+                includeExpression = "version"
+                userType = "dev.pankowski.garcon.domain.Version"
+                converter = "dev.pankowski.garcon.infrastructure.persistence.VersionConverter"
+              },
+              ForcedType().apply {
+                includeExpression = "classification_status"
+                userType = "dev.pankowski.garcon.domain.ClassificationStatus"
+                isEnumConverter = true
+              },
+              ForcedType().apply {
+                includeExpression = "repost_status"
+                userType = "dev.pankowski.garcon.domain.RepostStatus"
+                isEnumConverter = true
+              },
+              // Jooq applies the first matching conversion it encounters.
+              // For columns holding enum values both below and enum converters match.
+              // We want enum converters to win, so conversion below must be specified after them.
+              // We need this because PostgreSQL `text` type doesn't have length restrictions,
+              // so Jooq treats this as CLOB (mapped to String on Java side), but I don't want the JDBC
+              // CLOB infrastructure to be involved for these fields.
+              ForcedType().apply {
+                includeTypes = "text"
+                name = "varchar"
+              }
+            ))
           }
-        }
-        generate {
-          isJavaTimeTypes = true
-          isFluentSetters = true
-          isGeneratedAnnotation = false
-          isDeprecated = false
-        }
-        target {
-          packageName = "dev.pankowski.garcon.infrastructure.persistence.generated"
-          directory = "build/generated/source/jooq/main"
+          generate.apply {
+            isDeprecated = false
+          }
+          target.apply {
+            packageName = "dev.pankowski.garcon.infrastructure.persistence.generated"
+            directory = "build/generated/source/jooq/main"
+          }
         }
       }
     }
   }
 }
 
-val jooqCodegen = tasks.named("jooq-codegen-database")
+val generateJooq = tasks.named("generateJooq")
 
-jooqCodegen {
+generateJooq {
   dependsOn(tasks.flywayMigrate)
 }
 
 tasks.compileKotlin {
-  mustRunAfter(jooqCodegen)
+  mustRunAfter(generateJooq)
 }
