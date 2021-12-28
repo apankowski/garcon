@@ -4,10 +4,10 @@
 # Whereas:
 # - azul/zulu-openjdk-alpine:17-jre-headless is 64.28 MB compressed
 # - gcr.io/distroless/java17:latest is 81.7 MB compressed
-FROM openjdk:17-slim
+FROM azul/zulu-openjdk-alpine:17-jre-headless as production
 
 # Curl is used in healthcheck.
-RUN apt-get update && apt-get install -y curl
+RUN apk --no-cache add curl
 
 RUN mkdir -p /application
 COPY ./entrypoint.sh /application
