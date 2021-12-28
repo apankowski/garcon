@@ -9,10 +9,11 @@ FROM azul/zulu-openjdk-alpine:17-jre-headless as production
 # Curl is used in healthcheck.
 RUN apk --no-cache add curl
 
-RUN mkdir -p /application
-COPY ./entrypoint.sh /application
-COPY ./build/libs/application.jar /application
+RUN addgroup -S nonroot && adduser -S -H -G nonroot nonroot
+USER nonroot:nonroot
 
+COPY ./entrypoint.sh /application/
+COPY ./build/libs/application.jar /application/
 WORKDIR /application
 
 EXPOSE 8080
