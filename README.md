@@ -27,7 +27,7 @@ The service is written in Kotlin and uses the following stack:
   * Kotlin 1.6 on Java 17
   * Gradle 7.3 (with build script in Kotlin)
   * Spring Boot 2.6
-  * Kotest 5.0 and KockK 1.12 for tests
+  * Kotest 5.0 and MockK 1.12 for tests
   * Jooq for database access
   * PostgreSQL 10+
 
