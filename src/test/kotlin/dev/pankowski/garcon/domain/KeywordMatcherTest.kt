@@ -1,19 +1,19 @@
 package dev.pankowski.garcon.domain
 
-import dev.pankowski.garcon.WithTestName
-import dev.pankowski.garcon.forAll
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.datatest.WithDataTestName
+import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
 import java.util.*
 
 class KeywordMatcherTest : FreeSpec({
 
-  data class TestCase(val text: String, val keyword: Keyword, val match: Boolean) : WithTestName {
-    override fun testName() = "'$text' matches '${keyword.text}' with edit distance ${keyword.editDistance}: $match"
+  data class TestCase(val text: String, val keyword: Keyword, val match: Boolean) : WithDataTestName {
+    override fun dataTestName() = "'$text' matches '${keyword.text}' with edit distance ${keyword.editDistance}: $match"
   }
 
   "text matches keyword" - {
-    forAll(
+    withData(
       TestCase("some text", Keyword("some", 0), true),
       TestCase("some text", Keyword("smoe", 1), true),
       TestCase("some text", Keyword("pxet", 2), true),

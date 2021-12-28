@@ -1,11 +1,11 @@
 package dev.pankowski.garcon.api
 
-import dev.pankowski.garcon.WithTestName
-import dev.pankowski.garcon.forAll
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.datatest.WithDataTestName
+import io.kotest.datatest.withData
 import io.kotest.matchers.ints.beGreaterThanOrEqualTo
 import io.kotest.matchers.shouldBe
 import org.springframework.core.MethodParameter
@@ -37,12 +37,12 @@ class SlashCommandMethodArgumentResolverTest : FreeSpec({
 
   "supported types" - {
 
-    data class SupportedTypeTestCase(val type: KClass<*>, val isSupported: Boolean) : WithTestName {
-      override fun testName() =
+    data class SupportedTypeTestCase(val type: KClass<*>, val isSupported: Boolean) : WithDataTestName {
+      override fun dataTestName() =
         "${if (isSupported) "supports" else "doesn't support"} argument of type ${type.simpleName}"
     }
 
-    forAll(
+    withData(
       SupportedTypeTestCase(SlashCommand::class, true),
       SupportedTypeTestCase(String::class, false),
       SupportedTypeTestCase(Int::class, false),
@@ -80,15 +80,12 @@ class SlashCommandMethodArgumentResolverTest : FreeSpec({
 
   "required request params" - {
 
-    data class RequiredRequestParamTestCase(val requestParam: String) : WithTestName {
-      override fun testName() = "request param '$requestParam' is required"
-    }
-
-    forAll(
-      RequiredRequestParamTestCase("command"),
-      RequiredRequestParamTestCase("user_id"),
-      RequiredRequestParamTestCase("channel_id"),
-    ) { (requestParam) ->
+    withData<String>(
+      { "request param '$it' is required" },
+      "command",
+      "user_id",
+      "channel_id",
+    ) { requestParam ->
       // given
       val methodParameter = someMethodParameter(SlashCommand::class)
       val mockRequest = someMockRequestWithAllParameters()
@@ -103,17 +100,14 @@ class SlashCommandMethodArgumentResolverTest : FreeSpec({
 
   "optional request params" - {
 
-    data class OptionalRequestParamTestCase(val requestParam: String) : WithTestName {
-      override fun testName() = "request param '$requestParam' is optional"
-    }
-
-    forAll(
-      OptionalRequestParamTestCase("text"),
-      OptionalRequestParamTestCase("response_url"),
-      OptionalRequestParamTestCase("trigger_id"),
-      OptionalRequestParamTestCase("team_id"),
-      OptionalRequestParamTestCase("enterprise_id"),
-    ) { (requestParam) ->
+    withData<String>(
+      { "request param '$it' is optional" },
+      "text",
+      "response_url",
+      "trigger_id",
+      "team_id",
+      "enterprise_id",
+    ) { requestParam ->
       // given
       val methodParameter = someMethodParameter(SlashCommand::class)
       val mockRequest = someMockRequestWithAllParameters()
@@ -128,11 +122,11 @@ class SlashCommandMethodArgumentResolverTest : FreeSpec({
 
   "invalid request param values" - {
 
-    data class InvalidRequestParamValueTestCase(val requestParam: String, val value: String) : WithTestName {
-      override fun testName() = "request param '$requestParam' = '$value' is invalid"
+    data class InvalidRequestParamValueTestCase(val requestParam: String, val value: String) : WithDataTestName {
+      override fun dataTestName() = "request param '$requestParam' = '$value' is invalid"
     }
 
-    forAll(
+    withData(
       InvalidRequestParamValueTestCase("response_url", "not a url"),
       InvalidRequestParamValueTestCase("response_url", "1"),
     ) { (requestParam, value) ->
@@ -169,7 +163,8 @@ class SlashCommandMethodArgumentResolverTest : FreeSpec({
     command shouldBe SlashCommand(
       "/command",
       "some text",
-      URL("https://www.slack.com/some-response-link"),
+      // Silence warning about URL constructor (which is based on it throwing IOException)
+      @Suppress("BlockingMethodInNonBlockingContext") URL("https://www.slack.com/some-response-link"),
       TriggerId("some trigger id"),
       UserId("some user id"),
       ChannelId("some channel id"),

@@ -10,8 +10,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.test.context.TestPropertySource
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.time.ExperimentalTime
-import kotlin.time.seconds
+import kotlin.time.Duration.Companion.seconds
 
 @TestPropertySource(
   properties = [
@@ -20,7 +19,6 @@ import kotlin.time.seconds
     "spring.main.allow-bean-definition-overriding: true"
   ]
 )
-@ExperimentalTime
 class ScheduledTaskIT(private val lunchService: LunchService) : CommonIT() {
 
   // Maybe use https://github.com/Ninja-Squad/springmockk ?

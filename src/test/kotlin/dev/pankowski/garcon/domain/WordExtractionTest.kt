@@ -1,21 +1,21 @@
 package dev.pankowski.garcon.domain
 
-import dev.pankowski.garcon.WithTestName
-import dev.pankowski.garcon.forAll
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.core.spec.style.scopes.ContainerContext
+import io.kotest.core.spec.style.scopes.ContainerScope
+import io.kotest.datatest.WithDataTestName
+import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
 import java.util.*
 import java.util.Locale.ENGLISH as EnglishLocale
 
 class WordExtractionTest : FreeSpec({
 
-  data class TestCase(val text: String, val words: List<String>) : WithTestName {
-    override fun testName() = "words extracted from '$text' are $words"
+  data class TestCase(val text: String, val words: List<String>) : WithDataTestName {
+    override fun dataTestName() = "words extracted from '$text' are $words"
   }
 
-  suspend fun ContainerContext.verifyExtractions(locale: Locale, vararg testCases: TestCase) =
-    forAll(*testCases) { (text, words) ->
+  suspend fun ContainerScope.verifyExtractions(locale: Locale, vararg testCases: TestCase) =
+    withData(testCases.toList()) { (text, words) ->
       // expect
       text.extractWords(locale) shouldBe words
     }

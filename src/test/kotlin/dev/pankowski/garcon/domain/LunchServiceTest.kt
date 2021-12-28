@@ -1,12 +1,12 @@
 package dev.pankowski.garcon.domain
 
-import dev.pankowski.garcon.WithTestName
-import dev.pankowski.garcon.forAll
 import dev.pankowski.garcon.infrastructure.persistence.InMemorySynchronizedPostRepository
 import dev.pankowski.garcon.infrastructure.persistence.someFailedRepost
 import dev.pankowski.garcon.infrastructure.persistence.someSuccessRepost
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.datatest.WithDataTestName
+import io.kotest.datatest.withData
 import io.kotest.matchers.date.between
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
@@ -149,14 +149,11 @@ class LunchServiceTest : FreeSpec({
 
   "retries failed reposts" - {
 
-    data class NoRetryTestCase(val repost: Repost) : WithTestName {
-      override fun testName() = "doesn't retry ${repost::class.simpleName} repost"
-    }
-
-    forAll(
-      NoRetryTestCase(Repost.Skip),
-      NoRetryTestCase(someSuccessRepost()),
-    ) { (r) ->
+    withData<Repost>(
+      { "doesn't retry ${it::class.simpleName} repost" },
+      Repost.Skip,
+      someSuccessRepost(),
+    ) { r ->
       // given
       val post = someSynchronizedPost(repost = r)
       val retryConfig = someRetryConfig()
@@ -179,14 +176,11 @@ class LunchServiceTest : FreeSpec({
       }
     }
 
-    data class RetryTestCase(val repost: Repost) : WithTestName {
-      override fun testName() = "retries ${repost::class.simpleName} repost"
-    }
-
-    forAll(
-      RetryTestCase(Repost.Pending),
-      RetryTestCase(someFailedRepost()),
-    ) { (r) ->
+    withData<Repost>(
+      { "retries ${it::class.simpleName} repost" },
+      Repost.Pending,
+      someFailedRepost(),
+    ) { r ->
       // given
       val post = someSynchronizedPost(repost = r)
       val retryConfig = someRetryConfig()
@@ -219,11 +213,12 @@ class LunchServiceTest : FreeSpec({
       }
     }
 
-    data class FailedRetryTestCase(val repost: Repost, val newAttempts: Int) : WithTestName {
-      override fun testName() = "increments number of attempts after failed retry of ${repost::class.simpleName} repost"
+    data class FailedRetryTestCase(val repost: Repost, val newAttempts: Int) : WithDataTestName {
+      override fun dataTestName() =
+        "increments number of attempts after failed retry of ${repost::class.simpleName} repost"
     }
 
-    forAll(
+    withData(
       FailedRetryTestCase(Repost.Pending, 1),
       FailedRetryTestCase(someFailedRepost(attempts = 2), 3),
     ) { (r, newAttempts) ->

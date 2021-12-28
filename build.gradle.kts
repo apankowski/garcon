@@ -1,36 +1,37 @@
-import com.rohanprabhu.gradle.plugins.kdjooq.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jooq.meta.jaxb.ForcedType
+import org.jooq.meta.jaxb.Logging
 
 group = "dev.pankowski"
 
 // PLUGINS
 
 plugins {
-  kotlin("jvm") version "1.4.32"
-  kotlin("kapt") version "1.4.32"
-  kotlin("plugin.spring") version "1.4.32"
-  id("org.springframework.boot") version "2.4.5"
+  kotlin("jvm") version "1.6.10"
+  kotlin("kapt") version "1.6.10"
+  kotlin("plugin.spring") version "1.6.10"
+  id("org.springframework.boot") version "2.6.2"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
-  id("com.gorylenko.gradle-git-properties") version "2.2.4"
-  id("com.adarshr.test-logger") version "3.0.0"
-  id("com.avast.gradle.docker-compose") version "0.14.3"
-  id("org.flywaydb.flyway") version "7.8.2"
-  id("com.rohanprabhu.kotlin-dsl-jooq") version "0.4.6"
+  id("com.gorylenko.gradle-git-properties") version "2.3.2"
+  id("com.adarshr.test-logger") version "3.1.0"
+  id("com.avast.gradle.docker-compose") version "0.14.11"
+  id("org.flywaydb.flyway") version "8.3.0"
+  id("nu.studer.jooq") version "6.0.1"
 }
 
 tasks.wrapper {
-  gradleVersion = "6.9"
+  gradleVersion = "7.3.3"
 }
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_15
-  targetCompatibility = JavaVersion.VERSION_15
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
 }
 
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     freeCompilerArgs = listOf("-Xjsr305=strict") // Enable strict null-safety for Kotlin project
-    jvmTarget = "15"
+    jvmTarget = "17"
   }
 }
 
@@ -54,12 +55,13 @@ repositories {
 
 dependencyManagement {
   dependencies {
-    dependency("org.jsoup:jsoup:1.13.1")
-    dependency("com.github.tomakehurst:wiremock:2.27.2")
-    dependency("io.kotest:kotest-runner-junit5:4.5.0")
-    dependency("io.kotest.extensions:kotest-extensions-spring:1.0.0")
-    dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.2")
-    dependency("io.mockk:mockk:1.11.0")
+    dependency("org.jsoup:jsoup:1.14.3")
+    dependency("com.github.tomakehurst:wiremock-jre8:2.32.0")
+    dependency("io.kotest:kotest-runner-junit5:5.0.3")
+    dependency("io.kotest:kotest-framework-datatest:5.0.3")
+    dependency("io.kotest.extensions:kotest-extensions-spring:1.1.0")
+    dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.3")
+    dependency("io.mockk:mockk:1.12.1")
   }
 }
 
@@ -83,24 +85,19 @@ dependencies {
 
   // TESTS
   testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("io.rest-assured:rest-assured") {
-    // io.rest-assured:xml-path uses an older version of com.sun.xml.bind:jaxb-osgi which causes the following error:
-    // 'dependencyManagement.dependencies.dependency.systemPath' for com.sun:tools:jar must specify an absolute
-    //   path but is ${tools.jar} in com.sun.xml.bind:jaxb-osgi:2.2.10
-    // We don't use XML path matching so let's just remove it altogether.
-    exclude("io.rest-assured", "xml-path")
-  }
-  testImplementation("com.github.tomakehurst:wiremock")
+  testImplementation("io.rest-assured:rest-assured")
+  testImplementation("com.github.tomakehurst:wiremock-jre8")
 
   testImplementation("io.mockk:mockk")
   testImplementation("io.kotest:kotest-runner-junit5")
+  testImplementation("io.kotest:kotest-framework-datatest")
   testImplementation("io.kotest.extensions:kotest-extensions-wiremock")
   testImplementation("io.kotest.extensions:kotest-extensions-spring")
 
   // OTHER
   kapt("org.springframework.boot:spring-boot-configuration-processor")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
-  jooqGeneratorRuntime("org.postgresql:postgresql")
+  jooqGenerator("org.postgresql:postgresql")
 }
 
 // CI
@@ -110,7 +107,7 @@ val isCiEnv = System.getenv("CI") == "true"
 // DOCKER COMPOSE
 
 dockerCompose {
-  useComposeFiles = listOf("docker-compose-integration-test.yml")
+  useComposeFiles.set(listOf("docker-compose-integration-test.yml"))
 }
 
 // DATABASE
@@ -143,77 +140,79 @@ tasks.flywayMigrate {
 
 // JOOQ
 
-jooqGenerator {
-  jooqVersion = "3.14.3"
-  configuration("database", sourceSets.main.get()) {
-    databaseSources {
-      + "${project.projectDir}/src/main/resources/db/migration"
-    }
-    configuration = jooqCodegenConfiguration {
-      jdbc {
-        driver = "org.postgresql.Driver"
-        url = dbUrl
-        user = dbUser
-        password = dbPassword
-      }
-      generator {
-        database {
-          name = "org.jooq.meta.postgres.PostgresDatabase"
-          inputSchema = "public"
-          // `flyway_schema_history` is a Flyway table.
-          excludes = "flyway_schema_history"
-          forcedTypes {
-            forcedType {
-              types = "timestamp\\ with\\ time\\ zone"
-              name = "INSTANT"
-            }
-            forcedType {
-              types = "integer"
-              expression = "version"
-              userType = "dev.pankowski.garcon.domain.Version"
-              converter = "dev.pankowski.garcon.infrastructure.persistence.VersionConverter"
-            }
-            forcedType {
-              expression = "classification_status"
-              userType = "dev.pankowski.garcon.domain.ClassificationStatus"
-              isEnumConverter = true
-            }
-            forcedType {
-              expression = "repost_status"
-              userType = "dev.pankowski.garcon.domain.RepostStatus"
-              isEnumConverter = true
-            }
-            // Jooq applies the first matching conversion it encounters.
-            // For columns holding enum values both below and enum converters match.
-            // We want enum converters to win, so conversion below must be specified after them.
-            // We need this because PostgreSQL `text` type doesn't have length restrictions,
-            // so Jooq treats this as CLOB (mapped to String on Java side), but I don't want the JDBC
-            // CLOB infrastructure to be involved for these fields.
-            forcedType {
-              types = "text"
-              name = "varchar"
-            }
+jooq {
+  version.set("3.15.5")
+
+  configurations {
+    create("main") {
+
+      jooqConfiguration.apply {
+        logging = Logging.WARN
+        jdbc.apply {
+          driver = "org.postgresql.Driver"
+          url = dbUrl
+          user = dbUser
+          password = dbPassword
+        }
+        generator.apply {
+          name = "org.jooq.codegen.DefaultGenerator"
+          database.apply {
+            name = "org.jooq.meta.postgres.PostgresDatabase"
+            inputSchema = "public"
+            // `flyway_schema_history` is a Flyway table.
+            excludes = "flyway_schema_history"
+            forcedTypes.addAll(listOf(
+              ForcedType().apply {
+                includeTypes = "timestamp\\ with\\ time\\ zone"
+                name = "INSTANT"
+              },
+              ForcedType().apply {
+                includeTypes = "integer"
+                includeExpression = "version"
+                userType = "dev.pankowski.garcon.domain.Version"
+                converter = "dev.pankowski.garcon.infrastructure.persistence.VersionConverter"
+              },
+              ForcedType().apply {
+                includeExpression = "classification_status"
+                userType = "dev.pankowski.garcon.domain.ClassificationStatus"
+                isEnumConverter = true
+              },
+              ForcedType().apply {
+                includeExpression = "repost_status"
+                userType = "dev.pankowski.garcon.domain.RepostStatus"
+                isEnumConverter = true
+              },
+              // Jooq applies the first matching conversion it encounters.
+              // For columns holding enum values both below and enum converters match.
+              // We want enum converters to win, so conversion below must be specified after them.
+              // We need this because PostgreSQL `text` type doesn't have length restrictions,
+              // so Jooq treats this as CLOB (mapped to String on Java side), but I don't want the JDBC
+              // CLOB infrastructure to be involved for these fields.
+              ForcedType().apply {
+                includeTypes = "text"
+                name = "varchar"
+              }
+            ))
           }
-        }
-        generate {
-          isJavaTimeTypes = true
-          isFluentSetters = true
-          isGeneratedAnnotation = false
-          isDeprecated = false
-        }
-        target {
-          packageName = "dev.pankowski.garcon.infrastructure.persistence.generated"
-          directory = "build/generated/source/jooq/main"
+          generate.apply {
+            isDeprecated = false
+          }
+          target.apply {
+            packageName = "dev.pankowski.garcon.infrastructure.persistence.generated"
+            directory = "build/generated/source/jooq/main"
+          }
         }
       }
     }
   }
 }
 
-val `jooq-codegen-database` by project.tasks
+val generateJooq = tasks.named("generateJooq")
 
-`jooq-codegen-database`.dependsOn(tasks.flywayMigrate)
+generateJooq {
+  dependsOn(tasks.flywayMigrate)
+}
 
 tasks.compileKotlin {
-  mustRunAfter(`jooq-codegen-database`)
+  mustRunAfter(generateJooq)
 }

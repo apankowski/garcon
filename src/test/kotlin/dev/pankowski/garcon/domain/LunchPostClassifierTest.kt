@@ -1,19 +1,19 @@
 package dev.pankowski.garcon.domain
 
-import dev.pankowski.garcon.WithTestName
-import dev.pankowski.garcon.forAll
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.core.spec.style.scopes.ContainerContext
+import io.kotest.core.spec.style.scopes.ContainerScope
+import io.kotest.datatest.WithDataTestName
+import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
 
 class LunchPostClassifierTest : FreeSpec({
 
-  data class TestCase(val content: String, val classification: Classification) : WithTestName {
-    override fun testName() = "classifies '$content' as $classification"
+  data class TestCase(val content: String, val classification: Classification) : WithDataTestName {
+    override fun dataTestName() = "classifies '$content' as $classification"
   }
 
-  suspend fun ContainerContext.verifyClassifications(postConfig: LunchPostConfig, vararg testCases: TestCase) =
-    forAll(*testCases) { (content, classification) ->
+  suspend fun ContainerScope.verifyClassifications(postConfig: LunchPostConfig, vararg testCases: TestCase) =
+    withData(testCases.toList()) { (content, classification) ->
       // given
       val post = somePost(content = content)
       val classifier = LunchPostClassifier(postConfig)

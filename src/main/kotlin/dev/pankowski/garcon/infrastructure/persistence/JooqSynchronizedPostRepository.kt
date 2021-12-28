@@ -201,7 +201,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       .where(SYNCHRONIZED_POSTS.REPOST_STATUS.equal(RepostStatus.FAILED))
       .and(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS.lessThan(maxAttempts))
       .and(
-        timestampAdd(
+        timestampAdd<Any>(
           SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT.coerce(Timestamp::class.java),
           power(2, SYNCHRONIZED_POSTS.REPOST_ATTEMPTS - 1) * baseDelay.toSeconds(),
           DatePart.SECOND
