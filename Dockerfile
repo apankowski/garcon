@@ -9,10 +9,10 @@ FROM azul/zulu-openjdk-alpine:17-jre-headless as production
 # Curl is used in healthcheck.
 RUN apk --no-cache add curl
 
-RUN addgroup -S nonroot \
- && adduser -S -H -G nonroot nonroot \
- && mkdir -p /app \
- && chown nonroot:nonroot /app
+RUN addgroup -S nonroot && \
+    adduser -S -H -G nonroot nonroot && \
+    mkdir -p /app && \
+    chown nonroot:nonroot /app
 USER nonroot:nonroot
 
 COPY ./entrypoint.sh /app
