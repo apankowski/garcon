@@ -2,7 +2,7 @@ name: Build feature branch
 on:
   pull_request:
     branches:
-    - feature/*
+    - main
 
 env:
   DOCKER_BUILDKIT: 1
