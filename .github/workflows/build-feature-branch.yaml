@@ -36,6 +36,13 @@ jobs:
     - name: Run tests
       run: ./gradlew test
 
+    - name: Publish test results
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: always()
+      with:
+        check_name: Test Results
+        files: build/test-results/**/*.xml
+
     - name: Build docker image
       uses: docker/build-push-action@v2
       with:
