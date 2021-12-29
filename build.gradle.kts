@@ -1,3 +1,4 @@
+import nu.studer.gradle.jooq.JooqGenerate
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
 import org.jooq.meta.jaxb.Logging
@@ -207,9 +208,11 @@ jooq {
   }
 }
 
-val generateJooq = tasks.named("generateJooq")
+val generateJooq = tasks.named<JooqGenerate>("generateJooq")
 
 generateJooq {
+  inputs.dir("src/main/resources/db/migration")
+  allInputsDeclared.set(true)
   dependsOn(tasks.flywayMigrate)
 }
 
