@@ -1,4 +1,4 @@
-name: Build feature branch
+name: Build pull request
 on:
   pull_request:
     branches:
@@ -34,11 +34,20 @@ jobs:
       run: ./gradlew bootJar
 
     - name: Run tests
+      id: test
       run: ./gradlew test
+
+    - name: Archive test results
+      uses: actions/upload-artifact@v2
+      if: always() && (steps.test.conclusion != 'skipped')
+      with:
+        name: test-results
+        path: build/reports/tests/test/**/*
+        if-no-files-found: error
 
     - name: Publish test results
       uses: EnricoMi/publish-unit-test-result-action@v1
-      if: always()
+      if: always() && (steps.test.conclusion != 'skipped')
       with:
         check_name: Test Results
         files: build/test-results/**/*.xml
