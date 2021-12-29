@@ -4,16 +4,20 @@
 # Whereas:
 # - azul/zulu-openjdk-alpine:17-jre-headless is 64.28 MB compressed
 # - gcr.io/distroless/java17:latest is 81.7 MB compressed
-FROM openjdk:17-slim
+FROM azul/zulu-openjdk-alpine:17-jre-headless as production
 
 # Curl is used in healthcheck.
-RUN apt-get update && apt-get install -y curl
+RUN apk --no-cache add curl
 
-RUN mkdir -p /application
-COPY ./entrypoint.sh /application
-COPY ./build/libs/application.jar /application
+RUN addgroup -S nonroot && \
+  adduser -S -H -G nonroot nonroot && \
+  mkdir -p /app && \
+  chown nonroot:nonroot /app
+USER nonroot:nonroot
 
-WORKDIR /application
+COPY ./entrypoint.sh /app
+COPY ./build/libs/application.jar /app
+WORKDIR /app
 
 EXPOSE 8080
 
@@ -21,4 +25,4 @@ HEALTHCHECK CMD curl --fail http://localhost:8080/internal/health || exit 1
 
 # Heroku requires CMD to be specified. Can be changed to ENTRYPOINT when (if) we stop using Heroku.
 #ENTRYPOINT ["/application/entrypoint.sh"]
-CMD ["/application/entrypoint.sh"]
+CMD ["./entrypoint.sh"]
