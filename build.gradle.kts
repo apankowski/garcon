@@ -63,6 +63,7 @@ dependencyManagement {
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.0")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.3")
     dependency("io.mockk:mockk:1.12.1")
+    dependency("com.tngtech.archunit:archunit-junit5:0.22.0")
   }
 }
 
@@ -88,6 +89,7 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.rest-assured:rest-assured")
   testImplementation("com.github.tomakehurst:wiremock-jre8")
+  testImplementation("com.tngtech.archunit:archunit-junit5")
 
   testImplementation("io.mockk:mockk")
   testImplementation("io.kotest:kotest-runner-junit5")
