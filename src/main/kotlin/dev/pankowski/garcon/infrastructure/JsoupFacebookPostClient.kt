@@ -29,7 +29,6 @@ class JsoupFacebookPostClient(private val clientConfig: LunchClientConfig) : Fac
     return pageName to posts
   }
 
-  // We use retries as Facebook seems to be responding with 500 from time to time.
   private fun fetchDocument(url: URL): Document {
     fun fetch() =
       HttpConnection.connect(url)
@@ -41,6 +40,7 @@ class JsoupFacebookPostClient(private val clientConfig: LunchClientConfig) : Fac
         .timeout(clientConfig.timeout.toMillis().toInt())
         .get()
 
+    // We use retries as Facebook seems to be responding with 500 from time to time
     repeat(2) {
       try {
         return fetch()
