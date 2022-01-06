@@ -1,6 +1,5 @@
 package dev.pankowski.garcon.domain
 
-import dev.pankowski.garcon.infrastructure.JsoupFacebookPostClient
 import dev.pankowski.garcon.infrastructure.persistence.InMemorySynchronizedPostRepository
 import dev.pankowski.garcon.infrastructure.persistence.someFailedRepost
 import dev.pankowski.garcon.infrastructure.persistence.someSuccessRepost
@@ -21,7 +20,7 @@ class LunchServiceTest : FreeSpec({
     // given
     val pageConfig = somePageConfig()
 
-    val postClient = mockk<JsoupFacebookPostClient>()
+    val postClient = mockk<FacebookPostClient>()
     val repository = mockk<SynchronizedPostRepository>()
     val service = spyk(
       LunchService(someLunchConfig(pages = listOf(pageConfig)), mockk(), repository, postClient, mockk(), mockk())
@@ -45,7 +44,7 @@ class LunchServiceTest : FreeSpec({
     val lastSeenPublishedAt = now()
     val lastSeen = somePost(publishedAt = lastSeenPublishedAt)
 
-    val postClient = mockk<JsoupFacebookPostClient>()
+    val postClient = mockk<FacebookPostClient>()
     val postClassifier = mockk<LunchPostClassifier>()
     val reposter = mockk<SlackReposter>()
     val repository = mockk<SynchronizedPostRepository>()
@@ -85,7 +84,7 @@ class LunchServiceTest : FreeSpec({
     val post = somePost()
     val classification = Classification.LunchPost
 
-    val postClient = mockk<JsoupFacebookPostClient>()
+    val postClient = mockk<FacebookPostClient>()
     val postClassifier = mockk<LunchPostClassifier>()
     val reposter = mockk<SlackReposter>()
     val repository = spyk(InMemorySynchronizedPostRepository())
@@ -116,7 +115,7 @@ class LunchServiceTest : FreeSpec({
     val post = somePost()
     val classification = Classification.MissingKeywords
 
-    val postClient = mockk<JsoupFacebookPostClient>()
+    val postClient = mockk<FacebookPostClient>()
     val postClassifier = mockk<LunchPostClassifier>()
     val reposter = mockk<SlackReposter>()
     val repository = spyk(InMemorySynchronizedPostRepository())
