@@ -44,6 +44,15 @@ data class LunchClientConfig(
 
   /** Max time to wait for the lunch page to be fetched. */
   val timeout: Duration = Duration.ofSeconds(10),
+
+  /** Number of retries in case of failure. */
+  val retries: Int = 2,
+
+  /** Min wait time between retries. */
+  val retryMinJitter: Duration = Duration.ofMillis(50),
+
+  /** Max wait time between retries. */
+  val retryMaxJitter: Duration = Duration.ofSeconds(3),
 )
 
 /** Configuration related to lunch post classification. */

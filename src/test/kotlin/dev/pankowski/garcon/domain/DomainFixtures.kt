@@ -28,8 +28,11 @@ fun someSyncConfig(
 
 fun someClientConfig(
   userAgent: String = "Some User Agent",
-  timeout: Duration = Duration.ofSeconds(5)
-) = LunchClientConfig(userAgent, timeout)
+  timeout: Duration = Duration.ofSeconds(5),
+  retries: Int = 1,
+  retryMinJitter: Duration = Duration.ofMillis(50),
+  retryMaxJitter: Duration = Duration.ofMillis(500),
+) = LunchClientConfig(userAgent, timeout, retries, retryMinJitter, retryMaxJitter)
 
 fun somePostConfig(
   locale: Locale = PolishLocale,

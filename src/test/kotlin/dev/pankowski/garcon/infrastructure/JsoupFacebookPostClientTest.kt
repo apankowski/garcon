@@ -74,9 +74,9 @@ class JsoupFacebookPostClientTest : FreeSpec({
       else -> url.readText()
     }
 
-  "attempts retrieving given page 3 times in case of failure" {
+  "retries given page in case of failure" {
     // given
-    val client = JsoupFacebookPostClient(someClientConfig())
+    val client = JsoupFacebookPostClient(someClientConfig(retries = 2))
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -112,9 +112,9 @@ class JsoupFacebookPostClientTest : FreeSpec({
     nameAndPosts shouldBe Pair(null, emptyList())
   }
 
-  "fails when all 3 attempts to retrieve given page fail" {
+  "fails when all attempts to retrieve given page fail" {
     // given
-    val client = JsoupFacebookPostClient(someClientConfig())
+    val client = JsoupFacebookPostClient(someClientConfig(retries = 2))
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and

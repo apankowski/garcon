@@ -41,11 +41,11 @@ class JsoupFacebookPostClient(private val clientConfig: LunchClientConfig) : Fac
         .get()
 
     // We use retries as Facebook seems to be responding with 500 from time to time
-    repeat(2) {
+    repeat(clientConfig.retries) {
       try {
         return fetch()
       } catch (_: Exception) {
-        Thread.sleep(Random.nextLong(50, 500))
+        Thread.sleep(Random.nextLong(clientConfig.retryMinJitter.toMillis(), clientConfig.retryMaxJitter.toMillis()))
       }
     }
     return fetch()
