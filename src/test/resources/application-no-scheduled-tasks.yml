@@ -4,6 +4,9 @@ lunch:
   client:
     user-agent: "Some user agent"
     timeout: PT100S
+    retries: 1
+    retryMinJitter: PT1S
+    retryMaxJitter: PT4S
   pages:
   - id: PŻPS
     url: http://localhost:9876/lunch/facebook/pzps/posts

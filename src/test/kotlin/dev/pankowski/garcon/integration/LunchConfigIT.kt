@@ -36,6 +36,9 @@ class LunchConfigIT(
     clientConfig shouldBe LunchClientConfig(
       userAgent = "Some user agent",
       timeout = Duration.parse("PT100S"),
+      retries = 1,
+      retryMinJitter = Duration.ofSeconds(1),
+      retryMaxJitter = Duration.ofSeconds(4),
     )
   }
 
