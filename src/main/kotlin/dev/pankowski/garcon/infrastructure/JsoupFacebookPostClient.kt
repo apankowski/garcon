@@ -16,7 +16,7 @@ import java.time.Instant
 import kotlin.random.Random
 
 @Component
-class JsoupFacebookPostClient(private val clientConfig: LunchClientConfig) : FacebookPostClient {
+class JsoupFacebookPostClient(private val clientConfig: ClientConfig) : FacebookPostClient {
 
   private val log: Logger = LoggerFactory.getLogger(javaClass)
 
@@ -41,7 +41,7 @@ class JsoupFacebookPostClient(private val clientConfig: LunchClientConfig) : Fac
         .get()
 
     // We use retries as Facebook seems to be responding with 500 from time to time
-    repeat(clientConfig.retries) {
+    repeat(clientConfig.retryCount) {
       try {
         return fetch()
       } catch (_: Exception) {

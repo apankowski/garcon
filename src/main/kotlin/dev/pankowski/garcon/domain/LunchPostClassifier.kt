@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory.getLogger
 import org.springframework.stereotype.Component
 
 @Component
-class LunchPostClassifier(private val postConfig: LunchPostConfig) {
+class LunchPostClassifier(private val postConfig: PostConfig) {
 
   private val log = getLogger(javaClass)
 

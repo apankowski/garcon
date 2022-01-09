@@ -12,7 +12,7 @@ class LunchPostClassifierTest : FreeSpec({
     override fun dataTestName() = "classifies '$content' as $classification"
   }
 
-  suspend fun ContainerScope.verifyClassifications(postConfig: LunchPostConfig, vararg testCases: TestCase) =
+  suspend fun ContainerScope.verifyClassifications(postConfig: PostConfig, vararg testCases: TestCase) =
     withData(testCases.toList()) { (content, classification) ->
       // given
       val post = somePost(content = content)

@@ -4,7 +4,7 @@ lunch:
   client:
     user-agent: "Some user agent"
     timeout: PT100S
-    retries: 1
+    retryCount: 1
     retryMinJitter: PT1S
     retryMaxJitter: PT4S
   pages:

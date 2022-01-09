@@ -7,11 +7,11 @@ import java.time.Duration
 
 class LunchConfigIT(
   config: LunchConfig,
-  syncConfig: LunchSyncConfig,
-  clientConfig: LunchClientConfig,
-  postConfig: LunchPostConfig,
+  syncConfig: SyncConfig,
+  clientConfig: ClientConfig,
+  postConfig: PostConfig,
   slackConfig: SlackConfig,
-  retryConfig: RetryConfig,
+  repostRetryConfig: RepostRetryConfig,
 ) : CommonIT({
 
   "lunch config is set based on configuration properties" {
@@ -26,17 +26,17 @@ class LunchConfigIT(
 
   "sync config is set based on configuration properties" {
     // expect
-    syncConfig shouldBe LunchSyncConfig(
+    syncConfig shouldBe SyncConfig(
       interval = null,
     )
   }
 
   "client config is set based on configuration properties" {
     // expect
-    clientConfig shouldBe LunchClientConfig(
+    clientConfig shouldBe ClientConfig(
       userAgent = "Some user agent",
       timeout = Duration.parse("PT100S"),
-      retries = 1,
+      retryCount = 1,
       retryMinJitter = Duration.ofSeconds(1),
       retryMaxJitter = Duration.ofSeconds(4),
     )
@@ -44,7 +44,7 @@ class LunchConfigIT(
 
   "post config is set based on configuration properties" {
     // expect
-    postConfig shouldBe LunchPostConfig(
+    postConfig shouldBe PostConfig(
       locale = PolishLocale,
       keywords = listOf(
         Keyword("lunch", 1),
@@ -62,7 +62,7 @@ class LunchConfigIT(
 
   "retry config is set based on configuration properties" {
     // expect
-    retryConfig shouldBe RetryConfig(
+    repostRetryConfig shouldBe RepostRetryConfig(
       interval = null,
       baseDelay = Duration.ofSeconds(10),
       maxAttempts = 5,
