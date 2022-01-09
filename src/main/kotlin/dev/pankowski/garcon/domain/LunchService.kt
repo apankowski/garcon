@@ -7,7 +7,7 @@ import java.time.Instant
 @Component
 class LunchService(
   private val lunchConfig: LunchConfig,
-  private val retryConfig: RetryConfig,
+  private val repostRetryConfig: RepostRetryConfig,
   private val repository: SynchronizedPostRepository,
   private val postClient: FacebookPostClient,
   private val lunchPostClassifier: LunchPostClassifier,
@@ -104,5 +104,5 @@ class LunchService(
     repository.getLastSeen(20)
 
   fun retryFailedReposts() =
-    repository.streamRetryable(retryConfig.baseDelay, retryConfig.maxAttempts, ::repost)
+    repository.streamRetryable(repostRetryConfig.baseDelay, repostRetryConfig.maxAttempts, ::repost)
 }

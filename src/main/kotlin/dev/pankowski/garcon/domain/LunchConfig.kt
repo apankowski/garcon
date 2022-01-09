@@ -28,7 +28,7 @@ data class LunchPageConfig(
 /** Configuration of synchronization of lunch posts. */
 @ConstructorBinding
 @ConfigurationProperties("lunch.sync")
-data class LunchSyncConfig(
+data class SyncConfig(
 
   /** Interval between consecutive synchronizations of lunch posts. */
   val interval: Duration?,
@@ -37,19 +37,28 @@ data class LunchSyncConfig(
 /** Configuration of web client used to fetch lunch pages. */
 @ConstructorBinding
 @ConfigurationProperties("lunch.client")
-data class LunchClientConfig(
+data class ClientConfig(
 
   /** User agent by which the client identifies itself when fetching lunch pages. */
   val userAgent: String = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:80.0) Gecko/20100101 Firefox/80.0",
 
   /** Max time to wait for the lunch page to be fetched. */
   val timeout: Duration = Duration.ofSeconds(10),
+
+  /** Number of retries in case of failure. */
+  val retryCount: Int = 2,
+
+  /** Min wait time between retries. */
+  val retryMinJitter: Duration = Duration.ofMillis(50),
+
+  /** Max wait time between retries. */
+  val retryMaxJitter: Duration = Duration.ofSeconds(3),
 )
 
 /** Configuration related to lunch post classification. */
 @ConstructorBinding
 @ConfigurationProperties("lunch.post")
-data class LunchPostConfig(
+data class PostConfig(
 
   /** Locale of text of posts used while extracting their keywords. */
   val locale: Locale = Locale.ENGLISH,
@@ -70,7 +79,7 @@ data class SlackConfig(
 /** Configuration of retrying failed reposts. */
 @ConstructorBinding
 @ConfigurationProperties("lunch.repost.retry")
-data class RetryConfig(
+data class RepostRetryConfig(
 
   /** Interval between consecutive attempts to retry failed reposts. */
   val interval: Duration?,

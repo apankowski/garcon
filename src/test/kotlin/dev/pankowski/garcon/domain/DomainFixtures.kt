@@ -24,27 +24,30 @@ fun somePageConfig(
 
 fun someSyncConfig(
   interval: Duration? = Duration.ofMinutes(5),
-) = LunchSyncConfig(interval)
+) = SyncConfig(interval)
 
 fun someClientConfig(
   userAgent: String = "Some User Agent",
-  timeout: Duration = Duration.ofSeconds(5)
-) = LunchClientConfig(userAgent, timeout)
+  timeout: Duration = Duration.ofSeconds(5),
+  retries: Int = 1,
+  retryMinJitter: Duration = Duration.ofMillis(50),
+  retryMaxJitter: Duration = Duration.ofMillis(500),
+) = ClientConfig(userAgent, timeout, retries, retryMinJitter, retryMaxJitter)
 
 fun somePostConfig(
   locale: Locale = PolishLocale,
   keywords: List<Keyword> = listOf(Keyword("lunch", 1), Keyword("lunchowa", 2)),
-) = LunchPostConfig(locale, keywords)
+) = PostConfig(locale, keywords)
 
 fun someSlackConfig(
   webhookUrl: URL = URL("https://slack/webhook"),
 ) = SlackConfig(webhookUrl)
 
-fun someRetryConfig(
+fun someRepostRetryConfig(
   interval: Duration? = Duration.ofMinutes(10),
   baseDelay: Duration = Duration.ofMinutes(1),
   maxAttempts: Int = 10,
-) = RetryConfig(interval, baseDelay, maxAttempts)
+) = RepostRetryConfig(interval, baseDelay, maxAttempts)
 
 // Domain
 fun somePost(

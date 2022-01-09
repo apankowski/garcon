@@ -156,7 +156,7 @@ class LunchServiceTest : FreeSpec({
     ) { r ->
       // given
       val post = someSynchronizedPost(repost = r)
-      val retryConfig = someRetryConfig()
+      val retryConfig = someRepostRetryConfig()
 
       val reposter = mockk<SlackReposter>()
       val repository = mockk<SynchronizedPostRepository>()
@@ -183,7 +183,7 @@ class LunchServiceTest : FreeSpec({
     ) { r ->
       // given
       val post = someSynchronizedPost(repost = r)
-      val retryConfig = someRetryConfig()
+      val retryConfig = someRepostRetryConfig()
 
       val reposter = mockk<SlackReposter>()
       val repository = mockk<SynchronizedPostRepository>()
@@ -224,7 +224,7 @@ class LunchServiceTest : FreeSpec({
     ) { (r, newAttempts) ->
       // given
       val post = someSynchronizedPost(repost = r)
-      val retryConfig = someRetryConfig()
+      val retryConfig = someRepostRetryConfig()
 
       val reposter = mockk<SlackReposter>()
       val repository = mockk<SynchronizedPostRepository>()

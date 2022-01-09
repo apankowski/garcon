@@ -1,7 +1,7 @@
 package dev.pankowski.garcon.configuration
 
 import dev.pankowski.garcon.domain.LunchService
-import dev.pankowski.garcon.domain.someRetryConfig
+import dev.pankowski.garcon.domain.someRepostRetryConfig
 import dev.pankowski.garcon.domain.someSyncConfig
 import io.kotest.core.spec.style.FreeSpec
 import io.mockk.*
@@ -17,7 +17,7 @@ class ScheduledTaskInitializerTest : FreeSpec({
 
     val taskScheduler = mockk<TaskScheduler>()
     val service = mockk<LunchService>()
-    val initializer = ScheduledTaskInitializer(taskScheduler, service, syncConfig, someRetryConfig(interval = null))
+    val initializer = ScheduledTaskInitializer(taskScheduler, service, syncConfig, someRepostRetryConfig(interval = null))
 
     every { service.synchronizeAll() } returns Unit
     every { taskScheduler.scheduleWithFixedDelay(any(), syncConfig.interval!!) } answers {
@@ -41,7 +41,7 @@ class ScheduledTaskInitializerTest : FreeSpec({
 
     val taskScheduler = mockk<TaskScheduler>()
     val service = mockk<LunchService>()
-    val initializer = ScheduledTaskInitializer(taskScheduler, service, syncConfig, someRetryConfig(interval = null))
+    val initializer = ScheduledTaskInitializer(taskScheduler, service, syncConfig, someRepostRetryConfig(interval = null))
 
     // when
     initializer.run()
@@ -55,7 +55,7 @@ class ScheduledTaskInitializerTest : FreeSpec({
 
   "schedules retrying of failed reposts when retry interval is set" {
     // given
-    val retryConfig = someRetryConfig(interval = Duration.ofSeconds(42))
+    val retryConfig = someRepostRetryConfig(interval = Duration.ofSeconds(42))
 
     val taskScheduler = mockk<TaskScheduler>()
     val service = mockk<LunchService>()
@@ -79,7 +79,7 @@ class ScheduledTaskInitializerTest : FreeSpec({
 
   "doesn't schedule retrying of failed reposts when retry interval is not set" {
     // given
-    val retryConfig = someRetryConfig(interval = null)
+    val retryConfig = someRepostRetryConfig(interval = null)
 
     val taskScheduler = mockk<TaskScheduler>()
     val service = mockk<LunchService>()
