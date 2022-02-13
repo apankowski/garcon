@@ -41,7 +41,8 @@ fun somePostConfig(
 
 fun someSlackConfig(
   webhookUrl: URL = URL("https://slack/webhook"),
-) = SlackConfig(webhookUrl)
+  signingSecret: String? = null,
+) = SlackConfig(webhookUrl, signingSecret)
 
 fun someRepostRetryConfig(
   interval: Duration? = Duration.ofMinutes(10),

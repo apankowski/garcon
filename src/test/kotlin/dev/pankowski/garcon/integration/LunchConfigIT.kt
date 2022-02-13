@@ -57,6 +57,7 @@ class LunchConfigIT(
     // expect
     slackConfig shouldBe SlackConfig(
       webhookUrl = URL("http://localhost:9876/lunch/slack/webhook"),
+      signingSecret = "some-signing-secret",
     )
   }
 

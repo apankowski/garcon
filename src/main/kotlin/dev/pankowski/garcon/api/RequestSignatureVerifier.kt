@@ -1,20 +1,17 @@
-package dev.pankowski.garcon.configuration
+package dev.pankowski.garcon.api
 
 import com.google.common.hash.Hashing
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.util.ContentCachingRequestWrapper
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-@Component
-class RequestSignatureVerifier : OncePerRequestFilter() {
+class RequestSignatureVerifier(signingSecret: String) : OncePerRequestFilter() {
 
-  val signingSecret = ""
-  val hashFunction = Hashing.hmacSha256(signingSecret.toByteArray())
+  private val hashFunction = Hashing.hmacSha256(signingSecret.toByteArray())
 
   override fun shouldNotFilter(request: HttpServletRequest) =
     !HttpMethod.POST.matches(request.method)
