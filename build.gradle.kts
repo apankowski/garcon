@@ -64,15 +64,17 @@ dependencyManagement {
     dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.3")
     dependency("io.mockk:mockk:1.12.1")
     dependency("com.tngtech.archunit:archunit-junit5:0.22.0")
+    dependency("com.google.guava:guava:31.0.1-jre")
   }
 }
 
 dependencies {
-  // KOTLIN
+  // Kotlin & standard library
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+  implementation("com.google.guava:guava")
 
-  // WEB
+  // Web
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -80,12 +82,12 @@ dependencies {
   // HTML
   implementation("org.jsoup:jsoup")
 
-  // PERSISTENCE
+  // Persistence
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.flywaydb:flyway-core")
   runtimeOnly("org.postgresql:postgresql")
 
-  // TESTS
+  // Tests
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.rest-assured:rest-assured")
   testImplementation("com.github.tomakehurst:wiremock-jre8")
@@ -97,7 +99,7 @@ dependencies {
   testImplementation("io.kotest.extensions:kotest-extensions-wiremock")
   testImplementation("io.kotest.extensions:kotest-extensions-spring")
 
-  // OTHER
+  // Other
   kapt("org.springframework.boot:spring-boot-configuration-processor")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
   jooqGenerator("org.postgresql:postgresql")

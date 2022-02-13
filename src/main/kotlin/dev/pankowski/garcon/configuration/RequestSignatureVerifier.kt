@@ -1,23 +1,20 @@
 package dev.pankowski.garcon.configuration
 
+import com.google.common.hash.Hashing
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.util.ContentCachingRequestWrapper
-import java.security.Key
-import java.util.*
-import javax.crypto.Mac
-import javax.crypto.spec.SecretKeySpec
 import javax.servlet.FilterChain
-import javax.servlet.annotation.WebFilter
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-@WebFilter
+@Component
 class RequestSignatureVerifier : OncePerRequestFilter() {
 
   val signingSecret = ""
-  val key = SecretKeySpec(signingSecret.toByteArray(), "HmacSHA256")
+  val hashFunction = Hashing.hmacSha256(signingSecret.toByteArray())
 
   override fun shouldNotFilter(request: HttpServletRequest) =
     !HttpMethod.POST.matches(request.method)
@@ -27,36 +24,30 @@ class RequestSignatureVerifier : OncePerRequestFilter() {
 
     val contentCachedRequest = object : ContentCachingRequestWrapper(request, 100_000) {
       override fun handleContentOverflow(contentCacheLimit: Int) {
-        response.sendError(HttpStatus.BAD_REQUEST.value(), "Request body exceeds maximum allowed length")
-        response.flushBuffer()
         overflowed = true;
       }
     }
 
+    // See https://api.slack.com/authentication/verifying-requests-from-slack
     val version = "v0"
     val timestamp = contentCachedRequest.getHeader("X-Slack-Request-Timestamp") ?: ""
     val payload = contentCachedRequest.reader.readText()
     if (overflowed) {
+      response.sendError(HttpStatus.BAD_REQUEST.value(), "Request body exceeds maximum allowed length")
+      response.flushBuffer()
       return
     }
 
     val message = "$version:$timestamp:$payload"
 
-    val expectedSignature = calculateMac(key, message)
     val actualSignature = contentCachedRequest.getHeader("X-Slack-Signature") ?: ""
-    if (actualSignature != expectedSignature) {
+    val expectedSignature = "v0=" + hashFunction.hashString(message, Charsets.UTF_8).toString()
+    if (!actualSignature.equals(expectedSignature, ignoreCase = true)) {
       response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid request signature")
       response.flushBuffer()
       return
+    } else {
+      filterChain.doFilter(contentCachedRequest, response)
     }
-
-    filterChain.doFilter(contentCachedRequest, response)
-  }
-
-  private fun calculateMac(key: Key, message: String): String {
-    val mac = Mac.getInstance("HmacSHA256")
-    mac.init(key)
-    mac.update(message.toByteArray())
-    return Base64.getUrlEncoder().encodeToString(mac.doFinal())
   }
 }
