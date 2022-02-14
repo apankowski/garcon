@@ -21,14 +21,12 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletRequestWrapper
 import javax.servlet.http.HttpServletResponse
 
-class RequestSignatureVerifyingFilter(signingSecret: String) : OncePerRequestFilter() {
+class RequestSignatureVerifyingFilter(private val signatureVerifier: SlackSignatureVerifier) : OncePerRequestFilter() {
 
   companion object {
     private const val MaxBodyLength = 100_000
     private val VerifiedHttpMethods = setOf(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH).map { it.name }
   }
-
-  private val signatureVerifier = SlackSignatureVerifier(signingSecret)
 
   override fun shouldNotFilter(request: HttpServletRequest) =
     !VerifiedHttpMethods.contains(request.method)

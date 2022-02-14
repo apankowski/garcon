@@ -1,6 +1,7 @@
 package dev.pankowski.garcon.configuration
 
 import dev.pankowski.garcon.api.RequestSignatureVerifyingFilter
+import dev.pankowski.garcon.api.SlackSignatureVerifier
 import dev.pankowski.garcon.domain.SlackConfig
 import org.slf4j.LoggerFactory.getLogger
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -16,6 +17,7 @@ class SlackConfiguration {
   @ConditionalOnProperty("lunch.slack.signing-secret")
   fun requestSignatureVerifyingFilter(slackConfig: SlackConfig): RequestSignatureVerifyingFilter {
     log.info("Signing secret is set - incoming requests will be verified")
-    return RequestSignatureVerifyingFilter(slackConfig.signingSecret!!)
+    val signatureVerifier = SlackSignatureVerifier(slackConfig.signingSecret!!)
+    return RequestSignatureVerifyingFilter(signatureVerifier)
   }
 }
