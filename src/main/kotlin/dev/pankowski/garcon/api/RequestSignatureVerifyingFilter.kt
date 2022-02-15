@@ -1,5 +1,6 @@
 package dev.pankowski.garcon.api
 
+import com.google.common.annotations.VisibleForTesting
 import org.springframework.http.HttpInputMessage
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -55,7 +56,8 @@ class RequestSignatureVerifyingFilter(private val signatureVerifier: SlackSignat
     filterChain.doFilter(InMemoryRequest(request, body), response)
   }
 
-  private class InMemoryRequest(request: HttpServletRequest, body: ByteArray) : HttpServletRequestWrapper(request) {
+  @VisibleForTesting
+  class InMemoryRequest(request: HttpServletRequest, body: ByteArray) : HttpServletRequestWrapper(request) {
 
     companion object {
       private val FormDataReader = AllEncompassingFormHttpMessageConverter()
