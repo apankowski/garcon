@@ -16,11 +16,11 @@ class ClassLocationTest : ArchUnitSpec({
     rule.check(classes)
   }
 
-  "configuration classes are in configuration package" {
+  "configuration classes are in configuration or API package" {
     // given
     val rule = classes()
       .that().areAnnotatedWith(Configuration::class.java)
-      .should().resideInAPackage(Packages.Configuration)
+      .should().resideInAnyPackage(Packages.Configuration, Packages.Api)
 
     // expect
     rule.check(classes)
