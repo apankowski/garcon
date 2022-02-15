@@ -11,7 +11,7 @@ class ActuatorIT : CommonIT() {
   init {
     "info endpoint contains git info" {
       // given
-      val specification = signedRequest()
+      val specification = request()
         .accept(MediaType.APPLICATION_JSON_VALUE)
 
       // when
@@ -33,7 +33,7 @@ class ActuatorIT : CommonIT() {
 
     "info endpoint contains build info" {
       // given
-      val specification = signedRequest()
+      val specification = request()
         .accept(MediaType.APPLICATION_JSON_VALUE)
 
       // when
@@ -57,7 +57,7 @@ class ActuatorIT : CommonIT() {
 
     "health endpoint contains health details" {
       // given
-      val specification = signedRequest()
+      val specification = request()
         .accept(MediaType.APPLICATION_JSON_VALUE)
 
       // when

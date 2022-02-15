@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import java.time.Instant
 import java.util.*
@@ -52,9 +53,14 @@ class CommonIT(block: FreeSpec.() -> Unit = {}) : FreeSpec(block) {
     flyway.migrate()
   }
 
-  fun signedRequest() =
+  fun request() =
     RestAssured
       .given()
+      .port(serverPort)
+      .log().all()!!
+
+  fun slackRequest() =
+    request()
       .config(
         config().httpClient(
           httpClientConfig().httpClientFactory {
@@ -65,8 +71,7 @@ class CommonIT(block: FreeSpec.() -> Unit = {}) : FreeSpec(block) {
           }
         )
       )
-      .port(serverPort)
-      .log().all()!!
+      .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)!!
 }
 
 class SlackRequestSigningInterceptor(signingSecret: String) : HttpRequestInterceptor {

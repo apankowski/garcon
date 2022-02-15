@@ -8,8 +8,7 @@ class LunchIT : CommonIT() {
   init {
     "lunch endpoint is responding" {
       // given
-      val specification = signedRequest()
-        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+      val specification = slackRequest()
         .accept(MediaType.APPLICATION_JSON_VALUE)
         .formParam("command", "/lunch")
         .formParam("text", "log")
@@ -34,8 +33,7 @@ class LunchIT : CommonIT() {
 
     "lunch endpoint handles errors" {
       // given
-      val specification = signedRequest()
-        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+      val specification = slackRequest()
         .accept(MediaType.APPLICATION_JSON_VALUE)
         .formParam("command", "/wrong")
         .formParam("text", "log")
