@@ -1,6 +1,7 @@
 package dev.pankowski.garcon.api
 
 import com.google.common.annotations.VisibleForTesting
+import org.slf4j.LoggerFactory.getLogger
 import org.springframework.http.HttpInputMessage
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -29,12 +30,15 @@ class RequestSignatureVerifyingFilter(private val signatureVerifier: SlackSignat
     private val VerifiedHttpMethods = setOf(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH).map { it.name }
   }
 
+  private val log = getLogger(javaClass)
+
   override fun shouldNotFilter(request: HttpServletRequest) =
     !VerifiedHttpMethods.contains(request.method)
 
   override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
     val body = request.inputStream.readNBytes(MaxBodyLength)
     if (!request.inputStream.isFinished) {
+      log.trace("Rejecting request to ${request.requestURI} due to body exceeding $MaxBodyLength bytes")
       response.sendError(
         HttpStatus.BAD_REQUEST.value(),
         "Request body exceeds maximum allowed length of $MaxBodyLength"
@@ -48,6 +52,7 @@ class RequestSignatureVerifyingFilter(private val signatureVerifier: SlackSignat
       override fun headerValue(name: String) = request.getHeader(name)
     })
     if (!hasCorrectSignature) {
+      log.trace("Rejecting request to ${request.requestURI} due to invalid signature")
       response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid request signature")
       response.flushBuffer()
       return
