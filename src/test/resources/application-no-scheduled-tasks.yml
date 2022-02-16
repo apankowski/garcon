@@ -19,9 +19,10 @@ lunch:
       edit-distance: 1
     - text: "lunchowa"
       edit-distance: 2
+  slack:
+    webhook-url: http://localhost:9876/lunch/slack/webhook
+    signing-secret: some-signing-secret
   repost:
-    slack:
-      webhook-url: http://localhost:9876/lunch/slack/webhook
     retry:
       interval: null
       base-delay: PT10S

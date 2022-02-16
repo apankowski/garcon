@@ -25,6 +25,10 @@ spring:
 server:
   port: ${PORT:8080} # For Heroku: the app must bind itself to $PORT port.
   forward-headers-strategy: native
+  tomcat:
+    threads:
+      min-spare: 2
+      max: 10
 
 management:
   endpoints:

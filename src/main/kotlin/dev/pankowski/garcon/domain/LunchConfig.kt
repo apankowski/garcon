@@ -67,13 +67,16 @@ data class PostConfig(
   val keywords: List<Keyword> = listOf(Keyword("lunch", 1)),
 )
 
-/** Configuration of Slack reposter. */
+/** Slack-related configuration. */
 @ConstructorBinding
-@ConfigurationProperties("lunch.repost.slack")
+@ConfigurationProperties("lunch.slack")
 data class SlackConfig(
 
   /** URL of Slack's Incoming Webhook that will be used to send lunch messages. */
   val webhookUrl: URL,
+
+  /** Signing secret of the Slack app used for request verification. */
+  val signingSecret: String?,
 )
 
 /** Configuration of retrying failed reposts. */
