@@ -29,7 +29,7 @@ import java.util.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("no-scheduled-tasks")
-class CommonIT(body: FreeSpec.() -> Unit = {}) : FreeSpec(body) {
+class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
 
   @LocalServerPort
   protected var serverPort: Int = 0
@@ -39,6 +39,10 @@ class CommonIT(body: FreeSpec.() -> Unit = {}) : FreeSpec(body) {
 
   @Autowired
   private lateinit var slackConfig: SlackConfig
+
+  init {
+    body()
+  }
 
   override fun extensions(): List<Extension> {
     return listOf(SpringExtension)

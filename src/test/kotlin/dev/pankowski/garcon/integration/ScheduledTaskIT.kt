@@ -24,6 +24,7 @@ class ScheduledTaskIT(private val lunchService: LunchService) : CommonIT() {
   // Maybe use https://github.com/Ninja-Squad/springmockk ?
   @TestConfiguration
   class Mocks {
+
     @Bean
     fun lunchService() = mockk<LunchService>()
   }
