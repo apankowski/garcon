@@ -78,5 +78,25 @@ class ActuatorIT : CommonIT() {
         .body("components.diskSpace.details.total", notEmpty())
         .body("components.diskSpace.details.free", notEmpty())
     }
+
+    "HTTP trace endpoint is enabled" {
+      // given
+      val specification = request()
+        .accept(MediaType.APPLICATION_JSON_VALUE)
+
+      // when
+      val response = specification
+        .get("/internal/httptrace")
+
+      // then
+      response
+        .then()
+        .log().all()
+        .assertThat()
+        .statusCode(HttpStatus.OK.value())
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .and()
+        .body("traces", notNullValue())
+    }
   }
 }
