@@ -34,11 +34,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: '*'
       base-path: /internal
   endpoint:
     health:
-      enabled: true
       show-details: always
 
 lunch:
