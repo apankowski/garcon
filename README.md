@@ -140,6 +140,8 @@ Specifically, information about the service & its health can be observed via the
 
 ## Possible further work
 
+  * Securing Actuator endpoints
+  * Adding verification of Slack request timestamps to prevent replay attacks
   * Slack webhook testing subcommand
   * Update/delete reposts based on upstream
   * [Prometheus](https://prometheus.io/) metrics
