@@ -2,14 +2,14 @@ package dev.pankowski.garcon.api
 
 import com.google.common.annotations.VisibleForTesting
 import org.slf4j.LoggerFactory.getLogger
-import org.springframework.http.HttpInputMessage
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter
 import org.springframework.http.server.ServletServerHttpRequest
+import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.filter.OncePerRequestFilter
-import org.springframework.web.util.WebUtils
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
@@ -27,13 +27,13 @@ class RequestSignatureVerifyingFilter(private val signatureVerifier: SlackSignat
 
   companion object {
     private const val MaxBodyLength = 100_000
-    private val VerifiedHttpMethods = setOf(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH).map { it.name }
+    private val VerifiedHttpMethods = setOf(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH)
   }
 
   private val log = getLogger(javaClass)
 
   override fun shouldNotFilter(request: HttpServletRequest) =
-    !VerifiedHttpMethods.contains(request.method)
+    request.method !in VerifiedHttpMethods.map { it.name }
 
   override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
     val body = request.inputStream.readNBytes(MaxBodyLength)
@@ -68,7 +68,7 @@ class RequestSignatureVerifyingFilter(private val signatureVerifier: SlackSignat
       private val FormDataReader = AllEncompassingFormHttpMessageConverter()
     }
 
-    private val characterEncoding = super.getCharacterEncoding() ?: WebUtils.DEFAULT_CHARACTER_ENCODING
+    private val characterEncoding = super.getCharacterEncoding() ?: Charsets.UTF_8.name()
     private val inputStream = ByteArrayInputStream(body)
     private val reader = BufferedReader(InputStreamReader(inputStream, characterEncoding))
 
@@ -104,17 +104,27 @@ class RequestSignatureVerifyingFilter(private val signatureVerifier: SlackSignat
     // return the query parameters. We have to supplement them with form parameters read from the (memorized) body
     // to fulfill their contract specified in ServletRequest.
     private val formData: MultiValueMap<String, String> by lazy {
-      val message: HttpInputMessage = object : ServletServerHttpRequest(request) {
-        override fun getBody() = inputStream
+
+      val isFormMediaType =
+        runCatching { MediaType.parseMediaType(request.contentType) }
+          .map { MediaType.APPLICATION_FORM_URLENCODED.includes(it) }
+          .getOrDefault(false)
+
+      if (isFormMediaType) {
+        val message = object : ServletServerHttpRequest(request) {
+          override fun getBody() = inputStream
+        }
+        FormDataReader.read(null, message)
+      } else {
+        LinkedMultiValueMap()
       }
-      FormDataReader.read(null, message)
     }
 
     override fun getParameter(name: String): String? =
       super.getParameter(name) ?: formData.getFirst(name)
 
     override fun getParameterNames(): Enumeration<String> =
-      enumeration(super.getParameterNames().toList() + formData.keys)
+      enumeration(super.getParameterNames().toList().toSet() + formData.keys)
 
     override fun getParameterValues(name: String): Array<String> =
       (super.getParameterValues(name) ?: emptyArray()) + (formData[name] ?: emptyList())
