@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 class ApiConfiguration {
 
+  // Not using getClass() due to Spring's proxy mechanism mangling the class name
   private val log = getLogger("ApiConfiguration")
 
   @Bean

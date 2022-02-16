@@ -1,5 +1,6 @@
 package dev.pankowski.garcon.domain
 
+import com.google.common.annotations.VisibleForTesting
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.Instant
@@ -28,7 +29,7 @@ class LunchService(
     }
   }
 
-  // Visible for testing
+  @VisibleForTesting
   fun synchronize(page: LunchPageConfig) =
     Mdc.PageId.having(page.id) {
       val synchronizedPosts = synchronizePosts(page)

@@ -29,7 +29,7 @@ import java.util.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("no-scheduled-tasks")
-class CommonIT(block: FreeSpec.() -> Unit = {}) : FreeSpec(block) {
+class CommonIT(body: FreeSpec.() -> Unit = {}) : FreeSpec(body) {
 
   @LocalServerPort
   protected var serverPort: Int = 0

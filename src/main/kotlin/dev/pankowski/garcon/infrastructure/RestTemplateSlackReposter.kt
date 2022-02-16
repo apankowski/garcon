@@ -1,5 +1,6 @@
 package dev.pankowski.garcon.infrastructure
 
+import com.google.common.annotations.VisibleForTesting
 import dev.pankowski.garcon.domain.*
 import org.slf4j.LoggerFactory.getLogger
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -12,7 +13,7 @@ class RestTemplateSlackReposter(private val slackConfig: SlackConfig, restTempla
 
   private val log = getLogger(javaClass)
 
-  // Visible for testing
+  @VisibleForTesting
   val restTemplate: RestTemplate = restTemplateBuilder.build()
 
   override fun repost(post: Post, pageName: PageName) {
