@@ -3,9 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
 import org.jooq.meta.jaxb.Logging
 
-group = "dev.pankowski"
-
-// PLUGINS
+// Gradle
 
 plugins {
   kotlin("jvm") version "1.6.10"
@@ -24,31 +22,9 @@ tasks.wrapper {
   gradleVersion = "7.3.3"
 }
 
-java {
-  sourceCompatibility = JavaVersion.VERSION_17
-  targetCompatibility = JavaVersion.VERSION_17
-}
+group = "dev.pankowski"
 
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    freeCompilerArgs = listOf("-Xjsr305=strict") // Enable strict null-safety for Kotlin project
-    jvmTarget = "17"
-  }
-}
-
-tasks.withType<Test> {
-  useJUnitPlatform()
-}
-
-springBoot {
-  buildInfo()
-}
-
-tasks.bootJar {
-  archiveFileName.set("application.jar")
-}
-
-// DEPENDENCIES
+// Dependencies
 
 repositories {
   mavenCentral()
@@ -105,17 +81,47 @@ dependencies {
   jooqGenerator("org.postgresql:postgresql")
 }
 
+// Java compiler
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    freeCompilerArgs = listOf("-Xjsr305=strict") // Enable strict null-safety for Kotlin project
+    jvmTarget = "17"
+  }
+}
+
+// Spring
+
+springBoot {
+  buildInfo()
+}
+
+tasks.bootJar {
+  archiveFileName.set("application.jar")
+}
+
 // CI
 
 val isCiEnv = System.getenv("CI") == "true"
 
-// DOCKER COMPOSE
+// Tests
+
+tasks.withType<Test> {
+  useJUnitPlatform()
+}
+
+// Docker compose
 
 dockerCompose {
   useComposeFiles.set(listOf("docker-compose-integration-test.yml"))
 }
 
-// DATABASE
+// Database
 
 tasks.register("databaseUp") {
   dependsOn(tasks.composeUp)
@@ -126,7 +132,7 @@ tasks.register("databaseDown") {
   dependsOn(tasks.composeDown)
 }
 
-// FLYWAY
+// Flyway
 
 val dbUrl = "jdbc:postgresql://localhost:5432/garcon"
 val dbUser = "garcon"
@@ -143,7 +149,7 @@ tasks.flywayMigrate {
   dependsOn(tasks.composeUp)
 }
 
-// JOOQ
+// Jooq
 
 jooq {
   version.set("3.15.5")
