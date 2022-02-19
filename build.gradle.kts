@@ -135,8 +135,6 @@ sonarqube {
     property("sonar.organization", "apankowski")
     property("sonar.projectKey", "garcon")
     property("sonar.host.url", "https://sonarcloud.io")
-    property("sonar.sources", "src/main/kotlin")
-    property("sonar.tests", "src/test/kotlin")
   }
 }
 
