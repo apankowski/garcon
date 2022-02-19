@@ -16,6 +16,7 @@ plugins {
   id("com.avast.gradle.docker-compose") version "0.14.11"
   id("org.flywaydb.flyway") version "8.3.0"
   id("nu.studer.jooq") version "6.0.1"
+  jacoco
 }
 
 tasks.wrapper {
@@ -109,10 +110,21 @@ tasks.bootJar {
 
 val isCiEnv = System.getenv("CI") == "true"
 
-// Tests
+// Tests & code coverage
 
 tasks.withType<Test> {
   useJUnitPlatform()
+}
+
+tasks.jacocoTestReport {
+  reports {
+    html.required.set(true)
+    xml.required.set(true)
+  }
+}
+
+tasks.test {
+  finalizedBy(tasks.jacocoTestReport)
 }
 
 // Docker compose

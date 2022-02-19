@@ -52,6 +52,14 @@ jobs:
         check_name: Test Results
         files: build/test-results/**/*.xml
 
+    - name: Archive code coverage report
+      uses: actions/upload-artifact@v2
+      if: always() && (steps.test.conclusion != 'skipped')
+      with:
+        name: code-coverage-report
+        path: build/reports/jacoco/test/html/**/*
+        if-no-files-found: error
+
     - name: Build docker image
       uses: docker/build-push-action@v2
       with:
