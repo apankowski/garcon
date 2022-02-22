@@ -1,5 +1,8 @@
 name: Build pull request
 on:
+  push:
+    branches:
+    - main
   pull_request:
     branches:
     - main
@@ -16,19 +19,23 @@ jobs:
     steps:
     - name: Checkout source code
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # Seems to be required by Sonar to figure out which code is "new"
 
     - name: Setup Docker Buildx
       uses: docker/setup-buildx-action@v1
 
-    - name: Set up JDK
+    - name: Setup Java
       uses: actions/setup-java@v2
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
 
     - name: Validate Gradle wrapper
       uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
 
     - name: Build fat JAR
       run: ./gradlew bootJar
@@ -59,6 +66,20 @@ jobs:
         name: code-coverage-report
         path: build/reports/jacoco/test/html/**/*
         if-no-files-found: error
+
+    - name: Cache Sonar packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.sonar/cache
+        key: sonar
+        restore-keys: sonar
+
+    - name: Analyze code with Sonar
+      if: always()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: ./gradlew sonarqube --info
 
     - name: Build docker image
       uses: docker/build-push-action@v2

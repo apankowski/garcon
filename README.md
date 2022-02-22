@@ -1,6 +1,6 @@
 # Garçon
 
-[![CodeScene Code Health](https://codescene.io/projects/22033/status-badges/code-health)](https://codescene.io/projects/22033)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=garcon&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=garcon) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=garcon&metric=coverage)](https://sonarcloud.io/summary/new_code?id=garcon) [![CodeScene Code Health](https://codescene.io/projects/22033/status-badges/code-health)](https://codescene.io/projects/22033)
 
 Simple PoC ("toy" if you will) of a [Slack](https://slack.com/) bot that re-posts lunch offers from chosen Facebook pages.
 

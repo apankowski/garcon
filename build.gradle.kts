@@ -17,6 +17,7 @@ plugins {
   id("org.flywaydb.flyway") version "8.3.0"
   id("nu.studer.jooq") version "6.0.1"
   jacoco
+  id("org.sonarqube") version "3.3"
 }
 
 tasks.wrapper {
@@ -125,6 +126,16 @@ tasks.jacocoTestReport {
 
 tasks.test {
   finalizedBy(tasks.jacocoTestReport)
+}
+
+// SonarCloud
+
+sonarqube {
+  properties {
+    property("sonar.organization", "apankowski")
+    property("sonar.projectKey", "garcon")
+    property("sonar.host.url", "https://sonarcloud.io")
+  }
 }
 
 // Docker compose
