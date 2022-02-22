@@ -142,9 +142,6 @@ sonarqube {
 
 dockerCompose {
   useComposeFiles.set(listOf("docker-compose-integration-test.yml"))
-  noRecreate.set(true)
-  stopContainers.set(false)
-  removeContainers.set(false)
 }
 
 // Database
