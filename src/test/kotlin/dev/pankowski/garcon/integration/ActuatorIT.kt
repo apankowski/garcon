@@ -10,7 +10,7 @@ class ActuatorIT : CommonIT({
 
   "info endpoint contains git info" {
     // given
-    val specification = request()
+    val specification = managementRequest()
       .accept(MediaType.APPLICATION_JSON_VALUE)
 
     // when
@@ -32,7 +32,7 @@ class ActuatorIT : CommonIT({
 
   "info endpoint contains build info" {
     // given
-    val specification = request()
+    val specification = managementRequest()
       .accept(MediaType.APPLICATION_JSON_VALUE)
 
     // when
@@ -56,7 +56,7 @@ class ActuatorIT : CommonIT({
 
   "health endpoint contains health details" {
     // given
-    val specification = request()
+    val specification = managementRequest()
       .accept(MediaType.APPLICATION_JSON_VALUE)
 
     // when
@@ -80,7 +80,7 @@ class ActuatorIT : CommonIT({
 
   "HTTP trace endpoint is enabled" {
     // given
-    val specification = request()
+    val specification = managementRequest()
       .accept(MediaType.APPLICATION_JSON_VALUE)
 
     // when
@@ -94,7 +94,5 @@ class ActuatorIT : CommonIT({
       .assertThat()
       .statusCode(HttpStatus.OK.value())
       .contentType(MediaType.APPLICATION_JSON_VALUE)
-      .and()
-      .body("traces", notNullValue())
   }
 })

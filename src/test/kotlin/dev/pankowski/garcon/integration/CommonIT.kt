@@ -19,6 +19,7 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.protocol.HttpContext
 import org.flywaydb.core.Flyway
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.actuate.autoconfigure.web.server.LocalManagementPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpMethod
@@ -33,6 +34,9 @@ class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
 
   @LocalServerPort
   protected var serverPort: Int = 0
+
+  @LocalManagementPort
+  protected var managementPort: Int = 0
 
   @Autowired
   private lateinit var flyway: Flyway
@@ -62,6 +66,10 @@ class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
       .given()
       .port(serverPort)
       .log().all()!!
+
+  fun managementRequest() =
+    request()
+      .port(managementPort)!!
 
   fun slackRequest() =
     request()
