@@ -42,17 +42,17 @@ fun damerauLevenshtein(a: CharSequence, b: CharSequence): Int {
     assert(a.length >= 2)
     assert(b.length >= 2)
 
-    fun levenshteinCost(cost_1: IntArray, cost_0: IntArray, i: Int, j: Int): Int {
-      val insertCost = cost_1[i] + 1
-      val deleteCost = cost_0[i - 1] + 1
-      val replaceCost = cost_1[i - 1] + if (a[i - 1] == b[j - 1]) 0 else 1
+    fun levenshteinCost(cost0: IntArray, cost1: IntArray, i: Int, j: Int): Int {
+      val insertCost = cost0[i] + 1
+      val deleteCost = cost1[i - 1] + 1
+      val replaceCost = cost0[i - 1] + if (a[i - 1] == b[j - 1]) 0 else 1
       return minOf(insertCost, deleteCost, replaceCost)
     }
 
-    fun damerauCost(cost_2: IntArray, cost_1: IntArray, cost_0: IntArray, i: Int, j: Int): Int {
-      val levenshteinCost = levenshteinCost(cost_1, cost_0, i, j)
+    fun damerauCost(cost0: IntArray, cost1: IntArray, cost2: IntArray, i: Int, j: Int): Int {
+      val levenshteinCost = levenshteinCost(cost1, cost2, i, j)
       if (a[i - 1] == b[j - 2] && a[i - 2] == b[j - 1]) {
-        val transpositionCost = cost_2[i - 2] + 1
+        val transpositionCost = cost0[i - 2] + 1
         return minOf(levenshteinCost, transpositionCost)
       }
       return levenshteinCost
@@ -62,25 +62,25 @@ fun damerauLevenshtein(a: CharSequence, b: CharSequence): Int {
     val bLength = b.length
 
     // First seed row, corresponding to j = 0
-    val cost_2 = IntArray(aLength + 1) { it }
+    val cost0 = IntArray(aLength + 1) { it }
 
     // Second seed row, corresponding to j = 1
-    val cost_1 = IntArray(aLength + 1)
-    cost_1[0] = 1
-    for (i in 1..aLength) cost_1[i] = levenshteinCost(cost_2, cost_1, i, 1)
+    val cost1 = IntArray(aLength + 1)
+    cost1[0] = 1
+    for (i in 1..aLength) cost1[i] = levenshteinCost(cost0, cost1, i, 1)
 
-    val cost_0 = IntArray(aLength + 1)
+    val cost2 = IntArray(aLength + 1)
 
-    tailrec fun cost(cost_2: IntArray, cost_1: IntArray, cost_0: IntArray, j: Int): Int {
-      cost_0[0] = j
-      cost_0[1] = levenshteinCost(cost_1, cost_0, 1, j)
-      for (i in 2..aLength) cost_0[i] = damerauCost(cost_2, cost_1, cost_0, i, j)
+    tailrec fun cost(cost0: IntArray, cost1: IntArray, cost2: IntArray, j: Int): Int {
+      cost2[0] = j
+      cost2[1] = levenshteinCost(cost1, cost2, 1, j)
+      for (i in 2..aLength) cost2[i] = damerauCost(cost0, cost1, cost2, i, j)
 
-      return if (j == bLength) cost_0[aLength]
-      else cost(cost_1, cost_0, cost_2, j + 1)
+      return if (j == bLength) cost2[aLength]
+      else cost(cost1, cost2, cost0, j + 1)
     }
 
-    return cost(cost_2, cost_1, cost_0, 2)
+    return cost(cost0, cost1, cost2, 2)
   }
 
   // Analyze input and eliminate simple cases:
