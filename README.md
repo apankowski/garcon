@@ -130,12 +130,7 @@ See [here](https://devcenter.heroku.com/articles/container-registry-and-runtime)
 
 ## Actuator
 
-The service exposes [Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/actuator-api/html/) endpoints under `/internal` prefix.
-
-Specifically, information about the service & its health can be observed via the following endpoints:
-
-* `/internal/info` - information about the bot, e.g. version, build commit hash, etc.
-* `/internal/health` - health of the bot and its dependencies, e.g. usage of disk space, ability to reach database, etc.
+The service exposes [Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/actuator-api/html/) endpoints under `/internal` prefix. By default, Actuator endpoints are available under a different port than the API - see `ACTUATOR_PORT` environment variable.
 
 ## Possible further work
 
