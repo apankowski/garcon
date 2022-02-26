@@ -89,7 +89,8 @@ Create an empty PostgreSQL database for the bot with UTF-8 encoding to support e
 
 | Name | Description | Required | Default/Example |
 |------|-------------|:--------:|-----------------|
-| `PORT` | HTTP port that will serve requests | ✓ | `8080` |
+| `PORT` | HTTP port that will serve requests | ✗ | `8080` |
+| `ACTUATOR_PORT` | HTTP port that will serve Actuator endpoints | ✗ | `8081` |
 | `JDBC_DATABASE_URL` | JDBC URL to the database | ✗ | `jdbc:postgresql://localhost:5432/garcon` |
 | `JDBC_DATABASE_USERNAME` | Username used to connect to the database | ✗ | `garcon` |
 | `JDBC_DATABASE_PASSWORD` | Password used to connect to the database | ✗ | `garcon` |

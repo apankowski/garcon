@@ -31,6 +31,8 @@ server:
       max: 10
 
 management:
+  server:
+    port: ${ACTUATOR_PORT:8081}
   endpoints:
     web:
       exposure:
