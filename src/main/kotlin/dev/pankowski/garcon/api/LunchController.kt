@@ -58,9 +58,9 @@ class LunchController(
 
   private fun handleCheckForLunchPost() =
     try {
-      // TODO: Reply with responseId from command?
+      // TODO: Post summary of synchronization?
       taskScheduler.execute(service::synchronizeAll)
-      SlackMessage( "Checking...", ResponseType.EPHEMERAL)
+      SlackMessage("Checking...", ResponseType.EPHEMERAL)
     } catch (e: Exception) {
       log.error("Failed to schedule checking for lunch posts", e)
       SlackMessage("Error while scheduling synchronization :frowning:", ResponseType.EPHEMERAL)
