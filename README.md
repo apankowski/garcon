@@ -2,23 +2,21 @@
 
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=garcon&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=garcon) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=garcon&metric=coverage)](https://sonarcloud.io/summary/new_code?id=garcon) [![CodeScene Code Health](https://codescene.io/projects/22033/status-badges/code-health)](https://codescene.io/projects/22033)
 
-Simple PoC ("toy" if you will) of a [Slack](https://slack.com/) bot that re-posts lunch offers from chosen Facebook pages.
+Bot re-posting lunch posts from chosen Facebook pages on Slack.
 
-It doesn't use the [Graph API](https://developers.facebook.com/docs/graph-api/) to get the offers as the Graph API doesn't allow accessing content of Facebook pages willy-nilly and that is exactly what I want to do. Instead, it extracts necessary data directly from Facebook page's DOM.
+## How does it work?
 
-After extraction comes classification. To say whether a post is a lunch post or not the bot breaks it into a collection of words and searches for one of predefined keywords. To handle typos, misspellings, etc. the words are matched against keywords using [Damerau-Levenshtein distance](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance).
+The bot doesn't use Facebook's [Graph API](https://developers.facebook.com/docs/graph-api/) to get the posts as the Graph API doesn't allow accessing content of Facebook pages willy-nilly and that is exactly what we want to do. Instead, it scrapes necessary data directly from Facebook pages.
+
+After extraction comes classification. To say whether a post is a lunch post or not the bot breaks it into a collection of words and searches for predefined keywords. To handle typos, misspellings, etc. the words are matched against keywords using [Damerau-Levenshtein distance](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance).
 
 Each lunch post is then reposted to Slack using its [API](https://api.slack.com/).
 
 Fetched posts along with their classification, repost status, etc. are saved in a database to prevent same lunch offers from being reposted multiple times as well as allow the bot to be restarted without loosing data.
 
-The whole procedure is then repeated in regular intervals.
+The whole procedure is repeated in regular intervals.
 
-⚠️
-
-I do not endorse scraping Facebook pages. Again: this is a PoC.
-
-To protect certain things the original git commit history had to be wiped out.
+⚠️ I do not endorse scraping Facebook pages.
 
 ## Stack
 
@@ -144,5 +142,6 @@ Specifically, information about the service & its health can be observed via the
   * Adding verification of Slack request timestamps to prevent replay attacks
   * Slack webhook testing subcommand
   * Update/delete reposts based on upstream
+  * Management / backoffice UI
   * [Prometheus](https://prometheus.io/) metrics
   * [Instagram](https://www.instagram.com/) support
