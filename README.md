@@ -22,13 +22,13 @@ The whole procedure is repeated in regular intervals.
 
 The service is written in Kotlin and uses the following stack:
 
-  * Kotlin 1.6 on Java 17
-  * Gradle 7.3 (with build script in Kotlin)
-  * Spring Boot 2.6
-  * Jooq for database access
-  * PostgreSQL 10+
-  * Kotest 5.0 and MockK 1.12 for tests
-  * ArchUnit 0.22 for architecture tests
+* Kotlin 1.6 on Java 17
+* Gradle 7.3 (with build script in Kotlin)
+* Spring Boot 2.6
+* Jooq for database access
+* PostgreSQL 10+
+* Kotest 5.0 and MockK 1.12 for tests
+* ArchUnit 0.22 for architecture tests
 
 ## Building & running locally
 
@@ -36,14 +36,14 @@ Always use the Gradle wrapper (`./gradlew`) to build the project from command li
 
 Useful commands:
 
-  * `./gradlew build` - builds the project
-  * `./gradlew clean build` - fully rebuilds the project
-  * `./gradlew test` - runs all tests
-  * `./gradlew bootJar` - build & package the service as a fat JAR
-  * `./gradlew bootRun` - build & run the service locally
-  * `./gradlew jooq-codegen-database` - (re)generate Jooq classes
-  * `./gradlew databaseUp` - run a local, empty, fully migrated PostgreSQL database (convenient for testing the service locally or running integration tests from IDE)
-  * `./gradlew databaseDown` - shut down local PostgreSQL database
+* `./gradlew build` - builds the project
+* `./gradlew clean build` - fully rebuilds the project
+* `./gradlew test` - runs all tests
+* `./gradlew bootJar` - build & package the service as a fat JAR
+* `./gradlew bootRun` - build & run the service locally
+* `./gradlew jooq-codegen-database` - (re)generate Jooq classes
+* `./gradlew databaseUp` - run a local, empty, fully migrated PostgreSQL database (convenient for testing the service locally or running integration tests from IDE)
+* `./gradlew databaseDown` - shut down local PostgreSQL database
 
 During a build, a local, fully migrated PostgreSQL database is started and shut down after the build.
 
@@ -55,31 +55,31 @@ The service listens on HTTP port 8080 by default.
 
 Create a Slack app if you don't have one already:
 
- 1. Go to [Slack Apps](https://api.slack.com/apps) → _Create New App_.
- 1. Pick a name & workspace to which the app should belong.
- 1. Configure additional stuff like description & icon.
+1. Go to [Slack Apps](https://api.slack.com/apps) → _Create New App_.
+1. Pick a name & workspace to which the app should belong.
+1. Configure additional stuff like description & icon.
 
 Configure _Incoming Webhooks_ and _Slash Commands_ for the app:
 
- 1. Go to [Slack Apps](https://api.slack.com/apps) → click on the name of your app.
- 1. Go to _Incoming Webhooks_ (under _Features_ submenu) → _Add New Webhook to Workspace_ → select channel to which lunch posts will be reposted → _Allow_ → take note of the _Webhook URL_.
- 1. Go to _Slash Commands_ (under _Features_ submenu) → _Create New Command_ → _Command_: `/lunch`, _Request URL_: `{BASE_URI}/commands/lunch` where `{BASE_URI}` is the base URI under which the bot will be deployed/will handle requests → _Save_.
+1. Go to [Slack Apps](https://api.slack.com/apps) → click on the name of your app.
+1. Go to _Incoming Webhooks_ (under _Features_ submenu) → _Add New Webhook to Workspace_ → select channel to which lunch posts will be reposted → _Allow_ → take note of the _Webhook URL_.
+1. Go to _Slash Commands_ (under _Features_ submenu) → _Create New Command_ → _Command_: `/lunch`, _Request URL_: `{BASE_URI}/commands/lunch` where `{BASE_URI}` is the base URI under which the bot will be deployed/will handle requests → _Save_.
 
 ### Docker image
 
- 1. As described in [Building & Running](#building--running-locally) section create the fat JAR:
+1. As described in [Building & Running](#building--running-locally) section create the fat JAR:
 
-    ```
-    ./gradlew bootJar
-    ```
+   ```
+   ./gradlew bootJar
+   ```
 
- 1. Build the docker image:
+1. Build the docker image:
 
-    ```
-    docker build -t garcon .
-    ```
+   ```
+   docker build -t garcon .
+   ```
 
- 1. Push built image to the docker registry of your choosing & deploy to your target environment. If you're going with Heroku, see the [respective section](#heroku).
+1. Push built image to the docker registry of your choosing & deploy to your target environment. If you're going with Heroku, see the [respective section](#heroku).
 
 ### PostgreSQL database
 
@@ -114,16 +114,16 @@ Create an empty PostgreSQL database for the bot with UTF-8 encoding to support e
 
 The service can be deployed to Heroku. The following changes were made to meet requirements imposed by Heroku:
 
- 1. `Dockerfile` declares a `CMD` - see [this question & answers](https://stackoverflow.com/q/55913408/1820695).
- 1. Service is configured to bind to HTTP port provided via `PORT` environment variable - [see here](https://devcenter.heroku.com/articles/dynos#web-dynos).
- 1. If `DATABASE_URL` environment variable is set, its value is assumed to be a JDBC URL and split into the following environment variables: `JDBC_DATABASE_URL`, `JDBC_DATABASE_USERNAME` & `JDBC_DATABASE_PASSWORD`. See [here](https://devcenter.heroku.com/articles/connecting-to-relational-databases-on-heroku-with-java) for more information.
+1. `Dockerfile` declares a `CMD` - see [this question & answers](https://stackoverflow.com/q/55913408/1820695).
+1. Service is configured to bind to HTTP port provided via `PORT` environment variable - [see here](https://devcenter.heroku.com/articles/dynos#web-dynos).
+1. If `DATABASE_URL` environment variable is set, its value is assumed to be a JDBC URL and split into the following environment variables: `JDBC_DATABASE_URL`, `JDBC_DATABASE_USERNAME` & `JDBC_DATABASE_PASSWORD`. See [here](https://devcenter.heroku.com/articles/connecting-to-relational-databases-on-heroku-with-java) for more information.
 
 To deploy the service issue the following commands (presence of `heroku` CLI and deployment-level access to the service is assumed):
 
- 1. `heroku login`
- 1. `heroku container:login`
- 1. `heroku container:push web --app garcon`
- 1. `heroku container:release web --app garcon`
+1. `heroku login`
+1. `heroku container:login`
+1. `heroku container:push web --app garcon`
+1. `heroku container:release web --app garcon`
 
 See [here](https://devcenter.heroku.com/articles/container-registry-and-runtime) for more details.
 
@@ -133,15 +133,15 @@ The service exposes [Spring Boot Actuator](https://docs.spring.io/spring-boot/do
 
 Specifically, information about the service & its health can be observed via the following endpoints:
 
-  * `/internal/info` - information about the bot, e.g. version, build commit hash, etc.
-  * `/internal/health` - health of the bot and its dependencies, e.g. usage of disk space, ability to reach database, etc.
+* `/internal/info` - information about the bot, e.g. version, build commit hash, etc.
+* `/internal/health` - health of the bot and its dependencies, e.g. usage of disk space, ability to reach database, etc.
 
 ## Possible further work
 
-  * Securing Actuator endpoints
-  * Adding verification of Slack request timestamps to prevent replay attacks
-  * Slack webhook testing subcommand
-  * Update/delete reposts based on upstream
-  * Management / backoffice UI
-  * [Prometheus](https://prometheus.io/) metrics
-  * [Instagram](https://www.instagram.com/) support
+* Securing Actuator endpoints
+* Adding verification of Slack request timestamps to prevent replay attacks
+* Slack webhook testing subcommand
+* Update/delete reposts based on upstream
+* Management / backoffice UI
+* [Prometheus](https://prometheus.io/) metrics
+* [Instagram](https://www.instagram.com/) support
