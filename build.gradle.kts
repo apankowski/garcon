@@ -42,7 +42,7 @@ dependencyManagement {
     dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.3")
     dependency("io.mockk:mockk:1.12.3")
     dependency("com.tngtech.archunit:archunit-junit5:0.23.1")
-    dependency("com.google.guava:guava:31.0.1-jre")
+    dependency("com.google.guava:guava:31.1-jre")
   }
 }
 
