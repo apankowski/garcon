@@ -36,15 +36,19 @@ dependencyManagement {
   dependencies {
     dependency("org.jsoup:jsoup:1.14.3")
     dependency("com.github.tomakehurst:wiremock-jre8:2.33.2")
-    dependency("io.kotest:kotest-runner-junit5:5.0.3")
-    dependency("io.kotest:kotest-framework-datatest:5.0.3")
-    dependency("io.kotest.extensions:kotest-extensions-spring:1.1.0")
+    dependency("io.kotest:kotest-runner-junit5:5.2.3")
+    dependency("io.kotest:kotest-framework-datatest:5.2.3")
+    dependency("io.kotest.extensions:kotest-extensions-spring:1.1.1")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.3")
     dependency("io.mockk:mockk:1.12.1")
     dependency("com.tngtech.archunit:archunit-junit5:0.22.0")
     dependency("com.google.guava:guava:31.0.1-jre")
   }
 }
+
+// See https://github.com/kotest/kotest/issues/2782
+// Remove once Spring Boot-imported BOM upgrades coroutines to 1.6+
+extra["kotlin-coroutines.version"] = "1.6.0"
 
 dependencies {
   // Kotlin & standard library
@@ -82,7 +86,8 @@ dependencies {
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   jooqGenerator("org.postgresql:postgresql")
-  // For dependency below see https://github.com/etiennestuder/gradle-jooq-plugin/issues/209
+  // See https://github.com/etiennestuder/gradle-jooq-plugin/issues/209
+  // Remove once Spring Boot-imported BOM upgrades Jakarta XML API to 3+
   jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
 }
 

@@ -41,13 +41,13 @@ class InMemoryRequestTest : FreeSpec({
     inMemoryRequest.reader.readText() shouldBe "body"
   }
 
-  "handles charsets" {
+  "handles charsets" - {
     withData<Charset>({ "handles $it charset" }, listOf(Charsets.UTF_8, Charsets.ISO_8859_1)) { charset ->
       // given
       val body = "ÄËÖäëö"
       val originalRequest = MockHttpServletRequest()
       originalRequest.contentType = MediaType.TEXT_PLAIN_VALUE + ";charset=" + charset.name()
-      val inMemoryRequest = InMemoryRequest(originalRequest, body.toByteArray())
+      val inMemoryRequest = InMemoryRequest(originalRequest, body.toByteArray(charset))
 
       // expect
       inMemoryRequest.reader.readText() shouldBe body

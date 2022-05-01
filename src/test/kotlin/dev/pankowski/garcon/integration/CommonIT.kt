@@ -52,11 +52,11 @@ class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
     return listOf(SpringExtension)
   }
 
-  override fun beforeSpec(spec: Spec) {
+  override suspend fun beforeSpec(spec: Spec) {
     RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
   }
 
-  override fun beforeEach(testCase: TestCase) {
+  override suspend fun beforeEach(testCase: TestCase) {
     flyway.clean()
     flyway.migrate()
   }
