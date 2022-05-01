@@ -12,7 +12,7 @@ plugins {
   id("org.springframework.boot") version "2.6.7"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
-  id("com.adarshr.test-logger") version "3.1.0"
+  id("com.adarshr.test-logger") version "3.2.0"
   id("com.avast.gradle.docker-compose") version "0.14.11"
   id("org.flywaydb.flyway") version "8.3.0"
   id("nu.studer.jooq") version "6.0.1"
