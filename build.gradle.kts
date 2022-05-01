@@ -15,7 +15,7 @@ plugins {
   id("com.adarshr.test-logger") version "3.2.0"
   id("com.avast.gradle.docker-compose") version "0.16.0"
   id("org.flywaydb.flyway") version "8.5.10"
-  id("nu.studer.jooq") version "6.0.1"
+  id("nu.studer.jooq") version "7.1.1"
   jacoco
   id("org.sonarqube") version "3.3"
 }
@@ -80,7 +80,10 @@ dependencies {
   // Other
   kapt("org.springframework.boot:spring-boot-configuration-processor")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
+
   jooqGenerator("org.postgresql:postgresql")
+  // For dependency below see https://github.com/etiennestuder/gradle-jooq-plugin/issues/209
+  jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
 }
 
 // Java compiler
@@ -175,7 +178,7 @@ tasks.flywayMigrate {
 // Jooq
 
 jooq {
-  version.set("3.15.5")
+  version.set("3.16.6")
 
   configurations {
     create("main") {
