@@ -48,7 +48,7 @@ dependencyManagement {
 
 // See https://github.com/kotest/kotest/issues/2782
 // Remove once Spring Boot-imported BOM upgrades coroutines to 1.6+
-extra["kotlin-coroutines.version"] = "1.6.0"
+extra["kotlin-coroutines.version"] = "1.6.1"
 
 dependencies {
   // Kotlin & standard library
