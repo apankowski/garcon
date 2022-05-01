@@ -6,9 +6,9 @@ import org.jooq.meta.jaxb.Logging
 // Gradle
 
 plugins {
-  kotlin("jvm") version "1.6.10"
-  kotlin("kapt") version "1.6.10"
-  kotlin("plugin.spring") version "1.6.10"
+  kotlin("jvm") version "1.6.21"
+  kotlin("kapt") version "1.6.21"
+  kotlin("plugin.spring") version "1.6.21"
   id("org.springframework.boot") version "2.6.2"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
   id("com.gorylenko.gradle-git-properties") version "2.3.2"
