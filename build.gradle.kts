@@ -13,7 +13,7 @@ plugins {
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
-  id("com.avast.gradle.docker-compose") version "0.16.0"
+  id("com.avast.gradle.docker-compose") version "0.16.4"
   id("org.flywaydb.flyway") version "8.5.10"
   id("nu.studer.jooq") version "7.1.1"
   jacoco
@@ -34,13 +34,13 @@ repositories {
 
 dependencyManagement {
   dependencies {
-    dependency("org.jsoup:jsoup:1.14.3")
+    dependency("org.jsoup:jsoup:1.15.1")
     dependency("com.github.tomakehurst:wiremock-jre8:2.33.2")
-    dependency("io.kotest:kotest-runner-junit5:5.2.3")
-    dependency("io.kotest:kotest-framework-datatest:5.2.3")
+    dependency("io.kotest:kotest-runner-junit5:5.3.0")
+    dependency("io.kotest:kotest-framework-datatest:5.3.0")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.1")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.3")
-    dependency("io.mockk:mockk:1.12.3")
+    dependency("io.mockk:mockk:1.12.4")
     dependency("com.tngtech.archunit:archunit-junit5:0.23.1")
     dependency("com.google.guava:guava:31.1-jre")
   }
