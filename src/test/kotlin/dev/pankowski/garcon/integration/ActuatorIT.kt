@@ -1,5 +1,6 @@
 package dev.pankowski.garcon.integration
 
+import io.kotest.datatest.withData
 import org.hamcrest.Matchers.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -76,6 +77,27 @@ class ActuatorIT : CommonIT({
       .body("components.diskSpace.status", equalTo("UP"))
       .body("components.diskSpace.details.total", notEmpty())
       .body("components.diskSpace.details.free", notEmpty())
+  }
+
+  "readiness and liveness probes are available" - {
+    withData("/internal/health/liveness", "/internal/health/readiness") { probe ->
+      // given
+      val specification = managementRequest()
+        .accept(MediaType.APPLICATION_JSON_VALUE)
+
+      // when
+      val response = specification.get(probe)
+
+      // then
+      response
+        .then()
+        .log().all()
+        .assertThat()
+        .statusCode(HttpStatus.OK.value())
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .and()
+        .body("status", equalTo("UP"))
+    }
   }
 
   "HTTP trace endpoint is enabled" {
