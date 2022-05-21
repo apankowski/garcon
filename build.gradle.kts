@@ -9,7 +9,7 @@ plugins {
   kotlin("jvm") version "1.6.21"
   kotlin("kapt") version "1.6.21"
   kotlin("plugin.spring") version "1.6.21"
-  id("org.springframework.boot") version "2.6.7"
+  id("org.springframework.boot") version "2.7.0"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
@@ -45,10 +45,6 @@ dependencyManagement {
     dependency("com.google.guava:guava:31.1-jre")
   }
 }
-
-// See https://github.com/kotest/kotest/issues/2782
-// Remove once Spring Boot-imported BOM upgrades coroutines to 1.6+
-extra["kotlin-coroutines.version"] = "1.6.1"
 
 dependencies {
   // Kotlin & standard library
