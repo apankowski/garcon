@@ -134,7 +134,6 @@ The service exposes [Spring Boot Actuator](https://docs.spring.io/spring-boot/do
 
 ## Possible further work
 
-* Securing Actuator endpoints
 * Adding verification of Slack request timestamps to prevent replay attacks
 * Slack webhook testing subcommand
 * Update/delete reposts based on upstream
