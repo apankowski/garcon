@@ -93,7 +93,7 @@ class JsoupFacebookPostClient(private val clientConfig: ClientConfig) : Facebook
         "Possible unexpected format of facebook page post. Found .userContentWrapper but "
           + "some of the post parts couldn't be extracted.\ntimestampElement: {}\nlink: {}\n"
           + "externalId: {}\nfacebookLink: {}\npublishedAt: {}\ncontent: {}\n.userContentWrapper: {}",
-        timestampElement, facebookId, facebookLink, publishedAt, content, e
+        timestampElement, link, facebookId, facebookLink, publishedAt, content, e
       )
       return null
     }
@@ -116,8 +116,7 @@ class JsoupFacebookPostClient(private val clientConfig: ClientConfig) : Facebook
   private fun extractFacebookId(uri: URI): ExternalId? {
     // Regular post
     val postPathRegex = "^/?permalink\\.php".toRegex()
-    val postPathMatch = postPathRegex.find(uri.path)
-    if (postPathMatch != null) {
+    postPathRegex.find(uri.path)?.let {
       return UriComponentsBuilder.fromUri(uri).build()
         .queryParams["story_fbid"]
         ?.firstOrNull()
@@ -125,17 +124,15 @@ class JsoupFacebookPostClient(private val clientConfig: ClientConfig) : Facebook
     }
 
     // Regular post - alternative version
-    val altPostPathRegex = "^/?[^/]+/posts/([\\d]+)/?$".toRegex()
-    val altPostPathMatch = altPostPathRegex.find(uri.path)
-    if (altPostPathMatch != null) {
-      return ExternalId(altPostPathMatch.groupValues[1])
+    val altPostPathRegex = "^/?[^/]+/posts/(\\d+)/?$".toRegex()
+    altPostPathRegex.find(uri.path)?.let {
+      return ExternalId(it.groupValues[1])
     }
 
     // Photo
-    val photoPathRegex = "^/?[^/]+/photos/[a-z.\\d]+/([\\d]+)/?$".toRegex()
-    val photoPathMatch = photoPathRegex.find(uri.path)
-    if (photoPathMatch != null) {
-      return ExternalId(photoPathMatch.groupValues[1])
+    val photoPathRegex = "^/?[^/]+/photos/[a-z.\\d]+/(\\d+)/?$".toRegex()
+    photoPathRegex.find(uri.path)?.let {
+      return ExternalId(it.groupValues[1])
     }
 
     // Dunno
