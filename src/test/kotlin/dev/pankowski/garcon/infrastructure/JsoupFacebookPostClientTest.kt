@@ -273,34 +273,6 @@ class JsoupFacebookPostClientTest : FreeSpec({
     )
   }
 
-  "returns posts newer than specified published date" {
-    // given
-    val client = JsoupFacebookPostClient(someClientConfig())
-    val pageConfig = somePageConfig(url = URL(server.url("/posts")))
-
-    // and
-    server.givenThat(
-      get("/posts")
-        .willReturn(okHtml(htmlFrom("/lunch/facebook/post-sorting-test.html")))
-    )
-
-    // when
-    val nameAndPosts = client.fetch(pageConfig, Instant.ofEpochSecond(1))
-
-    // then
-    nameAndPosts shouldBe Pair(
-      null,
-      listOf(
-        Post(
-          ExternalId("2"),
-          URL("https://www.facebook.com/2"),
-          Instant.ofEpochSecond(2),
-          "Some content 2"
-        )
-      )
-    )
-  }
-
   "extracts posts from a real page" {
     // given
     val client = JsoupFacebookPostClient(someClientConfig())

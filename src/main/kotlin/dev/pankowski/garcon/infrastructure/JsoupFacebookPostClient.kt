@@ -23,9 +23,7 @@ class JsoupFacebookPostClient(private val clientConfig: ClientConfig) : Facebook
   override fun fetch(pageConfig: LunchPageConfig, lastSeenPublishedAt: Instant?): Pair<PageName?, Posts> {
     val document = fetchDocument(pageConfig.url)
     val pageName = extractPageName(document, pageConfig)
-    val posts = extractPosts(document)
-      .sortedBy(Post::publishedAt)
-      .filter { it.publishedAt > (lastSeenPublishedAt ?: Instant.MIN) }
+    val posts = extractPosts(document).sortedBy { it.publishedAt }
     return pageName to posts
   }
 
