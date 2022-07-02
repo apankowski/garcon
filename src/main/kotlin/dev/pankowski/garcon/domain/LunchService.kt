@@ -43,9 +43,8 @@ class LunchService(
 
     val lastSeen = repository.findLastSeen(pageConfig.id)
     val (pageName, posts) = postClient.fetch(pageConfig, lastSeen?.post?.publishedAt)
-    val newPosts = posts
-      .filter { it.publishedAt > (lastSeen?.post?.publishedAt ?: Instant.MIN) }
 
+    val newPosts = posts.filter { it.publishedAt > (lastSeen?.post?.publishedAt ?: Instant.MIN) }
     if (newPosts.isEmpty()) {
       log.info("No new posts")
       return emptyList()
