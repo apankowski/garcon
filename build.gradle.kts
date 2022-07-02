@@ -13,11 +13,11 @@ plugins {
   id("io.spring.dependency-management") version "1.0.12.RELEASE"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
-  id("com.avast.gradle.docker-compose") version "0.16.4"
-  id("org.flywaydb.flyway") version "8.5.10"
+  id("com.avast.gradle.docker-compose") version "0.16.8"
+  id("org.flywaydb.flyway") version "8.5.13"
   id("nu.studer.jooq") version "7.1.1"
   jacoco
-  id("org.sonarqube") version "3.3"
+  id("org.sonarqube") version "3.4.0.2513"
 }
 
 tasks.wrapper {
