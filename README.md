@@ -6,7 +6,8 @@
 <a href="https://codescene.io/projects/22033"><img src="https://codescene.io/projects/22033/status-badges/code-health" alt="Code Health" /></a>
 
 Bot re-posting lunch posts from chosen Facebook pages on Slack.
-<br />
+
+
 </div>
 
 ## How does it work?
