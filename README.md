@@ -1,13 +1,11 @@
-<div align="center">
+<div align="center" style="margin-bottom: 3em">
 <img src="./assets/logo.png" alt="Logo" style="width: 300px" />
-<h1 style="margin-top: 0">Garçon</h1>
+<h1>Garçon</h1>
 <a href="https://sonarcloud.io/summary/new_code?id=garcon"><img src="https://sonarcloud.io/api/project_badges/measure?project=garcon&metric=ncloc" alt="Lines of Code" /></a>
 <a href="https://sonarcloud.io/summary/new_code?id=garcon"><img src="https://sonarcloud.io/api/project_badges/measure?project=garcon&metric=coverage" alt="Coverage" /></a>
 <a href="https://codescene.io/projects/22033"><img src="https://codescene.io/projects/22033/status-badges/code-health" alt="Code Health" /></a>
 
 Bot re-posting lunch posts from chosen Facebook pages on Slack.
-
-
 </div>
 
 ## How does it work?
