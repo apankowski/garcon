@@ -1,8 +1,14 @@
-# Garçon
-
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=garcon&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=garcon) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=garcon&metric=coverage)](https://sonarcloud.io/summary/new_code?id=garcon) [![CodeScene Code Health](https://codescene.io/projects/22033/status-badges/code-health)](https://codescene.io/projects/22033)
+<div align="center">
+<img src="./assets/logo.png" alt="Logo" style="width: 300px" />
+<h1>Garçon</h1>
+<a href="https://sonarcloud.io/summary/new_code?id=garcon"><img src="https://sonarcloud.io/api/project_badges/measure?project=garcon&metric=ncloc" alt="Lines of Code" /></a>
+<a href="https://sonarcloud.io/summary/new_code?id=garcon"><img src="https://sonarcloud.io/api/project_badges/measure?project=garcon&metric=coverage" alt="Coverage" /></a>
+<a href="https://codescene.io/projects/22033"><img src="https://codescene.io/projects/22033/status-badges/code-health" alt="Code Health" /></a>
 
 Bot re-posting lunch posts from chosen Facebook pages on Slack.
+<br />
+<br />
+</div>
 
 ## How does it work?
 
