@@ -9,19 +9,19 @@ plugins {
   kotlin("jvm") version "1.6.21"
   kotlin("kapt") version "1.6.21"
   kotlin("plugin.spring") version "1.6.21"
-  id("org.springframework.boot") version "2.7.1"
-  id("io.spring.dependency-management") version "1.0.12.RELEASE"
+  id("org.springframework.boot") version "2.7.3"
+  id("io.spring.dependency-management") version "1.0.13.RELEASE"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
   id("com.avast.gradle.docker-compose") version "0.16.8"
-  id("org.flywaydb.flyway") version "8.5.13"
+  id("org.flywaydb.flyway") version "9.2.0"
   id("nu.studer.jooq") version "7.1.1"
   jacoco
   id("org.sonarqube") version "3.4.0.2513"
 }
 
 tasks.wrapper {
-  gradleVersion = "7.4.2"
+  gradleVersion = "7.5.1"
 }
 
 group = "dev.pankowski"
