@@ -10,13 +10,13 @@ data class StoreData(
   val pageName: PageName?,
   val post: Post,
   val classification: Classification,
-  val repost: Repost
+  val repost: Repost,
 )
 
 data class UpdateData(
   val id: SynchronizedPostId,
   val version: Version,
-  val repost: Repost
+  val repost: Repost,
 )
 
 interface SynchronizedPostRepository {

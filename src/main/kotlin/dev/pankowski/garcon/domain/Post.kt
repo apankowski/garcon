@@ -9,7 +9,7 @@ data class Post(
   val externalId: ExternalId,
   val link: URL,
   val publishedAt: Instant,
-  val content: String
+  val content: String,
 )
 
 typealias Posts = List<Post>

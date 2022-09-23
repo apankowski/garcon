@@ -9,7 +9,7 @@ enum class ResponseType(private val apiName: String) {
 }
 
 data class Attachment(
-  val text: String
+  val text: String,
 )
 
 /**
@@ -18,5 +18,5 @@ data class Attachment(
 data class SlackMessage(
   val text: String,
   val responseType: ResponseType? = null,
-  val attachments: List<Attachment>? = null
+  val attachments: List<Attachment>? = null,
 )
