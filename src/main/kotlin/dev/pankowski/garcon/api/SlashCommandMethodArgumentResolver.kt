@@ -21,7 +21,7 @@ class SlashCommandMethodArgumentResolver : HandlerMethodArgumentResolver {
     parameter: MethodParameter,
     mavContainer: ModelAndViewContainer?,
     request: NativeWebRequest,
-    binderFactory: WebDataBinderFactory?
+    binderFactory: WebDataBinderFactory?,
   ): SlashCommand {
 
     val command = request.parameter("command", "string", identity(), ::required)!!
@@ -51,7 +51,7 @@ class SlashCommandMethodArgumentResolver : HandlerMethodArgumentResolver {
     name: String,
     type: String,
     converter: (String) -> T,
-    ifEmpty: (String, String) -> T?
+    ifEmpty: (String, String) -> T?,
   ): T? {
     fun convert(value: String): T =
       try {

@@ -21,5 +21,5 @@ data class SlashCommand(
   val userId: UserId,
   val channelId: ChannelId,
   val teamId: TeamId?,
-  val enterpriseId: EnterpriseId?
+  val enterpriseId: EnterpriseId?,
 )
