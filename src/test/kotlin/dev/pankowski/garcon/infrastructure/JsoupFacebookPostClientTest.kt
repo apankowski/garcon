@@ -37,7 +37,7 @@ class JsoupFacebookPostClientTest : FreeSpec({
     )
 
     // when
-    client.fetch(pageConfig, null)
+    client.fetch(pageConfig)
 
     // then
     server.verify(
@@ -64,7 +64,7 @@ class JsoupFacebookPostClientTest : FreeSpec({
 
     // expect
     shouldThrow<SocketTimeoutException> {
-      client.fetch(pageConfig, null)
+      client.fetch(pageConfig)
     }
   }
 
@@ -106,7 +106,7 @@ class JsoupFacebookPostClientTest : FreeSpec({
     )
 
     // when
-    val nameAndPosts = client.fetch(pageConfig, null)
+    val nameAndPosts = client.fetch(pageConfig)
 
     // then
     nameAndPosts shouldBe Pair(null, emptyList())
@@ -153,7 +153,7 @@ class JsoupFacebookPostClientTest : FreeSpec({
 
     // expect
     shouldThrow<HttpStatusException> {
-      client.fetch(pageConfig, null)
+      client.fetch(pageConfig)
     }
   }
 
@@ -169,7 +169,7 @@ class JsoupFacebookPostClientTest : FreeSpec({
     )
 
     // when
-    val nameAndPosts = client.fetch(pageConfig, null)
+    val nameAndPosts = client.fetch(pageConfig)
 
     // then
     nameAndPosts shouldBe Pair(PageName("Some Lunch Page Name"), emptyList())
@@ -187,7 +187,7 @@ class JsoupFacebookPostClientTest : FreeSpec({
     )
 
     // when
-    val nameAndPosts = client.fetch(pageConfig, null)
+    val nameAndPosts = client.fetch(pageConfig)
 
     // then
     nameAndPosts shouldBe Pair(null, emptyList())
@@ -205,7 +205,7 @@ class JsoupFacebookPostClientTest : FreeSpec({
     )
 
     // when
-    val nameAndPosts = client.fetch(pageConfig, null)
+    val nameAndPosts = client.fetch(pageConfig)
 
     // then
     nameAndPosts shouldBe Pair(
@@ -233,7 +233,7 @@ class JsoupFacebookPostClientTest : FreeSpec({
     )
 
     // when
-    val nameAndPosts = client.fetch(pageConfig, null)
+    val nameAndPosts = client.fetch(pageConfig)
 
     // then
     nameAndPosts shouldBe Pair(null, emptyList())
@@ -251,7 +251,7 @@ class JsoupFacebookPostClientTest : FreeSpec({
     )
 
     // when
-    val nameAndPosts = client.fetch(pageConfig, null)
+    val nameAndPosts = client.fetch(pageConfig)
 
     // then
     nameAndPosts shouldBe Pair(
@@ -285,7 +285,7 @@ class JsoupFacebookPostClientTest : FreeSpec({
     )
 
     // when
-    val nameAndPosts = client.fetch(pageConfig, null)
+    val nameAndPosts = client.fetch(pageConfig)
 
     // then
     nameAndPosts shouldBe Pair(

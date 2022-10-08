@@ -42,7 +42,7 @@ class LunchService(
     log.info("Synchronizing posts of {}", pageConfig)
 
     val lastSeen = repository.findLastSeen(pageConfig.id)
-    val (pageName, posts) = postClient.fetch(pageConfig, lastSeen?.post?.publishedAt)
+    val (pageName, posts) = postClient.fetch(pageConfig)
 
     val newPosts = posts.filter { it.publishedAt > (lastSeen?.post?.publishedAt ?: Instant.MIN) }
     if (newPosts.isEmpty()) {

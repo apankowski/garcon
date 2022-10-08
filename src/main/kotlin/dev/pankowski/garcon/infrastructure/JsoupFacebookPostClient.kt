@@ -20,7 +20,7 @@ class JsoupFacebookPostClient(private val clientConfig: ClientConfig) : Facebook
 
   private val log: Logger = LoggerFactory.getLogger(javaClass)
 
-  override fun fetch(pageConfig: LunchPageConfig, lastSeenPublishedAt: Instant?): Pair<PageName?, Posts> {
+  override fun fetch(pageConfig: LunchPageConfig): Pair<PageName?, Posts> {
     val document = fetchDocument(pageConfig.url)
     val pageName = extractPageName(document, pageConfig)
     val posts = extractPosts(document).sortedBy { it.publishedAt }
