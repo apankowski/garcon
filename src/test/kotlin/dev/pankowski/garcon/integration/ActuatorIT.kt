@@ -11,15 +11,13 @@ class ActuatorIT : CommonIT({
 
   "info endpoint contains git info" {
     // given
-    val specification = managementRequest()
+    managementRequest()
       .accept(MediaType.APPLICATION_JSON_VALUE)
 
-    // when
-    val response = specification
+      // when
       .get("/internal/info")
 
-    // then
-    response
+      // then
       .then()
       .log().all()
       .assertThat()
@@ -33,15 +31,13 @@ class ActuatorIT : CommonIT({
 
   "info endpoint contains build info" {
     // given
-    val specification = managementRequest()
+    managementRequest()
       .accept(MediaType.APPLICATION_JSON_VALUE)
 
-    // when
-    val response = specification
+      // when
       .get("/internal/info")
 
-    // then
-    response
+      // then
       .then()
       .log().all()
       .assertThat()
@@ -57,15 +53,13 @@ class ActuatorIT : CommonIT({
 
   "health endpoint contains health details" {
     // given
-    val specification = managementRequest()
+    managementRequest()
       .accept(MediaType.APPLICATION_JSON_VALUE)
 
-    // when
-    val response = specification
+      // when
       .get("/internal/health")
 
-    // then
-    response
+      // then
       .then()
       .log().all()
       .assertThat()
@@ -82,14 +76,13 @@ class ActuatorIT : CommonIT({
   "readiness and liveness probes are available" - {
     withData("/internal/health/liveness", "/internal/health/readiness") { probe ->
       // given
-      val specification = managementRequest()
+      managementRequest()
         .accept(MediaType.APPLICATION_JSON_VALUE)
 
-      // when
-      val response = specification.get(probe)
+        // when
+        .get(probe)
 
-      // then
-      response
+        // then
         .then()
         .log().all()
         .assertThat()
@@ -102,19 +95,60 @@ class ActuatorIT : CommonIT({
 
   "HTTP trace endpoint is enabled" {
     // given
-    val specification = managementRequest()
+    managementRequest()
       .accept(MediaType.APPLICATION_JSON_VALUE)
 
-    // when
-    val response = specification
+      // when
       .get("/internal/httptrace")
 
-    // then
-    response
+      // then
       .then()
       .log().all()
       .assertThat()
       .statusCode(HttpStatus.OK.value())
       .contentType(MediaType.APPLICATION_JSON_VALUE)
+  }
+
+  "Prometheus endpoint is enabled" {
+    // given
+    managementRequest()
+
+      // when
+      .get("/internal/prometheus")
+
+      // then
+      .then()
+      .log().all()
+      .assertThat()
+      .statusCode(HttpStatus.OK.value())
+  }
+
+  "Metrics are exposed" {
+    // given
+    managementRequest()
+
+      // when
+      .get("/internal/metrics")
+
+      // then
+      .then()
+      .log().all()
+      .statusCode(HttpStatus.OK.value())
+      .body(
+        "names", hasItems(
+          // Spring-provided, one per category
+          "application.started.time",
+          "disk.total",
+          "executor.pool.max",
+          "hikaricp.connections.max",
+          "jdbc.connections.max",
+          "jvm.memory.max",
+          "logback.events",
+          "process.start.time",
+          "system.cpu.count",
+          "tomcat.sessions.active.max",
+          // Custom ones, one per category
+        )
+      )
   }
 })
