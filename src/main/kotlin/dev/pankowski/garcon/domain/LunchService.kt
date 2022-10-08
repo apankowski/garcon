@@ -42,16 +42,17 @@ class LunchService(
     log.info("Synchronizing posts of {}", pageConfig)
 
     val lastSeen = repository.findLastSeen(pageConfig.id)
-    val (pageName, posts) = postClient.fetch(pageConfig, lastSeen?.post?.publishedAt)
+    val (pageName, posts) = postClient.fetch(pageConfig)
 
-    if (posts.isEmpty()) {
+    val newPosts = posts.filter { it.publishedAt > (lastSeen?.post?.publishedAt ?: Instant.MIN) }
+    if (newPosts.isEmpty()) {
       log.info("No new posts")
       return emptyList()
     } else {
-      log.debug("Found new posts: {}", posts)
+      log.debug("Found new posts: {}", newPosts)
     }
 
-    val synchronizedPostsToStore = posts.map { p ->
+    val synchronizedPostsToStore = newPosts.map { p ->
       val classification = lunchPostClassifier.classify(p)
       val repost = when (classification) {
         Classification.LunchPost -> Repost.Pending
