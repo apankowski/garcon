@@ -117,4 +117,49 @@ class ActuatorIT : CommonIT({
       .statusCode(HttpStatus.OK.value())
       .contentType(MediaType.APPLICATION_JSON_VALUE)
   }
+
+  "Prometheus endpoint is enabled" {
+    // given
+    val specification = managementRequest()
+
+    // when
+    val response = specification
+      .get("/internal/prometheus")
+
+    // then
+    response
+      .then()
+      .log().all()
+      .assertThat()
+      .statusCode(HttpStatus.OK.value())
+  }
+
+  "Metrics are exposed" {
+    // given
+    managementRequest()
+
+      // when
+      .get("/internal/metrics")
+
+      // then
+      .then()
+      .log().all()
+      .statusCode(HttpStatus.OK.value())
+      .body(
+        "names", hasItems(
+          // Spring-provided, one per category
+          "application.started.time",
+          "disk.total",
+          "executor.pool.max",
+          "hikaricp.connections.max",
+          "jdbc.connections.max",
+          "jvm.memory.max",
+          "logback.events",
+          "process.start.time",
+          "system.cpu.count",
+          "tomcat.sessions.active.max",
+          // Custom ones, one per category
+        )
+      )
+  }
 })
