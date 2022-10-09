@@ -125,6 +125,11 @@ class ActuatorIT : CommonIT({
 
   "Metrics are exposed" {
     // given
+    // Issue dummy request so that http.server.requests metric becomes visible
+    request()
+      .post("/test")
+
+    // and
     managementRequest()
 
       // when
@@ -147,6 +152,7 @@ class ActuatorIT : CommonIT({
           "process.start.time",
           "system.cpu.count",
           "tomcat.sessions.active.max",
+          "http.server.requests",
           // Custom ones, one per category
         )
       )
