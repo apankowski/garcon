@@ -14,7 +14,6 @@ import io.kotest.extensions.wiremock.WireMockListener
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import org.jsoup.HttpStatusException
 import org.springframework.http.MediaType
 import java.net.SocketTimeoutException
@@ -171,7 +170,7 @@ class JsoupFacebookPostClientTest : FreeSpec({
     // and
     server.givenThat(
       get("/posts")
-        .willReturn(okHtml(htmlFrom("/lunch/facebook/page-name-extraction-test.html")))
+        .willReturn(okHtml(htmlFrom("/lunch/facebook/v1/page-name-extraction-test.html")))
     )
 
     // when
@@ -190,7 +189,7 @@ class JsoupFacebookPostClientTest : FreeSpec({
     // and
     server.givenThat(
       get("/posts")
-        .willReturn(okHtml(htmlFrom("/lunch/facebook/page-name-unextractable-test.html")))
+        .willReturn(okHtml(htmlFrom("/lunch/facebook/v1/page-name-unextractable-test.html")))
     )
 
     // when

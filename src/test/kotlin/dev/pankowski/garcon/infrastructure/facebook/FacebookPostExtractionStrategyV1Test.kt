@@ -23,7 +23,7 @@ class FacebookPostExtractionStrategyV1Test : FreeSpec({
 
   "extracts posts from given page" {
     // given
-    val document = documentFromFile("/lunch/facebook/post-extraction-test.html")
+    val document = documentFromFile("/lunch/facebook/v1/post-extraction-test.html")
 
     // when
     val result = strategy.extractPosts(document)
@@ -41,7 +41,7 @@ class FacebookPostExtractionStrategyV1Test : FreeSpec({
 
   "ignores unextractable posts" {
     // given
-    val document = documentFromFile("/lunch/facebook/post-unextractable-test.html")
+    val document = documentFromFile("/lunch/facebook/v1/post-unextractable-test.html")
 
     // when
     val result = strategy.extractPosts(document)
@@ -52,7 +52,7 @@ class FacebookPostExtractionStrategyV1Test : FreeSpec({
 
   "returns posts sorted by published date" {
     // given
-    val document = documentFromFile("/lunch/facebook/post-sorting-test.html")
+    val document = documentFromFile("/lunch/facebook/v1/post-sorting-test.html")
 
     // when
     val result = strategy.extractPosts(document)
@@ -76,7 +76,7 @@ class FacebookPostExtractionStrategyV1Test : FreeSpec({
 
   "extracts posts from a real page" {
     // given
-    val document = documentFromFile("/lunch/facebook/real-page-test.html")
+    val document = documentFromFile("/lunch/facebook/v1/real-page-test.html")
 
     // when
     val result = strategy.extractPosts(document)
