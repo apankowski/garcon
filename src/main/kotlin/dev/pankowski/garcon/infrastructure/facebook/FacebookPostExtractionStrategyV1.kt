@@ -1,69 +1,27 @@
-package dev.pankowski.garcon.infrastructure
+package dev.pankowski.garcon.infrastructure.facebook
 
 import dev.pankowski.garcon.domain.*
 import org.jsoup.Jsoup
-import org.jsoup.helper.HttpConnection
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.safety.Safelist
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.net.URL
 import java.time.Instant
-import kotlin.random.Random
 
 @Component
-class JsoupFacebookPostClient(private val clientConfig: ClientConfig) : FacebookPostClient {
+class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
 
-  private val log: Logger = LoggerFactory.getLogger(javaClass)
+  private val log = LoggerFactory.getLogger(javaClass)
 
-  override fun fetch(pageConfig: LunchPageConfig): Pair<PageName?, Posts> {
-    val document = fetchDocument(pageConfig.url)
-    val pageName = extractPageName(document, pageConfig)
-    val posts = extractPosts(document).sortedBy { it.publishedAt }
-    return pageName to posts
-  }
-
-  private fun fetchDocument(url: URL): Document {
-    fun fetch() =
-      HttpConnection.connect(url)
-        .userAgent(clientConfig.userAgent)
-        .header("Accept", "text/html,application/xhtml+xml")
-        .header("Accept-Language", "pl,en;q=0.5")
-        .header("Cache-Control", "no-cache")
-        .header("Pragma", "no-cache")
-        .timeout(clientConfig.timeout.toMillis().toInt())
-        .get()
-
-    // We use retries as Facebook seems to be responding with 500 from time to time
-    repeat(clientConfig.retryCount) {
-      try {
-        return fetch()
-      } catch (_: Exception) {
-        Thread.sleep(Random.nextLong(clientConfig.retryMinJitter.toMillis(), clientConfig.retryMaxJitter.toMillis()))
-      }
-    }
-    return fetch()
-  }
-
-  private fun extractPageName(document: Document, pageConfig: LunchPageConfig): PageName? {
-    val pageName = document.select("head meta[property=og:title]")
-      .attr("content")
-      .emptyToNull()
-      ?.let(::PageName)
-
-    if (pageName == null) {
-      log.warn("Couldn't get facebook page name for ${pageConfig.url}")
-    }
-
-    return pageName
-  }
-
-  private fun extractPosts(document: Document) =
-    document.select(".userContentWrapper").mapNotNull(::processContentWrapper)
+  override fun extractPosts(document: Document) =
+    document
+      .select(".userContentWrapper")
+      .mapNotNull(::processContentWrapper)
+      .sortedBy { it.publishedAt }
 
   private fun processContentWrapper(e: Element): Post? {
     // Wrap content wrapper element in a document shell to limit parent traversal.
@@ -104,11 +62,9 @@ class JsoupFacebookPostClient(private val clientConfig: ClientConfig) : Facebook
       .toLongOrNull()
       ?.let(Instant::ofEpochSecond)
 
-  private fun String.emptyToNull() = takeUnless(String::isEmpty)
-
   private fun getLink(e: Element) =
     e.absUrl("href")
-      .emptyToNull()
+      .takeUnless(String::isEmpty)
       ?.let(URI::create)
 
   private fun extractFacebookId(uri: URI): ExternalId? {
