@@ -15,7 +15,7 @@ plugins {
   id("com.adarshr.test-logger") version "3.2.0"
   id("com.avast.gradle.docker-compose") version "0.16.9"
   id("org.flywaydb.flyway") version "9.5.1"
-  id("nu.studer.jooq") version "7.1.1"
+  id("nu.studer.jooq") version "8.0"
   jacoco
   id("org.sonarqube") version "3.4.0.2513"
 }
@@ -183,7 +183,7 @@ tasks.flywayMigrate {
 // Jooq
 
 jooq {
-  version.set("3.17.3")
+  version.set("3.17.4")
 
   configurations {
     create("main") {
