@@ -1,13 +1,13 @@
 package dev.pankowski.garcon.infrastructure.facebook
 
-import dev.pankowski.garcon.domain.*
+import dev.pankowski.garcon.domain.ExternalId
+import dev.pankowski.garcon.domain.Post
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.safety.Safelist
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.net.URL
 import java.time.Instant
@@ -33,7 +33,7 @@ class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
       ?.parents()
       ?.mapNotNull(::getLink)
       ?.firstOrNull()
-    val facebookId = link?.let(::extractFacebookId)
+    val facebookId = link?.let(FacebookIdExtractor::extractFacebookId)
     val facebookLink = facebookId?.let(::buildFacebookLink)
 
     val publishedAt = timestampElement
@@ -66,32 +66,6 @@ class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
     e.absUrl("href")
       .takeUnless(String::isEmpty)
       ?.let(URI::create)
-
-  private fun extractFacebookId(uri: URI): ExternalId? {
-    // Regular post
-    val postPathRegex = "^/?permalink\\.php".toRegex()
-    postPathRegex.find(uri.path)?.let {
-      return UriComponentsBuilder.fromUri(uri).build()
-        .queryParams["story_fbid"]
-        ?.firstOrNull()
-        ?.let(::ExternalId)
-    }
-
-    // Regular post - alternative version
-    val altPostPathRegex = "^/?[^/]+/posts/(\\d+)/?$".toRegex()
-    altPostPathRegex.find(uri.path)?.let {
-      return ExternalId(it.groupValues[1])
-    }
-
-    // Photo
-    val photoPathRegex = "^/?[^/]+/photos/[a-z.\\d]+/(\\d+)/?$".toRegex()
-    photoPathRegex.find(uri.path)?.let {
-      return ExternalId(it.groupValues[1])
-    }
-
-    // Dunno
-    return null
-  }
 
   private fun buildFacebookLink(id: ExternalId) =
     URL("https://www.facebook.com/${id.id}")
