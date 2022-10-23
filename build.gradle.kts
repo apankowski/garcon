@@ -6,9 +6,9 @@ import org.jooq.meta.jaxb.Logging
 // Gradle
 
 plugins {
-  kotlin("jvm") version "1.6.21"
-  kotlin("kapt") version "1.6.21"
-  kotlin("plugin.spring") version "1.6.21"
+  kotlin("jvm") version "1.7.20"
+  kotlin("kapt") version "1.7.20"
+  kotlin("plugin.spring") version "1.7.20"
   id("org.springframework.boot") version "2.7.3"
   id("io.spring.dependency-management") version "1.0.13.RELEASE"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
@@ -40,7 +40,7 @@ dependencyManagement {
     dependency("io.kotest:kotest-framework-datatest:5.4.2")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.2")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.3")
-    dependency("io.mockk:mockk:1.12.7")
+    dependency("io.mockk:mockk:1.13.2")
     dependency("com.tngtech.archunit:archunit-junit5:0.23.1")
     dependency("com.google.guava:guava:31.1-jre")
   }
