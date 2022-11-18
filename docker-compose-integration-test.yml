@@ -3,7 +3,7 @@ version: '3.1'
 services:
   database:
     restart: always
-    image: postgres:14.1
+    image: postgres:14.6
     environment:
       POSTGRES_DB: garcon
       POSTGRES_USER: garcon
