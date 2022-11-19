@@ -69,7 +69,7 @@ dependencies {
   jooqGenerator("org.postgresql:postgresql")
   // See https://github.com/etiennestuder/gradle-jooq-plugin/issues/209
   // Remove once Spring Boot-imported BOM upgrades Jakarta XML API to 3+
-  jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
+  jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
 
   // Tests
   testImplementation("org.springframework.boot:spring-boot-starter-test")
