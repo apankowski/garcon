@@ -1,10 +1,9 @@
-# OpenJDK builds are quite large at the moment:
-# - openjdk:17-alpine is 181.71 MB compressed
-# - openjdk:17-slim is 210.27 MB compressed
+# OpenJDK images are quite large:
+# - openjdk:19-alpine is 185.34 MB compressed
+# - openjdk:19-slim is 218.92 MB MB compressed
 # Whereas:
-# - azul/zulu-openjdk-alpine:17-jre-headless is 64.28 MB compressed
-# - gcr.io/distroless/java17:latest is 81.7 MB compressed
-FROM azul/zulu-openjdk-alpine:17-jre-headless as production
+# - azul/zulu-openjdk-alpine:19-jre-headless is 66.13 MB compressed
+FROM azul/zulu-openjdk-alpine:19-jre-headless as production
 
 # Curl is used in healthcheck.
 RUN apk --no-cache add curl
