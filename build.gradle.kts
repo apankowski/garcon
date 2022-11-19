@@ -17,7 +17,7 @@ plugins {
   id("org.flywaydb.flyway") version "9.8.2"
   id("nu.studer.jooq") version "8.0"
   jacoco
-  id("org.sonarqube") version "3.5.0.2730"
+  id("org.sonarqube") version "3.4.0.2513"
 }
 
 tasks.wrapper {
