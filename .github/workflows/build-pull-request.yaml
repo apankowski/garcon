@@ -67,7 +67,7 @@ jobs:
         if-no-files-found: error
 
     - name: Cache Sonar packages
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.sonar/cache
         key: sonar
