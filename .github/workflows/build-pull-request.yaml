@@ -23,7 +23,7 @@ jobs:
         fetch-depth: 0 # Seems to be required by Sonar to figure out which code is "new"
 
     - name: Setup Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@v2
 
     - name: Setup Java
       uses: actions/setup-java@v3
