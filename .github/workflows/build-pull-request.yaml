@@ -53,7 +53,7 @@ jobs:
         if-no-files-found: error
 
     - name: Publish test results
-      uses: EnricoMi/publish-unit-test-result-action@v1
+      uses: EnricoMi/publish-unit-test-result-action@v2
       if: always() && (steps.test.conclusion != 'skipped') && (github.event_name == 'pull_request')
       with:
         files: build/test-results/**/*.xml
