@@ -10,6 +10,7 @@ on:
 env:
   DOCKER_BUILDKIT: 1
   DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG == 'true' }} # Secrets can't be used in step conditions
+  JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal
 
 jobs:
   build:
@@ -78,7 +79,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: ./gradlew sonarqube --info
+      # Seen lots of bizarre errors when Sonar scan was running inside the Gradle daemon:
+      # - OutOfMemoryError: Metaspace
+      # - Expiring Daemon due to JVM Metaspace space being exhausted
+      # - Could not receive a message from the daemon
+      # All seemed to appear during Kotlin Sensor's scan.
+      run: ./gradlew sonarqube --info --stacktrace --no-daemon
 
     - name: Build docker image
       uses: docker/build-push-action@v3
