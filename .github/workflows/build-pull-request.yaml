@@ -67,6 +67,13 @@ jobs:
         path: build/reports/jacoco/test/html/**/*
         if-no-files-found: error
 
+    - name: Cache Sonar packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.sonar/cache
+        key: sonar
+        restore-keys: sonar
+
     - name: Analyze code with Sonar
       if: always()
       env:
