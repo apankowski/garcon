@@ -14,6 +14,7 @@ import io.kotest.matchers.shouldBe
 import org.flywaydb.core.Flyway
 import org.jooq.DSLContext
 import org.springframework.boot.test.autoconfigure.jooq.JooqTest
+import org.springframework.test.context.ActiveProfiles
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit.DAYS
@@ -21,6 +22,7 @@ import java.time.temporal.ChronoUnit.HOURS
 import java.util.UUID.randomUUID
 
 @JooqTest
+@ActiveProfiles("no-scheduled-tasks")
 class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : FreeSpec({
 
   beforeEach {
