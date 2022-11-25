@@ -35,7 +35,7 @@ repositories {
 dependencyManagement {
   dependencies {
     dependency("org.jsoup:jsoup:1.15.3")
-    dependency("com.github.tomakehurst:wiremock-jre8:2.35.0")
+    dependency("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
     dependency("io.kotest:kotest-runner-junit5:5.5.4")
     dependency("io.kotest:kotest-framework-datatest:5.5.4")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.2")
@@ -74,7 +74,7 @@ dependencies {
   // Tests
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.rest-assured:rest-assured")
-  testImplementation("com.github.tomakehurst:wiremock-jre8")
+  testImplementation("com.github.tomakehurst:wiremock-jre8-standalone")
   testImplementation("com.tngtech.archunit:archunit-junit5")
 
   testImplementation("io.mockk:mockk")
