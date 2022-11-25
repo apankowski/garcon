@@ -1,13 +1,11 @@
 package dev.pankowski.garcon.domain
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import java.net.URL
 import java.time.Duration
 import java.util.*
 
 /** Configuration of lunch feature of the bot. */
-@ConstructorBinding
 @ConfigurationProperties("lunch")
 data class LunchConfig(
 
@@ -26,7 +24,6 @@ data class LunchPageConfig(
 )
 
 /** Configuration of synchronization of lunch posts. */
-@ConstructorBinding
 @ConfigurationProperties("lunch.sync")
 data class SyncConfig(
 
@@ -35,7 +32,6 @@ data class SyncConfig(
 )
 
 /** Configuration of web client used to fetch lunch pages. */
-@ConstructorBinding
 @ConfigurationProperties("lunch.client")
 data class ClientConfig(
 
@@ -56,7 +52,6 @@ data class ClientConfig(
 )
 
 /** Configuration related to lunch post classification. */
-@ConstructorBinding
 @ConfigurationProperties("lunch.post")
 data class PostConfig(
 
@@ -68,7 +63,6 @@ data class PostConfig(
 )
 
 /** Slack-related configuration. */
-@ConstructorBinding
 @ConfigurationProperties("lunch.slack")
 data class SlackConfig(
 
@@ -80,7 +74,6 @@ data class SlackConfig(
 )
 
 /** Configuration of retrying failed reposts. */
-@ConstructorBinding
 @ConfigurationProperties("lunch.repost.retry")
 data class RepostRetryConfig(
 
