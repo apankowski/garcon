@@ -10,6 +10,7 @@ import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import jakarta.servlet.Servlet
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockFilterChain
