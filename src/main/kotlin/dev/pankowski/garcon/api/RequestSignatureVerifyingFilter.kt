@@ -33,7 +33,7 @@ class RequestSignatureVerifyingFilter(private val signatureVerifier: SlackSignat
   private val log = getLogger(javaClass)
 
   override fun shouldNotFilter(request: HttpServletRequest) =
-    request.method !in VerifiedHttpMethods.map { it.name }
+    request.method !in VerifiedHttpMethods.map { it.name() }
 
   override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
     val body = request.inputStream.readNBytes(MaxBodyLength)

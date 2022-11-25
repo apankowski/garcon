@@ -16,8 +16,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockFilterChain
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
-import java.util.*
-import javax.servlet.Servlet
 
 class RequestSignatureVerifyingFilterTest : FreeSpec({
 
@@ -31,12 +29,12 @@ class RequestSignatureVerifyingFilterTest : FreeSpec({
 
   fun runFilterChain() = MockFilterChain(servlet, filter).doFilter(request, response)
 
-  val verifiedMethods = EnumSet.of(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH)
+  val verifiedMethods = setOf(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH)
 
   "verifies some methods" - {
     withData<HttpMethod>({ "verifies $it method" }, verifiedMethods) { method ->
       // given
-      request.method = method.name
+      request.method = method.name()
       every { verifier.verify(any()) } returns false
 
       // when
@@ -50,9 +48,9 @@ class RequestSignatureVerifyingFilterTest : FreeSpec({
   }
 
   "doesn't verify some methods" - {
-    withData<HttpMethod>({ "doesn't verify $it method" }, EnumSet.complementOf(verifiedMethods)) { method ->
+    withData<HttpMethod>({ "doesn't verify $it method" }, setOf(*HttpMethod.values()) - verifiedMethods) { method ->
       // given
-      request.method = method.name
+      request.method = method.name()
       every { servlet.service(any(), any()) } returns Unit
 
       // when
@@ -68,7 +66,7 @@ class RequestSignatureVerifyingFilterTest : FreeSpec({
 
   "rejects request with too large body" {
     // given
-    request.method = HttpMethod.POST.name
+    request.method = HttpMethod.POST.name()
     request.setContent(ByteArray(100_001))
 
     // when
@@ -86,7 +84,7 @@ class RequestSignatureVerifyingFilterTest : FreeSpec({
 
   "rejects request with incorrect signature" {
     // given
-    request.method = HttpMethod.POST.name
+    request.method = HttpMethod.POST.name()
     every { verifier.verify(any()) } returns false
 
     // when
@@ -104,7 +102,7 @@ class RequestSignatureVerifyingFilterTest : FreeSpec({
 
   "accepts request with correct signature" {
     // given
-    request.method = HttpMethod.POST.name
+    request.method = HttpMethod.POST.name()
     every { verifier.verify(any()) } returns true
     every { servlet.service(any(), any()) } returns Unit
 
