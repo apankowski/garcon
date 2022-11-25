@@ -9,7 +9,7 @@ plugins {
   kotlin("jvm") version "1.7.21"
   kotlin("kapt") version "1.7.21"
   kotlin("plugin.spring") version "1.7.21"
-  id("org.springframework.boot") version "2.7.6"
+  id("org.springframework.boot") version "3.0.0"
   id("io.spring.dependency-management") version "1.1.0"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
@@ -35,7 +35,7 @@ repositories {
 dependencyManagement {
   dependencies {
     dependency("org.jsoup:jsoup:1.15.3")
-    dependency("com.github.tomakehurst:wiremock-jre8:2.35.0")
+    dependency("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
     dependency("io.kotest:kotest-runner-junit5:5.5.4")
     dependency("io.kotest:kotest-framework-datatest:5.5.4")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.2")
@@ -67,14 +67,11 @@ dependencies {
 
   // Jooq generator
   jooqGenerator("org.postgresql:postgresql")
-  // See https://github.com/etiennestuder/gradle-jooq-plugin/issues/209
-  // Remove once Spring Boot-imported BOM upgrades Jakarta XML API to 3+
-  jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
 
   // Tests
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.rest-assured:rest-assured")
-  testImplementation("com.github.tomakehurst:wiremock-jre8")
+  testImplementation("com.github.tomakehurst:wiremock-jre8-standalone")
   testImplementation("com.tngtech.archunit:archunit-junit5")
 
   testImplementation("io.mockk:mockk")

@@ -88,11 +88,11 @@ class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
 
 class SlackRequestSigningInterceptor(signingSecret: String) : HttpRequestInterceptor {
 
-  private val supportedHttpMethods = EnumSet.of(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH)
+  private val supportedHttpMethods = setOf(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH)
   private val hashFunction = Hashing.hmacSha256(signingSecret.toByteArray())
 
   override fun process(request: HttpRequest, context: HttpContext) {
-    if (request.requestLine.method in supportedHttpMethods.map { it.name }) {
+    if (request.requestLine.method in supportedHttpMethods.map { it.name() }) {
       val maybeEntity = findEntity(request)
       val body = maybeEntity?.content?.readBytes() ?: ByteArray(0)
 

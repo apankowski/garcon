@@ -16,12 +16,12 @@ import java.io.InputStreamReader
 import java.io.OutputStream
 import java.util.*
 import java.util.Collections.enumeration
-import javax.servlet.FilterChain
-import javax.servlet.ReadListener
-import javax.servlet.ServletInputStream
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletRequestWrapper
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.FilterChain
+import jakarta.servlet.ReadListener
+import jakarta.servlet.ServletInputStream
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequestWrapper
+import jakarta.servlet.http.HttpServletResponse
 
 class RequestSignatureVerifyingFilter(private val signatureVerifier: SlackSignatureVerifier) : OncePerRequestFilter() {
 
@@ -33,7 +33,7 @@ class RequestSignatureVerifyingFilter(private val signatureVerifier: SlackSignat
   private val log = getLogger(javaClass)
 
   override fun shouldNotFilter(request: HttpServletRequest) =
-    request.method !in VerifiedHttpMethods.map { it.name }
+    request.method !in VerifiedHttpMethods.map { it.name() }
 
   override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
     val body = request.inputStream.readNBytes(MaxBodyLength)
