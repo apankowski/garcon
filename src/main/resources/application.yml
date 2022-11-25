@@ -43,9 +43,9 @@ management:
       show-details: always
       probes:
         enabled: true
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
 
 lunch:
