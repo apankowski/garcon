@@ -99,7 +99,7 @@ class ActuatorIT : CommonIT({
       .accept(MediaType.APPLICATION_JSON_VALUE)
 
       // when
-      .get("/internal/httptrace")
+      .get("/internal/httpexchanges")
 
       // then
       .then()
