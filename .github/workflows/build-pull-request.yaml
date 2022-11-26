@@ -94,7 +94,7 @@ jobs:
         format: json
 
     - name: Publish Hadolint results
-      uses: apankowski/publish-hadolint-results-action@master
+      uses: apankowski/publish-hadolint-results-action@main
       with:
         files: hadolint-output.json
 
