@@ -88,13 +88,16 @@ jobs:
 
     - name: Analyze Dockerfile with Hadolint
       uses: hadolint/hadolint-action@v3.0.0
+      id: hadolint
       if: always()
       with:
         output-file: hadolint-output.sarif
         format: sarif
+        failure-threshold: error
 
     - name: Upload Hadolint results
       uses: github/codeql-action/upload-sarif@v2
+      if: always() && (steps.hadolint.conclusion != 'skipped')
       with:
         sarif_file: hadolint-output.sarif
 
