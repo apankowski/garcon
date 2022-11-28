@@ -86,17 +86,17 @@ jobs:
       # All seemed to appear during Kotlin Sensor's scan.
       run: ./gradlew sonarqube --info --stacktrace --no-daemon
 
-    - uses: hadolint/hadolint-action@v3.0.0
-      id: hadolint
+    - name: Analyze Dockerfile with Hadolint
+      uses: hadolint/hadolint-action@v3.0.0
       if: always()
       with:
-        output-file: hadolint-output.json
-        format: json
+        output-file: hadolint-output.sarif
+        format: sarif
 
-    - name: Publish Hadolint results
-      uses: apankowski/publish-hadolint-results-action@main
+    - name: Upload Hadolint results
+      uses: github/codeql-action/upload-sarif@v2
       with:
-        files: hadolint-output.json
+        sarif_file: hadolint-output.sarif
 
     - name: Build docker image
       uses: docker/build-push-action@v3
