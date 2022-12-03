@@ -108,6 +108,7 @@ jobs:
         tags: garcon:${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        load: true
 
     - name: Analyze image with Trivy
       uses: aquasecurity/trivy-action@0.8.0
