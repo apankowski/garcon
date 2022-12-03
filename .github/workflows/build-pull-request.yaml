@@ -10,7 +10,8 @@ on:
 env:
   DOCKER_BUILDKIT: 1
   DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG == 'true' }} # Secrets can't be used in step conditions
-  JAVA_TOOL_OPTIONS: -XX:+PrintFlagsFinal
+  # Print JVM flags in debug mode. Uses simulated ternary operator (see https://github.com/actions/runner/issues/409).
+  JAVA_TOOL_OPTIONS: ${{ secrets.ACTIONS_STEP_DEBUG == 'true' && '-XX:+PrintFlagsFinal' || '' }}
 
 jobs:
   build:
