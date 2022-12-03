@@ -105,8 +105,28 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: .
+        tags: apankowski/garcon:${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        load: true
+
+    - name: Analyze image with Trivy
+      uses: aquasecurity/trivy-action@0.8.0
+      id: trivy
+      with:
+        image-ref: apankowski/garcon:${{ github.sha }}
+        format: sarif
+        output: trivy-output.sarif
+        vuln-type: os,library
+        severity: CRITICAL,HIGH,MEDIUM
+        exit-code: 1
+        ignore-unfixed: true
+
+    - name: Upload Trivy results
+      uses: github/codeql-action/upload-sarif@v2
+      if: always() && (steps.trivy.conclusion != 'skipped')
+      with:
+        sarif_file: trivy-output.sarif
 
     - name: Cleanup Gradle Cache
       if: always()
