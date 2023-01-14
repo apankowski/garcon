@@ -52,6 +52,11 @@ class JsoupFacebookPostClient(
         .header("Accept-Language", "pl,en;q=0.5")
         .header("Cache-Control", "no-cache")
         .header("Pragma", "no-cache")
+        .header("DNT", "1")
+        .header("Sec-Fetch-Dest", "document")
+        .header("Sec-Fetch-Mode", "navigate")
+        .header("Sec-Fetch-Site", "none")
+        .header("Sec-Fetch-User", "?1")
         .timeout(clientConfig.timeout.toMillis().toInt())
         .get()
 
