@@ -7,7 +7,6 @@ import java.net.URI
 
 object FacebookIdExtractor {
 
-  @VisibleForTesting
   fun extractFacebookId(uri: URI): ExternalId? {
     // Regular post
     val postPathRegex = "^/?permalink\\.php".toRegex()

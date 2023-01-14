@@ -13,9 +13,10 @@ import java.net.URL
 import java.time.Instant
 
 /**
- * Post extraction strategy viable until H1 2022, extracting posts from Facebook page DOM which
- * (back then) was server-side rendered. As a result, parts of post information was pretty easily
- * identifiable in the DOM.
+ * Post extraction strategy viable for pages returned before H1- 2022.
+ *
+ * Until then Facebook pages were server-side rendered. Extracting posts from a page meant
+ * (more or less) searching for DOM elements with appropriate CSS selectors.
  */
 @Component
 class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
