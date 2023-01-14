@@ -1,5 +1,6 @@
 package dev.pankowski.garcon.infrastructure.facebook
 
+import com.google.common.annotations.VisibleForTesting
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.Post
 import org.jsoup.Jsoup
@@ -8,14 +9,16 @@ import org.jsoup.nodes.Element
 import org.jsoup.safety.Safelist
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.net.URL
 import java.time.Instant
 
 /**
- * Post extraction strategy viable until H1 2022, extracting posts from Facebook page DOM which
- * (back then) was server-side rendered. As a result, parts of post information was pretty easily
- * identifiable in the DOM.
+ * Post extraction strategy viable for pages returned before H1- 2022.
+ *
+ * Until then Facebook pages were server-side rendered. Extracting posts from a page meant
+ * (more or less) searching for DOM elements with appropriate CSS selectors.
  */
 @Component
 class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
@@ -91,5 +94,59 @@ class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
 
     // Remove surrounding newlines & whitespace surrounding each individual line.
     return clean.trim().lines().joinToString(transform = String::trim, separator = "\n")
+  }
+}
+
+@VisibleForTesting
+object FacebookIdExtractor {
+
+  fun extractFacebookId(uri: URI): ExternalId? {
+    // Regular post
+    val postPathRegex = "^/?permalink\\.php".toRegex()
+    postPathRegex.find(uri.path)?.let {
+      return UriComponentsBuilder.fromUri(uri).build()
+        .queryParams["story_fbid"]
+        ?.firstOrNull()
+        ?.let(::ExternalId)
+    }
+
+    // Regular post - alternative version
+    val altPostPathRegex = "^/?[^/]+/posts/([0-9a-zA-Z_-]+)/?".toRegex()
+    altPostPathRegex.find(uri.path)?.let {
+      return ExternalId(it.groupValues[1])
+    }
+
+    // Photo
+    val photoPathRegex = "^/?[^/]+/photos/[0-9a-zA-Z._-]+/([0-9a-zA-Z_-]+)/?".toRegex()
+    photoPathRegex.find(uri.path)?.let {
+      return ExternalId(it.groupValues[1])
+    }
+
+    // Photo - alternative version
+    val altPhotoPathRegex = "^/?photo/?".toRegex()
+    altPhotoPathRegex.find(uri.path)?.let {
+      return UriComponentsBuilder.fromUri(uri).build()
+        .queryParams["fbid"]
+        ?.firstOrNull()
+        ?.let(::ExternalId)
+    }
+
+    // Video
+    val videoPathRegex = "^/?watch/?".toRegex()
+    videoPathRegex.find(uri.path)?.let {
+      return UriComponentsBuilder.fromUri(uri).build()
+        .queryParams["v"]
+        ?.firstOrNull()
+        ?.let(::ExternalId)
+    }
+
+    // Reel
+    val reelPathRegex = "^/?reel/([0-9a-zA-Z_-]+)/?".toRegex()
+    reelPathRegex.find(uri.path)?.let {
+      return ExternalId(it.groupValues[1])
+    }
+
+    // Dunno
+    return null
   }
 }
