@@ -57,6 +57,11 @@ class JsoupFacebookPostClientTest : FreeSpec({
         .withHeader("Accept-Language", equalTo("pl,en;q=0.5"))
         .withHeader("Cache-Control", equalTo("no-cache"))
         .withHeader("Pragma", equalTo("no-cache"))
+        .withHeader("DNT", equalTo("1"))
+        .withHeader("Sec-Fetch-Dest", equalTo("document"))
+        .withHeader("Sec-Fetch-Mode", equalTo("navigate"))
+        .withHeader("Sec-Fetch-Site", equalTo("none"))
+        .withHeader("Sec-Fetch-User", equalTo("?1"))
     )
   }
 
