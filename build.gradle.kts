@@ -49,7 +49,7 @@ dependencyManagement {
 dependencies {
   // Kotlin & standard library
   implementation("org.jetbrains.kotlin:kotlin-reflect")
-  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+  implementation("org.jetbrains.kotlin:kotlin-stdlib")
   implementation("com.google.guava:guava")
 
   // Web
