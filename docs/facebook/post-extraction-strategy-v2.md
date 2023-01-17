@@ -2,6 +2,11 @@
 
 This document covers some research around post extraction strategy for pages served by Facebook since mid 2022.
 
+Downsides of this strategy:
+
+1. it's a bit complicated,
+2. it allows extracting a single, most recent post.
+
 ## DOM loading
 
 For some reason regular `curl` doesn't work, i.e. the following returns a login page:
