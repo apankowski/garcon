@@ -1,5 +1,7 @@
 # Post extraction strategy v2
 
+This document covers some research around post extraction strategy for pages served by Facebook since mid 2022.
+
 ## DOM loading
 
 For some reason regular `curl` doesn't work, i.e. the following returns a login page:
@@ -27,7 +29,27 @@ Compared to previously working request, the difference is in the addition of:
 
 ## Payload extraction
 
-TODO: Define payload and describe extraction approach
+Downloaded page DOM contains information needed to render the top-most post (called the "payload" here). The page is not server-side rendered. Rather, information needed to render the post on the client side is embedded in the DOM, in one of the inline scripts.
+
+There is a lot of scripts, both inline and loaded. Identifying the one containing the payload is challenging. Moreover, the payload is buried deep in calls setting up invocation of post rendering logic:
+
+```javascript
+requireLazy(["Bootloader"],function(b){
+    b.loadResources(["xKlBoGV"],{
+        onAll:function(){
+            requireLazy(["JSScheduler","ServerJS","ScheduledApplyEach"],function(JSScheduler,ServerJS,ScheduledApplyEach){
+                JSScheduler.runWithPriority(3,function(){
+                    (new ServerJS()).handleWithCustomApplyEach(ScheduledApplyEach,{"define":[/*...*/]});
+                });
+            });
+        }
+    })
+});
+```
+
+Above, the payload is the `{"define":[/*...*/]}` JSON object (cut short for brevity), the snippet is formatted for readability, and it's just one line of a larger inline script.
+
+Instead of trying to identify the script of interest, all plain JSON object literals from all the scripts in the DOM can be extracted and a query extracting post data applied to each one of them.
 
 ## Payload analysis
 
