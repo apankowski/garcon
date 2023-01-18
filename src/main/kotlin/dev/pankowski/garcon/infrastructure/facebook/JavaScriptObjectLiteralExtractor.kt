@@ -14,20 +14,20 @@ object JavaScriptObjectLiteralExtractor {
   private val log = LoggerFactory.getLogger(javaClass)
   private val mapper = JsonMapper()
 
-  fun extract(javascript: String) =
+  fun extractFrom(javascript: String) =
     // Is the script a JSON object literal by itself? If so, return it.
-    maybeJsonObject(javascript)?.let { listOf(it) }
+    toJsonObject(javascript)?.let { listOf(it) }
       ?:
       // No. Let's try parsing as JavaScript and extracting object literals.
-      runCatching { collectObjectLiterals(javascript) }
+      runCatching { collectObjectLiteralsFrom(javascript) }
         .onFailure { log.warn("Error parsing as JavaScript: {}", javascript, it) }
         .getOrDefault(emptyList())
 
-  private fun maybeJsonObject(string: String) =
+  private fun toJsonObject(string: String) =
     runCatching { mapper.readValue(string, ObjectNode::class.java) }
       .getOrNull()
 
-  private fun collectObjectLiterals(javascript: String): List<ObjectNode> {
+  private fun collectObjectLiteralsFrom(javascript: String): List<ObjectNode> {
     val accumulator = mutableListOf<ObjectNode>()
     val detector = objectLiteralDetector(javascript) { accumulator.add(it) }
     traverseAst(javascript, detector)
@@ -52,7 +52,7 @@ object JavaScriptObjectLiteralExtractor {
         // We're in JavaScript world here, so object properties might have values being functions 🙃
         // We should only short-circuit traversal if the node is a plain JSON object, which we detect by trying
         // to parse the node with Jackson (which will choke on JavaScript extensions over JSON).
-        maybeJsonObject(candidate)?.let {
+        toJsonObject(candidate)?.let {
           log.trace("Found object literal: {}", candidate)
           onObjectLiteralDetected(it)
           // Don't descend to children AST nodes - if we did, we'd find objects nested in the found one

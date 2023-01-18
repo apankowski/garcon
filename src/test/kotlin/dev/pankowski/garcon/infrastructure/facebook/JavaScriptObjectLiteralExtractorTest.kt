@@ -85,7 +85,7 @@ class JavaScriptObjectLiteralExtractorTest : FreeSpec({
     ) { testCase ->
 
       // given
-      val result = extractor.extract(testCase.script)
+      val result = extractor.extractFrom(testCase.script)
 
       // expect
       result shouldBe testCase.outputs
