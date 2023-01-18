@@ -76,9 +76,11 @@ class JavaScriptObjectLiteralExtractorTest : FreeSpec({
       ),
       TestCase(
         """abc""",
+        // No object literals
       ),
       TestCase(
         """call(["a"],function(m){m.handle({"some":{"object":true""",
+        // No object literals
       ),
     ) { testCase ->
 
