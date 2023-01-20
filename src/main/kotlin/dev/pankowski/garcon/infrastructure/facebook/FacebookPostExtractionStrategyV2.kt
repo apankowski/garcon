@@ -1,6 +1,10 @@
 package dev.pankowski.garcon.infrastructure.facebook
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.JsonNodeType
+import com.fasterxml.jackson.databind.node.JsonNodeType.NUMBER
+import com.fasterxml.jackson.databind.node.JsonNodeType.STRING
 import com.fasterxml.jackson.databind.node.ObjectNode
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.Post
@@ -70,13 +74,30 @@ class FacebookPostExtractionStrategyV2 : FacebookPostExtractionStrategy {
   private fun extractPostsFromQueryOutput(output: ArrayNode): Posts {
     return output.mapNotNull map@{ node ->
       Post(
-        // TODO: Better edge-case handling (missing properties, properties of wrong type) + warnings in logs
-        externalId = node.get("id").textValue()?.let { ExternalId(it) } ?: return@map null,
-        link = node.get("url").textValue()?.let { URL(it) } ?: return@map null,
-        publishedAt = node.get("published_at").longValue().let { Instant.ofEpochSecond(it) } ?: return@map null,
-        content = node.get("content").textValue()?.sanitizeContent() ?: return@map null,
+        // TODO: Collecting all extraction and mapping warnings
+        externalId = node.extractProperty("id", STRING) { ExternalId(it.textValue()) } ?: return@map null,
+        link = node.extractProperty("url", STRING) { URL(it.textValue()) } ?: return@map null,
+        publishedAt = node.extractProperty("published_at", NUMBER) { Instant.ofEpochSecond(it.longValue()) } ?: return@map null,
+        content = node.extractProperty("content", STRING) { it.textValue().sanitizeContent() } ?: return@map null,
       )
     }
+  }
+
+  private fun <T> JsonNode.extractProperty(name: String, expectedType: JsonNodeType, mapper: (JsonNode) -> T): T? {
+    val propertyValue = get(name)
+
+    if (propertyValue == null) {
+      log.warn("Posts query output doesn't have expected property '{}'", name)
+      return null
+    } else if (propertyValue.nodeType != expectedType) {
+      log.warn(
+        "Property '{}' of posts query output is a {}, but {} was expected",
+        name, propertyValue.nodeType, expectedType
+      )
+      return null
+    }
+
+    return mapper(propertyValue)
   }
 
   private fun String.sanitizeContent() =
