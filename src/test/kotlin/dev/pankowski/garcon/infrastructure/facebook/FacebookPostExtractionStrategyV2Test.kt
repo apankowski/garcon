@@ -3,7 +3,6 @@ package dev.pankowski.garcon.infrastructure.facebook
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.Post
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
 import org.jsoup.Jsoup
 import java.net.URL
@@ -90,8 +89,28 @@ class FacebookPostExtractionStrategyV2Test : FreeSpec({
           "__typename": "Story",
           "post_id": "some-post-id",
           "content": {
+            "creation_time": false,
+            "url": "https://facebook.com/some-post-permalink",
+            "__typename": "TextWithEntities",
+            "text": "some content"
+          }
+        },
+        {
+          "__typename": "Story",
+          "post_id": "some-post-id",
+          "content": {
             "creation_time": 0,
             "url": false,
+            "__typename": "TextWithEntities",
+            "text": "some content"
+          }
+        },
+        {
+          "__typename": "Story",
+          "post_id": "some-post-id",
+          "content": {
+            "creation_time": 0,
+            "url": "invalid URL",
             "__typename": "TextWithEntities",
             "text": "some content"
           }
