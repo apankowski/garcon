@@ -65,8 +65,7 @@ class FacebookPostExtractionStrategyV2 : FacebookPostExtractionStrategy {
   private fun extractPostsFromObjectLiteral(objectLiteral: ObjectNode): Posts {
     var result = emptyList<Post>()
     postsQuery.apply(rootScope, objectLiteral) { output ->
-      if (output is ArrayNode)
-        result = extractPostsFromQueryOutput(output)
+      if (output is ArrayNode) result = extractPostsFromQueryOutput(output)
     }
     return result
   }
