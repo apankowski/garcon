@@ -102,7 +102,9 @@ class FacebookPostExtractionStrategyV2 : FacebookPostExtractionStrategy {
       return null
     }
 
-    return mapper(propertyValue)
+    return runCatching { mapper(propertyValue) }
+      .onFailure { log.warn("Error mapping property '{}' from value '{}'", name, propertyValue, it) }
+      .getOrNull()
   }
 
   private fun String.sanitizeContent() =
