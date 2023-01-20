@@ -3,6 +3,7 @@ package dev.pankowski.garcon.infrastructure.facebook
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.Post
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
 import org.jsoup.Jsoup
 import java.net.URL
@@ -18,12 +19,200 @@ class FacebookPostExtractionStrategyV2Test : FreeSpec({
       else -> url.readText()
     }
 
-  fun documentFromFile(file: String) =
-    Jsoup.parse(htmlFrom(file), "https://www.facebook.com/")
+  fun document(html: String) = Jsoup.parse(html, "https://www.facebook.com/")
+
+  "gracefully handles edge-cases" {
+    val html =
+      """
+      <html>
+      <script>
+      </script>
+      <script>
+      [
+        {
+          "__typename": "Story"
+        },
+        {
+          "__typename": "Story",
+          "post_id": "some-post-id"
+        },
+        {
+          "__typename": "Story",
+          "post_id": "some-post-id",
+          "content": {
+          }
+        },
+        {
+          "__typename": "Story",
+          "post_id": "some-post-id",
+          "content": {
+            "creation_time": 0
+          }
+        },
+        {
+          "__typename": "Story",
+          "post_id": "some-post-id",
+          "content": {
+            "creation_time": 0,
+            "url": "https://facebook.com/some-post-permalink",
+          }
+        },
+        {
+          "__typename": "Story",
+          "post_id": "some-post-id",
+          "content": {
+            "creation_time": 0,
+            "url": "https://facebook.com/some-post-permalink",
+            "__typename": "TextWithEntities",
+          }
+        },
+        {
+          "__typename": false,
+          "post_id": "some-post-id",
+          "content": {
+            "creation_time": 0,
+            "url": "https://facebook.com/some-post-permalink",
+            "__typename": "TextWithEntities",
+            "text": "some content"
+          }
+        },
+        {
+          "__typename": "Story",
+          "post_id": false,
+          "content": {
+            "creation_time": 0,
+            "url": "https://facebook.com/some-post-permalink",
+            "__typename": "TextWithEntities",
+            "text": "some content"
+          }
+        },
+        {
+          "__typename": "Story",
+          "post_id": "some-post-id",
+          "content": {
+            "creation_time": 0,
+            "url": false,
+            "__typename": "TextWithEntities",
+            "text": "some content"
+          }
+        },
+        {
+          "__typename": "Story",
+          "post_id": "some-post-id",
+          "content": {
+            "creation_time": 0,
+            "url": "https://facebook.com/some-post-permalink",
+            "__typename": false,
+            "text": "some content"
+          }
+        },
+        {
+          "__typename": "Story",
+          "post_id": "some-post-id",
+          "content": {
+            "creation_time": 0,
+            "url": "https://facebook.com/some-post-permalink",
+            "__typename": "TextWithEntities",
+            "text": false
+          }
+        },
+      ]
+      </script>
+      </html>
+      """.trimIndent()
+
+    // given
+    val document = document(html)
+
+    // when
+    val result = strategy.extractPosts(document)
+
+    // then
+    result shouldBe emptyList()
+  }
+
+  "extracts posts from a page with simplistic payload" {
+    val html =
+      """
+      <html>
+      <script>
+      </script>
+      <script>
+      [
+        {
+          "__typename": "Story",
+          "post_id": "some-post-id-1",
+          "content": {
+            "creation_time": 1,
+            "url": "https://facebook.com/some-post1-permalink",
+            "__typename": "TextWithEntities",
+            "text": "some content #1"
+          }
+        },
+        {
+          "__typename": "Story",
+          "post_id": "some-post-id-2",
+          "content": {
+            "creation_time": 2,
+            "url": "https://facebook.com/some-post2-permalink",
+            "__typename": "TextWithEntities",
+            "text": "some content #2"
+          }
+        },
+      ]
+      </script>
+      <div>some stuff</div>
+      <script>
+      [
+        {
+          "__typename": "Story",
+          "post_id": "some-post-id-3",
+          "content": {
+            "creation_time": 3,
+            "url": "https://facebook.com/some-post3-permalink",
+            "__typename": "TextWithEntities",
+            "text": "some content #3"
+          }
+        },
+      ]
+      </script>
+      </html>
+      """.trimIndent()
+
+    val posts = listOf(
+      Post(
+        externalId = ExternalId("some-post-id-1"),
+        link = URL("https://facebook.com/some-post1-permalink"),
+        publishedAt = Instant.ofEpochSecond(1),
+        content = "some content #1"
+      ),
+      Post(
+        externalId = ExternalId("some-post-id-2"),
+        link = URL("https://facebook.com/some-post2-permalink"),
+        publishedAt = Instant.ofEpochSecond(2),
+        content = "some content #2"
+      ),
+      Post(
+        externalId = ExternalId("some-post-id-3"),
+        link = URL("https://facebook.com/some-post3-permalink"),
+        publishedAt = Instant.ofEpochSecond(3),
+        content = "some content #3"
+      ),
+    )
+
+    // given
+    val document = document(html)
+
+    // when
+    val result = strategy.extractPosts(document)
+
+    // then
+    result shouldBe posts
+  }
 
   "extracts post from a real page" {
     // given
-    val document = documentFromFile("/lunch/facebook/v2/real-page-story.html")
+    val document = document(htmlFrom("/lunch/facebook/v2/real-page-story.html"))
 
     // when
     val result = strategy.extractPosts(document)
@@ -118,7 +307,7 @@ class FacebookPostExtractionStrategyV2Test : FreeSpec({
 
   "extracts post with image from a real page" {
     // given
-    val document = documentFromFile("/lunch/facebook/v2/real-page-story-with-image.html")
+    val document = document(htmlFrom("/lunch/facebook/v2/real-page-story-with-image.html"))
 
     // when
     val result = strategy.extractPosts(document)
