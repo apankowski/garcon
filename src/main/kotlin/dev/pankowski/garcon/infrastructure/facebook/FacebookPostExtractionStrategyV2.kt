@@ -73,12 +73,17 @@ class FacebookPostExtractionStrategyV2 : FacebookPostExtractionStrategy {
 
   private fun extractPostsFromQueryOutput(output: ArrayNode): Posts {
     return output.mapNotNull map@{ node ->
-      Post(
-        // TODO: Collecting all extraction and mapping warnings
-        externalId = node.extractProperty("id", STRING) { ExternalId(it.textValue()) } ?: return@map null,
-        link = node.extractProperty("url", STRING) { URL(it.textValue()) } ?: return@map null,
-        publishedAt = node.extractProperty("published_at", NUMBER) { Instant.ofEpochSecond(it.longValue()) } ?: return@map null,
-        content = node.extractProperty("content", STRING) { it.textValue().sanitizeContent() } ?: return@map null,
+      val externalId = node.extractProperty("id", STRING) { ExternalId(it.textValue()) }
+      val url = node.extractProperty("url", STRING) { URL(it.textValue()) }
+      val publishedAt = node.extractProperty("published_at", NUMBER) { Instant.ofEpochSecond(it.longValue()) }
+      val content = node.extractProperty("content", STRING) { it.textValue().sanitizeContent() }
+
+      if (externalId == null || url == null || publishedAt == null || content == null) null
+      else Post(
+        externalId = externalId,
+        link = url,
+        publishedAt = publishedAt,
+        content = content,
       )
     }
   }
