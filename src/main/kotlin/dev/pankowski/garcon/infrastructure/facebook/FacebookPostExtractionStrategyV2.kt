@@ -18,7 +18,7 @@ import java.time.Instant
 /**
  * Post extraction strategy suitable for pages returned H2+ 2022.
  *
- * See `${REPOSITORY_ROOT}/docs/facebook/post-extraction-strategy-v2.md` for a description of how strategy works.
+ * See `${REPOSITORY_ROOT}/docs/facebook/post-extraction-strategy-v2.md` for a description of how it works.
  */
 @Component
 class FacebookPostExtractionStrategyV2 : FacebookPostExtractionStrategy {

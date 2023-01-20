@@ -124,7 +124,7 @@ Comprehensive `jq` query returning all information for a captured payload:
                     "id": .post_id,
                     "published_at": $metadata.creation_time,
                     "url": $metadata.url,
-                    "content": $content | .. | objects | select(.__typename == "TextWithEntities") | .text,
+                    "content": $content | .. | objects | select(.__typename == "TextWithEntities") | .text
                 })
 }
 ```
