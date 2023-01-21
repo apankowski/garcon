@@ -201,19 +201,19 @@ class FacebookPostExtractionStrategyV2Test : FreeSpec({
     val posts = listOf(
       Post(
         externalId = ExternalId("some-post-id-1"),
-        link = URL("https://facebook.com/some-post1-permalink"),
+        url = URL("https://facebook.com/some-post1-permalink"),
         publishedAt = Instant.ofEpochSecond(1),
         content = "some content #1"
       ),
       Post(
         externalId = ExternalId("some-post-id-2"),
-        link = URL("https://facebook.com/some-post2-permalink"),
+        url = URL("https://facebook.com/some-post2-permalink"),
         publishedAt = Instant.ofEpochSecond(2),
         content = "some content #2"
       ),
       Post(
         externalId = ExternalId("some-post-id-3"),
-        link = URL("https://facebook.com/some-post3-permalink"),
+        url = URL("https://facebook.com/some-post3-permalink"),
         publishedAt = Instant.ofEpochSecond(3),
         content = "some content #3"
       ),

@@ -37,12 +37,12 @@ class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
 
     val timestampElement = e.selectFirst(".timestampContent")
 
-    val link = timestampElement
+    val url = timestampElement
       ?.parents()
-      ?.mapNotNull(::getLink)
+      ?.mapNotNull(::getUrl)
       ?.firstOrNull()
-    val facebookId = link?.let(FacebookIdExtractor::extractFacebookId)
-    val facebookLink = facebookId?.let(::buildFacebookLink)
+    val facebookId = url?.let(FacebookIdExtractor::extractFacebookId)
+    val permalinkUrl = facebookId?.let(::buildPermalinkUrl)
 
     val publishedAt = timestampElement
       ?.parents()
@@ -52,17 +52,17 @@ class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
     val contentElement = e.selectFirst(".userContent")
     val content = contentElement?.let(::extractContent)
 
-    if (facebookId == null || publishedAt == null || facebookLink == null || content == null) {
+    if (facebookId == null || publishedAt == null || permalinkUrl == null || content == null) {
       log.warn(
         "Possible unexpected format of facebook page post. Found .userContentWrapper but "
-          + "some of the post parts couldn't be extracted.\ntimestampElement: {}\nlink: {}\n"
-          + "externalId: {}\nfacebookLink: {}\npublishedAt: {}\ncontent: {}\n.userContentWrapper: {}",
-        timestampElement, link, facebookId, facebookLink, publishedAt, content, e
+          + "some of the post parts couldn't be extracted.\ntimestampElement: {}\nURL: {}\n"
+          + "externalId: {}\npermalinkUrl: {}\npublishedAt: {}\ncontent: {}\n.userContentWrapper: {}",
+        timestampElement, url, facebookId, permalinkUrl, publishedAt, content, e
       )
       return null
     }
 
-    return Post(facebookId, facebookLink, publishedAt, content)
+    return Post(facebookId, permalinkUrl, publishedAt, content)
   }
 
   private fun getTimestampData(e: Element) =
@@ -70,12 +70,12 @@ class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
       .toLongOrNull()
       ?.let(Instant::ofEpochSecond)
 
-  private fun getLink(e: Element) =
+  private fun getUrl(e: Element) =
     e.absUrl("href")
       .takeUnless(String::isEmpty)
       ?.let(URI::create)
 
-  private fun buildFacebookLink(id: ExternalId) =
+  private fun buildPermalinkUrl(id: ExternalId) =
     URL("https://www.facebook.com/${id.id}")
 
   private fun extractContent(e: Element): String {

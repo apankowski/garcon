@@ -7,7 +7,7 @@ data class ExternalId(val id: String)
 
 data class Post(
   val externalId: ExternalId,
-  val link: URL,
+  val url: URL,
   val publishedAt: Instant,
   val content: String,
 )

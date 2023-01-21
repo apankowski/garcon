@@ -75,9 +75,9 @@ class LunchController(
       }
     }
 
-    fun Instant.toSlackDate(link: URL? = null) =
-      if (link == null) "<!date^${epochSecond}^{date_num} {time}|${this}>"
-      else "<!date^${epochSecond}^{date_num} {time}^${link}|${this}>"
+    fun Instant.toSlackDate(linkUrl: URL? = null) =
+      if (linkUrl == null) "<!date^${epochSecond}^{date_num} {time}|${this}>"
+      else "<!date^${epochSecond}^{date_num} {time}^${linkUrl}|${this}>"
 
     fun classificationInfo(c: Classification) =
       when (c) {
@@ -95,7 +95,7 @@ class LunchController(
 
     fun buildItem(p: SynchronizedPost) =
       """
-      |• *${p.post.publishedAt.toSlackDate(link = p.post.link)}* from *${p.pageName?.value ?: p.pageId.value}*
+      |• *${p.post.publishedAt.toSlackDate(linkUrl = p.post.url)}* from *${p.pageName?.value ?: p.pageId.value}*
       |Preview: ${contentPreview(p.post.content, 120)}
       |Lunch post: ${classificationInfo(p.classification)}
       |Repost: ${repostInfo(p.repost)}
