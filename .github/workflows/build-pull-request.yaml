@@ -122,6 +122,7 @@ jobs:
         severity: CRITICAL,HIGH,MEDIUM
         exit-code: 1
         ignore-unfixed: true
+        timeout: 10m0s
 
     - name: Upload Trivy results
       uses: github/codeql-action/upload-sarif@v2
