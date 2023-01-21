@@ -38,6 +38,8 @@ dependencyManagement {
     dependency("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
     dependency("io.kotest:kotest-runner-junit5:5.5.4")
     dependency("io.kotest:kotest-framework-datatest:5.5.4")
+    dependency("org.mozilla:rhino:1.7.14")
+    dependency("net.thisptr:jackson-jq:1.0.0-preview.20220705")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.2")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.3")
     dependency("io.mockk:mockk:1.13.3")
@@ -57,8 +59,10 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-  // HTML
+  // HTML, JavaScript, JSON processing
   implementation("org.jsoup:jsoup")
+  implementation("org.mozilla:rhino")
+  implementation("net.thisptr:jackson-jq")
 
   // Persistence
   implementation("org.springframework.boot:spring-boot-starter-jooq")
