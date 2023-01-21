@@ -46,7 +46,7 @@ Compared to previously working request, the difference is in the addition of:
 
 ## Payload extraction
 
-Downloaded page DOM contains information needed to render the top-most post (called the "payload" here). The page is not server-side rendered. Rather, information needed to render the post on the client side is embedded in the DOM, in one of the inline scripts.
+Downloaded page DOM contains information needed to render the top-most post (called the "payload" here). The post is not server-side rendered. Rather, information needed to render it on the client side is embedded in the DOM, in one of the inline scripts.
 
 There is a lot of scripts, both inline and loaded. Identifying the one containing the payload is challenging. Moreover, the payload is buried deep in calls setting up invocation of post rendering logic:
 
