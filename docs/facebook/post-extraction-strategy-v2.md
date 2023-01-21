@@ -7,6 +7,18 @@ Downsides of this strategy:
 1. it's a bit complicated,
 2. it allows extracting a single, most recent post.
 
+Diagram below presents main stages of this strategy:
+
+```mermaid
+flowchart TD
+    fetch([DOM]) -- extract scripts --> scripts([scripts])
+    scripts -- extract object literals --> payload_candidates([payload candidates])
+    payload_candidates -. apply jq query .-> post([post])
+    post -- collect --> posts([posts])
+```
+
+The stages are described in more detail the following sections.
+
 ## DOM loading
 
 For some reason regular `curl` doesn't work, i.e. the following returns a login page:
@@ -34,7 +46,7 @@ Compared to previously working request, the difference is in the addition of:
 
 ## Payload extraction
 
-Downloaded page DOM contains information needed to render the top-most post (called the "payload" here). The page is not server-side rendered. Rather, information needed to render the post on the client side is embedded in the DOM, in one of the inline scripts.
+Downloaded page DOM contains information needed to render the top-most post (called the "payload" here). The post is not server-side rendered. Rather, information needed to render it on the client side is embedded in the DOM, in one of the inline scripts.
 
 There is a lot of scripts, both inline and loaded. Identifying the one containing the payload is challenging. Moreover, the payload is buried deep in calls setting up invocation of post rendering logic:
 
