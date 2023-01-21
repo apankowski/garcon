@@ -7,6 +7,18 @@ Downsides of this strategy:
 1. it's a bit complicated,
 2. it allows extracting a single, most recent post.
 
+Diagram below presents main stages of this strategy:
+
+```mermaid
+flowchart TD
+    fetch([DOM]) -- extract scripts --> scripts([scripts])
+    scripts -- extract object literals --> payload_candidates([payload candidates])
+    payload_candidates -. apply jq query .-> post([post])
+    post -- collect --> posts([posts])
+```
+
+The stages are described in more detail the following sections.
+
 ## DOM loading
 
 For some reason regular `curl` doesn't work, i.e. the following returns a login page:
