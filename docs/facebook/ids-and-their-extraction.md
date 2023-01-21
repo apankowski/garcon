@@ -17,7 +17,7 @@ Broad categories of content found on Facebook, along with their URL templates, a
   * v2: `/{actor id}/posts/{post id}`
 * photo
   * v1: `/{actor id}/photos/a.{album id}/{photo id}`
-  * v2: `/photo/{photo id}`
+  * v2: `/photo?fbid={photo id}&set=a.{album id}`
 * video
   * `/watch?v={video id}`
 * reel
@@ -33,7 +33,7 @@ graph LR
     facebook -- "post (v1)" ---> post_v1(["/permalink.php?story_fbid={post id}&id={actor id}"])
     facebook -- "post (v2)" ---> post_v2(["/{actor id}/posts/{post id}"])
     facebook -- "photo (v1)" ---> photo_v1(["/{actor id}/photos/a.{album id}/{photo id}"])
-    facebook -- "photo (v2)" ---> photo_v2(["/photo/{photo id}"])
+    facebook -- "photo (v2)" ---> photo_v2(["/photo?fbid={photo id}&set=a.{album id}"])
     facebook -- "video" ---> video(["/watch?v={video id}"])
     facebook -- "reel" ---> reel(["/reel/{reel id}"])
 ```
