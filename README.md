@@ -138,11 +138,15 @@ See [here](https://devcenter.heroku.com/articles/container-registry-and-runtime)
 
 The service exposes [Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/actuator-api/html/) endpoints under `/internal` prefix. By default, Actuator endpoints are available under a different port than the API - see `ACTUATOR_PORT` environment variable.
 
+## Metrics
+
+The service exposes [many metrics](https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.metrics.supported) under a [Prometheus](https://prometheus.io/) scrape endpoint: `/internal/prometheus`.
+
 ## Possible further work
 
-* Adding verification of Slack request timestamps to prevent replay attacks
 * Slack webhook testing subcommand
 * Update/delete reposts based on upstream
+* Custom business & technical metrics
+* Adding verification of Slack request timestamps to prevent replay attacks
 * Management / backoffice UI
-* [Prometheus](https://prometheus.io/) metrics
 * [Instagram](https://www.instagram.com/) support
