@@ -53,10 +53,10 @@ fun someRepostRetryConfig(
 // Domain
 fun somePost(
   externalId: ExternalId = ExternalId("FBID1"),
-  link: URL = URL("https://facebook/post"),
+  url: URL = URL("https://facebook/post"),
   publishedAt: Instant = now(),
   content: String = "some post content",
-) = Post(externalId, link, publishedAt, content)
+) = Post(externalId, url, publishedAt, content)
 
 fun somePageName(name: String = "some name") = PageName(name)
 

@@ -19,7 +19,7 @@ class RestTemplateSlackReposterTest : FreeSpec({
     // given
     val pageName = PageName("Some page name")
     val post = somePost(
-      link = URL("https://www.facebook.com/post"),
+      url = URL("https://www.facebook.com/post"),
       content = "Some post content",
     )
 

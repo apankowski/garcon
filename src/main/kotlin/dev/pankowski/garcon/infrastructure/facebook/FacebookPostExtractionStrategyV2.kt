@@ -85,7 +85,7 @@ class FacebookPostExtractionStrategyV2 : FacebookPostExtractionStrategy {
       if (externalId == null || url == null || publishedAt == null || content == null) null
       else Post(
         externalId = externalId,
-        link = url,
+        url = url,
         publishedAt = publishedAt,
         content = content,
       )
