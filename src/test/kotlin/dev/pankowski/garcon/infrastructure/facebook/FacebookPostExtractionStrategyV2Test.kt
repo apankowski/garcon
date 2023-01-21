@@ -20,7 +20,7 @@ class FacebookPostExtractionStrategyV2Test : FreeSpec({
 
   fun document(html: String) = Jsoup.parse(html, "https://www.facebook.com/")
 
-  "gracefully handles edge-cases" {
+  "gracefully handles edge cases" {
     val html =
       """
       <html>
@@ -229,7 +229,7 @@ class FacebookPostExtractionStrategyV2Test : FreeSpec({
     result shouldBe posts
   }
 
-  "extracts post from a real page" {
+  "extracts post from a real page (text-only story)" {
     // given
     val document = document(htmlFrom("/lunch/facebook/v2/real-page-story.html"))
 
@@ -324,7 +324,7 @@ class FacebookPostExtractionStrategyV2Test : FreeSpec({
     )
   }
 
-  "extracts post with image from a real page" {
+  "extracts post from a real page (text story with image)" {
     // given
     val document = document(htmlFrom("/lunch/facebook/v2/real-page-story-with-image.html"))
 
