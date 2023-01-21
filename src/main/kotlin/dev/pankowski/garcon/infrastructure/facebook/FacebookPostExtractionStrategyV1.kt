@@ -10,7 +10,6 @@ import org.jsoup.safety.Safelist
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
-import java.net.URI
 import java.net.URL
 import java.time.Instant
 
@@ -42,7 +41,6 @@ class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
       ?.mapNotNull(::getUrl)
       ?.firstOrNull()
     val facebookId = url?.let(FacebookIdExtractor::extractFacebookId)
-    val permalinkUrl = facebookId?.let(::buildPermalinkUrl)
 
     val publishedAt = timestampElement
       ?.parents()
@@ -52,17 +50,17 @@ class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
     val contentElement = e.selectFirst(".userContent")
     val content = contentElement?.let(::extractContent)
 
-    if (facebookId == null || publishedAt == null || permalinkUrl == null || content == null) {
+    if (facebookId == null || publishedAt == null || content == null) {
       log.warn(
         "Possible unexpected format of facebook page post. Found .userContentWrapper but "
           + "some of the post parts couldn't be extracted.\ntimestampElement: {}\nURL: {}\n"
-          + "externalId: {}\npermalinkUrl: {}\npublishedAt: {}\ncontent: {}\n.userContentWrapper: {}",
-        timestampElement, url, facebookId, permalinkUrl, publishedAt, content, e
+          + "externalId: {}\npublishedAt: {}\ncontent: {}\n.userContentWrapper: {}",
+        timestampElement, url, facebookId, publishedAt, content, e
       )
       return null
     }
 
-    return Post(facebookId, permalinkUrl, publishedAt, content)
+    return Post(facebookId, url, publishedAt, content)
   }
 
   private fun getTimestampData(e: Element) =
@@ -73,10 +71,7 @@ class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
   private fun getUrl(e: Element) =
     e.absUrl("href")
       .takeUnless(String::isEmpty)
-      ?.let(URI::create)
-
-  private fun buildPermalinkUrl(id: ExternalId) =
-    URL("https://www.facebook.com/${id.id}")
+      ?.let(::URL)
 
   private fun extractContent(e: Element): String {
     // Remove the ellipsis & "show more" link from post's content.
@@ -100,11 +95,11 @@ class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
 @VisibleForTesting
 object FacebookIdExtractor {
 
-  fun extractFacebookId(uri: URI): ExternalId? {
+  fun extractFacebookId(url: URL): ExternalId? {
     // Regular post
     val postPathRegex = "^/?permalink\\.php".toRegex()
-    postPathRegex.find(uri.path)?.let {
-      return UriComponentsBuilder.fromUri(uri).build()
+    postPathRegex.find(url.path)?.let {
+      return UriComponentsBuilder.fromUri(url.toURI()).build()
         .queryParams["story_fbid"]
         ?.firstOrNull()
         ?.let(::ExternalId)
@@ -112,20 +107,20 @@ object FacebookIdExtractor {
 
     // Regular post - alternative version
     val altPostPathRegex = "^/?[^/]+/posts/([0-9a-zA-Z_-]+)/?".toRegex()
-    altPostPathRegex.find(uri.path)?.let {
+    altPostPathRegex.find(url.path)?.let {
       return ExternalId(it.groupValues[1])
     }
 
     // Photo
     val photoPathRegex = "^/?[^/]+/photos/[0-9a-zA-Z._-]+/([0-9a-zA-Z_-]+)/?".toRegex()
-    photoPathRegex.find(uri.path)?.let {
+    photoPathRegex.find(url.path)?.let {
       return ExternalId(it.groupValues[1])
     }
 
     // Photo - alternative version
     val altPhotoPathRegex = "^/?photo/?".toRegex()
-    altPhotoPathRegex.find(uri.path)?.let {
-      return UriComponentsBuilder.fromUri(uri).build()
+    altPhotoPathRegex.find(url.path)?.let {
+      return UriComponentsBuilder.fromUri(url.toURI()).build()
         .queryParams["fbid"]
         ?.firstOrNull()
         ?.let(::ExternalId)
@@ -133,8 +128,8 @@ object FacebookIdExtractor {
 
     // Video
     val videoPathRegex = "^/?watch/?".toRegex()
-    videoPathRegex.find(uri.path)?.let {
-      return UriComponentsBuilder.fromUri(uri).build()
+    videoPathRegex.find(url.path)?.let {
+      return UriComponentsBuilder.fromUri(url.toURI()).build()
         .queryParams["v"]
         ?.firstOrNull()
         ?.let(::ExternalId)
@@ -142,7 +137,7 @@ object FacebookIdExtractor {
 
     // Reel
     val reelPathRegex = "^/?reel/([0-9a-zA-Z_-]+)/?".toRegex()
-    reelPathRegex.find(uri.path)?.let {
+    reelPathRegex.find(url.path)?.let {
       return ExternalId(it.groupValues[1])
     }
 
