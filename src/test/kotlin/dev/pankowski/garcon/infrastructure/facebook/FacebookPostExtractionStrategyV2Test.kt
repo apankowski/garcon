@@ -231,7 +231,7 @@ class FacebookPostExtractionStrategyV2Test : FreeSpec({
 
   "extracts post from a real page (text-only story)" {
     // given
-    val document = document(htmlFrom("/lunch/facebook/v2/real-page-story.html"))
+    val document = document(htmlFrom("/lunch/facebook/v2/real-page-text-story.html"))
 
     // when
     val result = strategy.extractPosts(document)
@@ -326,7 +326,7 @@ class FacebookPostExtractionStrategyV2Test : FreeSpec({
 
   "extracts post from a real page (text story with image)" {
     // given
-    val document = document(htmlFrom("/lunch/facebook/v2/real-page-story-with-image.html"))
+    val document = document(htmlFrom("/lunch/facebook/v2/real-page-text-story-with-image.html"))
 
     // when
     val result = strategy.extractPosts(document)
