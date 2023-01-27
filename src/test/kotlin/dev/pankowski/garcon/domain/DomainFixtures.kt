@@ -14,13 +14,13 @@ val PolishLocale = Locale("pl", "PL")
 
 // Configs
 fun someLunchConfig(
-  pages: List<LunchPageConfig> = emptyList()
+  pages: List<PageConfig> = emptyList()
 ) = LunchConfig(pages)
 
 fun somePageConfig(
   pageId: PageId = PageId("PID1"),
   url: URL = URL("http://localhost:4321/posts")
-) = LunchPageConfig(pageId, url)
+) = PageConfig(pageId, url)
 
 fun someSyncConfig(
   interval: Duration? = Duration.ofMinutes(5),

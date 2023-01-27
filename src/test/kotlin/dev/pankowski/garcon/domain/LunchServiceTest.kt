@@ -20,14 +20,14 @@ class LunchServiceTest : FreeSpec({
     // given
     val pageConfig = somePageConfig()
 
-    val postClient = mockk<FacebookPostClient>()
+    val postClient = mockk<FacebookPageClient>()
     val repository = mockk<SynchronizedPostRepository>()
     val service = spyk(
       LunchService(someLunchConfig(pages = listOf(pageConfig)), mockk(), repository, postClient, mockk(), mockk())
     )
 
     every { repository.findLastSeen(any()) } returns null
-    every { postClient.fetch(any()) } returns Pair(null, emptyList())
+    every { postClient.fetch(any()) } returns PageOfPosts(null, emptyList())
 
     // when
     service.synchronizeAll()
@@ -44,7 +44,7 @@ class LunchServiceTest : FreeSpec({
     val lastSeenPublishedAt = now()
     val lastSeen = somePost(publishedAt = lastSeenPublishedAt)
 
-    val postClient = mockk<FacebookPostClient>()
+    val postClient = mockk<FacebookPageClient>()
     val postClassifier = mockk<LunchPostClassifier>()
     val reposter = mockk<SlackReposter>()
     val repository = mockk<SynchronizedPostRepository>()
@@ -63,7 +63,7 @@ class LunchServiceTest : FreeSpec({
         Repost.Skip
       )
 
-    every { postClient.fetch(any()) } returns Pair(somePageName(), emptyList())
+    every { postClient.fetch(any()) } returns PageOfPosts(somePageName(), emptyList())
 
     // when
     service.synchronize(pageConfig)
@@ -84,13 +84,13 @@ class LunchServiceTest : FreeSpec({
     val post = somePost()
     val classification = Classification.LunchPost
 
-    val postClient = mockk<FacebookPostClient>()
+    val postClient = mockk<FacebookPageClient>()
     val postClassifier = mockk<LunchPostClassifier>()
     val reposter = mockk<SlackReposter>()
     val repository = spyk(InMemorySynchronizedPostRepository())
     val service = LunchService(someLunchConfig(), mockk(), repository, postClient, postClassifier, reposter)
 
-    every { postClient.fetch(pageConfig) } returns Pair(pageName, listOf(post))
+    every { postClient.fetch(pageConfig) } returns PageOfPosts(pageName, listOf(post))
     every { postClassifier.classify(post) } returns classification
     every { reposter.repost(post, pageName) } returns Unit
 
@@ -115,13 +115,13 @@ class LunchServiceTest : FreeSpec({
     val post = somePost()
     val classification = Classification.MissingKeywords
 
-    val postClient = mockk<FacebookPostClient>()
+    val postClient = mockk<FacebookPageClient>()
     val postClassifier = mockk<LunchPostClassifier>()
     val reposter = mockk<SlackReposter>()
     val repository = spyk(InMemorySynchronizedPostRepository())
     val service = LunchService(someLunchConfig(), mockk(), repository, postClient, postClassifier, reposter)
 
-    every { postClient.fetch(pageConfig) } returns Pair(somePageName(), listOf(post))
+    every { postClient.fetch(pageConfig) } returns PageOfPosts(somePageName(), listOf(post))
     every { postClassifier.classify(post) } returns classification
 
     // when

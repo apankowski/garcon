@@ -9,12 +9,12 @@ import java.util.*
 @ConfigurationProperties("lunch")
 data class LunchConfig(
 
-  /** Lunch pages. */
-  val pages: List<LunchPageConfig> = emptyList(),
+  /** Configuration of lunch pages to synchronize. */
+  val pages: List<PageConfig> = emptyList(),
 )
 
 /** Configuration of a single lunch page to synchronize. */
-data class LunchPageConfig(
+data class PageConfig(
 
   /** ID of Facebook post page containing lunch posts. */
   val id: PageId,
