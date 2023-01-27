@@ -110,3 +110,12 @@ fun String.extractWords(locale: Locale): List<String> {
 
   return unmodifiableList(collectWords(it.first(), it.next(), emptyList()))
 }
+
+fun CharSequence.ellipsize(at: Int) =
+  when {
+    length <= at -> this
+    else -> substring(0, at) + Typography.ellipsis
+  }
+
+fun CharSequence.oneLinePreview(maxLength: Int) =
+  replace("\\s*\\n+\\s*".toRegex(), " ").ellipsize(maxLength)

@@ -67,13 +67,6 @@ class LunchController(
     }
 
   private fun handleLog(): SlackMessage {
-    fun contentPreview(content: String, ellipsizeAt: Int): String {
-      val oneLine = content.split("\\s+".toRegex()).joinToString(" ")
-      return when {
-        oneLine.length <= ellipsizeAt -> oneLine
-        else -> oneLine.substring(0, ellipsizeAt) + Typography.ellipsis
-      }
-    }
 
     fun Instant.toSlackDate(linkUrl: URL? = null) =
       if (linkUrl == null) "<!date^${epochSecond}^{date_num} {time}|${this}>"
@@ -96,7 +89,7 @@ class LunchController(
     fun buildItem(p: SynchronizedPost) =
       """
       |• *${p.post.publishedAt.toSlackDate(linkUrl = p.post.url)}* from *${p.pageName?.value ?: p.pageId.value}*
-      |Preview: ${contentPreview(p.post.content, 120)}
+      |Preview: ${p.post.content.oneLinePreview(120)}
       |Lunch post: ${classificationInfo(p.classification)}
       |Repost: ${repostInfo(p.repost)}
       |

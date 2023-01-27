@@ -2,6 +2,7 @@ package dev.pankowski.garcon.infrastructure.facebook
 
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
+import dev.pankowski.garcon.domain.oneLinePreview
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
@@ -18,24 +19,7 @@ class JavaScriptObjectLiteralExtractorTest : FreeSpec({
     constructor(script: String, vararg objects: String) :
       this(script, objects.toList().map { mapper.readValue(it, ObjectNode::class.java) })
 
-    val scriptPreview = script.replace("\n+[\t ]*".toRegex(), "").take(80)
-  }
-
-  "test case preview removes indents and newlines" {
-    val testCase = TestCase(
-      """
-      a
-        b
-          c
-
-          d
-        e
-        f
-      g
-      """.trimIndent(), emptyList()
-    )
-
-    testCase.scriptPreview shouldBe "abcdefg"
+    val scriptPreview = script.oneLinePreview(80)
   }
 
   "extracts object literals from JavaScript" - {
