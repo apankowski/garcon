@@ -11,6 +11,7 @@ import com.google.common.annotations.VisibleForTesting
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.Post
 import dev.pankowski.garcon.domain.Posts
+import dev.pankowski.garcon.domain.oneLinePreview
 import net.thisptr.jackson.jq.BuiltinFunctionLoader
 import net.thisptr.jackson.jq.JsonQuery
 import net.thisptr.jackson.jq.Scope
@@ -152,7 +153,7 @@ object JavaScriptObjectLiteralExtractor {
 
       if (log.isTraceEnabled) {
         val nodeType = node.javaClass.simpleName
-        val nodePreview = node.code().take(80)
+        val nodePreview = node.code().oneLinePreview(80)
         log.trace("Now in {}: {}", nodeType, nodePreview)
       }
       if (node is ObjectLiteral) {
