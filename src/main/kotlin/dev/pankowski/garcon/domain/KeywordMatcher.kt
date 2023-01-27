@@ -14,8 +14,11 @@ class KeywordMatcher private constructor(
       KeywordMatcher(text.lowercase(locale).extractWords(locale), locale)
   }
 
-  fun matches(keyword: Keyword) =
-    words.any {
-      damerauLevenshtein(it, keyword.text.lowercase(locale)) <= keyword.editDistance
-    }
+  fun matches(keyword: Keyword): Boolean {
+    val lowercaseKeyword = keyword.text.lowercase(locale)
+    return words.any { damerauLevenshtein(it, lowercaseKeyword) <= keyword.editDistance }
+  }
+
+  fun matchesAny(keywords: Iterable<Keyword>) =
+    keywords.any { matches(it) }
 }
