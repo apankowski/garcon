@@ -13,25 +13,25 @@ interface FacebookPostExtractionStrategy {
 }
 
 @Component
-class JsoupFacebookPostClient(
+class JsoupFacebookPageClient(
   private val clientConfig: ClientConfig,
   private val strategies: List<FacebookPostExtractionStrategy>
-) : FacebookPostClient {
+) : FacebookPageClient {
 
   private val log = LoggerFactory.getLogger(javaClass)
 
-  override fun fetch(pageConfig: LunchPageConfig): Pair<PageName?, Posts> {
+  override fun fetch(pageConfig: PageConfig): PageOfPosts {
     val document = fetchDocument(pageConfig.url)
     val pageName = extractPageName(document, pageConfig) ?: PageName(pageConfig.id.value)
     for (s in strategies) {
       val posts = s.extractPosts(document)
-      if (posts.isNotEmpty()) return Pair(pageName, posts)
+      if (posts.isNotEmpty()) return PageOfPosts(pageName, posts)
     }
     log.warn("None of the Facebook post extraction strategies was able to extract post data")
-    return Pair(pageName, emptyList())
+    return PageOfPosts(pageName, emptyList())
   }
 
-  private fun extractPageName(document: Document, pageConfig: LunchPageConfig): PageName? {
+  private fun extractPageName(document: Document, pageConfig: PageConfig): PageName? {
     val pageName = document.select("head meta[property=og:title]")
       .attr("content")
       .takeUnless(String::isEmpty)

@@ -10,7 +10,7 @@ class LunchService(
   private val lunchConfig: LunchConfig,
   private val repostRetryConfig: RepostRetryConfig,
   private val repository: SynchronizedPostRepository,
-  private val postClient: FacebookPostClient,
+  private val pageClient: FacebookPageClient,
   private val lunchPostClassifier: LunchPostClassifier,
   private val reposter: SlackReposter,
 ) {
@@ -30,7 +30,7 @@ class LunchService(
   }
 
   @VisibleForTesting
-  fun synchronize(page: LunchPageConfig) =
+  fun synchronize(page: PageConfig) =
     Mdc.PageId.having(page.id) {
       val synchronizedPosts = synchronizePosts(page)
       synchronizedPosts
@@ -38,11 +38,11 @@ class LunchService(
         .forEach(::repost)
     }
 
-  private fun synchronizePosts(pageConfig: LunchPageConfig): List<SynchronizedPost> {
+  private fun synchronizePosts(pageConfig: PageConfig): List<SynchronizedPost> {
     log.info("Synchronizing posts of {}", pageConfig)
 
     val lastSeen = repository.findLastSeen(pageConfig.id)
-    val (pageName, posts) = postClient.fetch(pageConfig)
+    val (pageName, posts) = pageClient.fetch(pageConfig)
 
     val newPosts = posts.filter { it.publishedAt > (lastSeen?.post?.publishedAt ?: Instant.MIN) }
     if (newPosts.isEmpty()) {
