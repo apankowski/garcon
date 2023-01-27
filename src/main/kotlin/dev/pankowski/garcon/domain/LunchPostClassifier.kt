@@ -11,7 +11,7 @@ class LunchPostClassifier(private val postConfig: PostConfig) {
   fun classify(post: Post): Classification {
     val matcher = KeywordMatcher.onWordsOf(post.content, postConfig.locale)
     log.debug("Words extracted for post {}: {}", post, matcher.words)
-    return if (postConfig.keywords.any { matcher.matches(it) }) Classification.LunchPost
+    return if (matcher.matchesAny(postConfig.keywords)) Classification.LunchPost
     else Classification.MissingKeywords
   }
 }
