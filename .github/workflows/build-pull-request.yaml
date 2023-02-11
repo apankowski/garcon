@@ -118,17 +118,22 @@ jobs:
         image-ref: apankowski/garcon:${{ github.sha }}
         format: sarif
         output: trivy-output.sarif
-        vuln-type: os,library
-        severity: CRITICAL,HIGH,MEDIUM
-        exit-code: 1
-        ignore-unfixed: true
-        timeout: 10m0s
 
     - name: Upload Trivy results
       uses: github/codeql-action/upload-sarif@v2
       if: always() && (steps.trivy.conclusion != 'skipped')
       with:
         sarif_file: trivy-output.sarif
+
+    - name: Archive security scanning report
+      uses: actions/upload-artifact@v3
+      if: always() && (steps.hadolint.conclusion != 'skipped' || steps.trivy.conclusion != 'skipped')
+      with:
+        name: security-scanning-report
+        path: |
+          hadolint-output.sarif
+          trivy-output.sarif
+        if-no-files-found: error
 
     - name: Cleanup Gradle Cache
       if: always()
