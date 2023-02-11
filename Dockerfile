@@ -7,11 +7,11 @@ FROM azul/zulu-openjdk-alpine:19-jre-headless as production
 
 RUN \
     # Install curl used in the healthcheck
-    apk --no-cache add curl && \
+    apk --no-cache add curl=7.80.0-r5 && \
     # Upgrade libssl1.1 due to CVE-2022-4304, CVE-2022-4450, CVE-2023-0215, CVE-2023-0286. They
     # have low severity but version 1.1.1t-r0 available in the Alpine repositories fixes them.
     # Remove once default version in base image is >= 1.1.1t-r0.
-    apk --no-cache add --upgrade libssl1.1
+    apk --no-cache add --upgrade libssl1.1=1.1.1t-r1
 
 RUN addgroup -S nonroot && \
     adduser -S -H -G nonroot nonroot && \
