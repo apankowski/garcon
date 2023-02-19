@@ -135,6 +135,11 @@ jobs:
           trivy-output.sarif
         if-no-files-found: error
 
+    - name: Submit Gradle dependencies
+      uses: mikepenz/gradle-dependency-submission@v0.8.4
+      with:
+        include-build-environment: true
+
     - name: Cleanup Gradle Cache
       if: always()
       run: |
