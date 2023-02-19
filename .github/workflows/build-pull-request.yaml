@@ -103,7 +103,7 @@ jobs:
         sarif_file: hadolint-output.sarif
 
     - name: Build docker image
-      uses: docker/build-push-action@v4
+      uses: docker/build-push-action@v3
       with:
         context: .
         tags: apankowski/garcon:${{ github.sha }}
