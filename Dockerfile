@@ -11,7 +11,7 @@ RUN \
     # Upgrade libssl1.1 due to CVE-2022-4304, CVE-2022-4450, CVE-2023-0215, CVE-2023-0286. They
     # have low severity but version 1.1.1t-r0 available in the Alpine repositories fixes them.
     # Remove once default version in base image is >= 1.1.1t-r0.
-    apk --no-cache add --upgrade 'libssl1.1>=1.1.1t-r0'
+    apk --no-cache add --upgrade 'libssl1.1>=1.1.1t'
 
 RUN addgroup -S nonroot && \
     adduser -S -H -G nonroot nonroot && \
@@ -27,6 +27,4 @@ EXPOSE 8080
 
 HEALTHCHECK CMD curl --fail http://localhost:8080/internal/health || exit 1
 
-# Heroku requires CMD to be specified. Can be changed to ENTRYPOINT when (if) we stop using Heroku.
-#ENTRYPOINT ["/application/entrypoint.sh"]
-CMD ["./entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]

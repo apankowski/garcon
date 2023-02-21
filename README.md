@@ -85,7 +85,7 @@ Configure _Incoming Webhooks_ and _Slash Commands_ for the app:
    docker build -t garcon .
    ```
 
-1. Push built image to the docker registry of your choosing & deploy to your target environment. If you're going with Heroku, see the [respective section](#heroku).
+1. Push built image to the docker registry of your choosing & deploy to your target environment.
 
 ### PostgreSQL database
 
@@ -116,23 +116,6 @@ Create an empty PostgreSQL database for the bot with UTF-8 encoding to support e
 | `LUNCH_REPOST_RETRY_INTERVAL` | Interval between consecutive attempts to retry failed reposts. | ✗ | `PT10M` |
 | `LUNCH_REPOST_RETRY_BASE_DELAY` | Base delay in the exponential backoff between consecutive retries of a failed repost. | ✗ | `PT1M` |
 | `LUNCH_REPOST_RETRY_MAX_ATTEMPTS` | Max retry attempts for a failed repost. | ✗ | `10` |
-
-### Heroku
-
-The service can be deployed to Heroku. The following changes were made to meet requirements imposed by Heroku:
-
-1. `Dockerfile` declares a `CMD` - see [this question & answers](https://stackoverflow.com/q/55913408/1820695).
-1. Service is configured to bind to HTTP port provided via `PORT` environment variable - [see here](https://devcenter.heroku.com/articles/dynos#web-dynos).
-1. If `DATABASE_URL` environment variable is set, its value is assumed to be a JDBC URL and split into the following environment variables: `JDBC_DATABASE_URL`, `JDBC_DATABASE_USERNAME` & `JDBC_DATABASE_PASSWORD`. See [here](https://devcenter.heroku.com/articles/connecting-to-relational-databases-on-heroku-with-java) for more information.
-
-To deploy the service issue the following commands (presence of `heroku` CLI and deployment-level access to the service is assumed):
-
-1. `heroku login`
-1. `heroku container:login`
-1. `heroku container:push web --app garcon`
-1. `heroku container:release web --app garcon`
-
-See [here](https://devcenter.heroku.com/articles/container-registry-and-runtime) for more details.
 
 ## Actuator
 

@@ -23,7 +23,7 @@ spring:
     maximum-pool-size: 2
 
 server:
-  port: ${PORT:8080} # For Heroku: the app must bind itself to $PORT port.
+  port: ${PORT:8080}
   forward-headers-strategy: native
   tomcat:
     threads:
