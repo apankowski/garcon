@@ -21,7 +21,7 @@ plugins {
 }
 
 tasks.wrapper {
-  gradleVersion = "7.6"
+  gradleVersion = "7.6.1"
 }
 
 group = "dev.pankowski"
