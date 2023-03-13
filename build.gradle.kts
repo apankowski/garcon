@@ -6,15 +6,15 @@ import org.jooq.meta.jaxb.Logging
 // Gradle
 
 plugins {
-  kotlin("jvm") version "1.8.0"
-  kotlin("kapt") version "1.8.0"
-  kotlin("plugin.spring") version "1.8.0"
-  id("org.springframework.boot") version "3.0.1"
+  kotlin("jvm") version "1.8.10"
+  kotlin("kapt") version "1.8.10"
+  kotlin("plugin.spring") version "1.8.10"
+  id("org.springframework.boot") version "3.0.4"
   id("io.spring.dependency-management") version "1.1.0"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
   id("com.avast.gradle.docker-compose") version "0.16.11"
-  id("org.flywaydb.flyway") version "9.11.0"
+  id("org.flywaydb.flyway") version "9.15.2"
   id("nu.studer.jooq") version "8.1"
   jacoco
   id("org.sonarqube") version "3.5.0.2730"
@@ -34,15 +34,15 @@ repositories {
 
 dependencyManagement {
   dependencies {
-    dependency("org.jsoup:jsoup:1.15.3")
+    dependency("org.jsoup:jsoup:1.15.4")
     dependency("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
-    dependency("io.kotest:kotest-runner-junit5:5.5.4")
-    dependency("io.kotest:kotest-framework-datatest:5.5.4")
+    dependency("io.kotest:kotest-runner-junit5:5.5.5")
+    dependency("io.kotest:kotest-framework-datatest:5.5.5")
     dependency("org.mozilla:rhino:1.7.14")
     dependency("net.thisptr:jackson-jq:1.0.0-preview.20220705")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.2")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.3")
-    dependency("io.mockk:mockk:1.13.3")
+    dependency("io.mockk:mockk:1.13.4")
     dependency("com.tngtech.archunit:archunit-junit5:1.0.1")
     dependency("com.google.guava:guava:31.1-jre")
   }
