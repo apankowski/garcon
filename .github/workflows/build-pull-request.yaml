@@ -37,7 +37,7 @@ jobs:
       uses: gradle/wrapper-validation-action@55e685c48d84285a5b0418cd094606e199cca3b6 # v1
 
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef # v2
+      uses: gradle/gradle-build-action@6095a76664413da4c8c134ee32e8a8ae900f0f1f # v2
 
     - name: Build fat JAR
       run: ./gradlew bootJar
@@ -112,7 +112,7 @@ jobs:
         load: true
 
     - name: Analyze image with Trivy
-      uses: aquasecurity/trivy-action@0.9.1
+      uses: aquasecurity/trivy-action@0.9.2
       id: trivy
       with:
         image-ref: apankowski/garcon:${{ github.sha }}
@@ -136,7 +136,7 @@ jobs:
         if-no-files-found: error
 
     - name: Submit Gradle dependencies
-      uses: mikepenz/gradle-dependency-submission@v0.8.4
+      uses: mikepenz/gradle-dependency-submission@v0.8.5
       with:
         include-build-environment: true
 
