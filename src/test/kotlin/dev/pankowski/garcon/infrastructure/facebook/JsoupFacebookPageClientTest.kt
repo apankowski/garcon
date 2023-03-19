@@ -8,6 +8,9 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.extensions.wiremock.ListenerMode
 import io.kotest.extensions.wiremock.WireMockListener
+import io.kotest.matchers.sequences.beEmpty
+import io.kotest.matchers.sequences.containExactly
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -115,7 +118,8 @@ class JsoupFacebookPageClientTest : FreeSpec({
     val result = client.fetch(pageConfig)
 
     // then
-    result shouldBe PageOfPosts(PageName(pageConfig.id.value), emptyList())
+    result.pageName shouldBe PageName(pageConfig.id.value)
+    result.posts should beEmpty()
   }
 
   "fails when all attempts to retrieve given page fail" {
@@ -205,8 +209,8 @@ class JsoupFacebookPageClientTest : FreeSpec({
     // given
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
     val strategy = mockk<FacebookPostExtractionStrategy>()
-    val result = listOf(somePost())
-    every { strategy.extractPosts(any()) } returns result
+    val post = somePost()
+    every { strategy.extractPosts(any()) } returns sequenceOf(post)
 
     val client = JsoupFacebookPageClient(someClientConfig(), listOf(strategy))
 
@@ -220,6 +224,6 @@ class JsoupFacebookPageClientTest : FreeSpec({
     val actualResult = client.fetch(pageConfig)
 
     // then
-    actualResult.posts shouldBe result
+    actualResult.posts should containExactly(post)
   }
 })

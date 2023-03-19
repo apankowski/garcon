@@ -32,37 +32,30 @@ class LunchService(
   @VisibleForTesting
   fun synchronize(page: PageConfig) =
     Mdc.PageId.having(page.id) {
-      val synchronizedPosts = synchronizePosts(page)
-      synchronizedPosts
+      synchronizePosts(page)
         .filter { it.repost != Repost.Skip }
         .forEach(::repost)
     }
 
-  private fun synchronizePosts(pageConfig: PageConfig): List<SynchronizedPost> {
+  private fun synchronizePosts(pageConfig: PageConfig): Sequence<SynchronizedPost> {
     log.info("Synchronizing posts of {}", pageConfig)
 
     val lastSeen = repository.findLastSeen(pageConfig.id)
     val (pageName, posts) = pageClient.fetch(pageConfig)
 
-    val newPosts = posts.filter { it.publishedAt > (lastSeen?.post?.publishedAt ?: Instant.MIN) }
-    if (newPosts.isEmpty()) {
-      log.info("No new posts")
-      return emptyList()
-    } else {
-      log.debug("Found new posts: {}", newPosts)
-    }
-
-    val synchronizedPostsToStore = newPosts.map { p ->
-      val classification = lunchPostClassifier.classify(p)
-      val repost = when (classification) {
-        Classification.LunchPost -> Repost.Pending
-        Classification.MissingKeywords -> Repost.Skip
+    return posts
+      .filter { it.publishedAt > (lastSeen?.post?.publishedAt ?: Instant.MIN) }
+      .sortedBy { it.publishedAt }
+      .onEach { log.info("Found new post: {}", it) }
+      .map { p ->
+        val classification = lunchPostClassifier.classify(p)
+        val repost = when (classification) {
+          Classification.LunchPost -> Repost.Pending
+          Classification.MissingKeywords -> Repost.Skip
+        }
+        log.info("Post $p classified as $classification, repost decision $repost")
+        StoreData(pageConfig.id, pageName, p, classification, repost)
       }
-      log.info("Post $p classified as $classification, repost decision $repost")
-      StoreData(pageConfig.id, pageName, p, classification, repost)
-    }
-
-    return synchronizedPostsToStore
       .map(repository::store)
       .map(repository::findExisting)
   }

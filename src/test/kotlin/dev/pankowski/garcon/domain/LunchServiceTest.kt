@@ -27,7 +27,7 @@ class LunchServiceTest : FreeSpec({
     )
 
     every { repository.findLastSeen(any()) } returns null
-    every { postClient.fetch(any()) } returns PageOfPosts(null, emptyList())
+    every { postClient.fetch(any()) } returns PageOfPosts(null, emptySequence())
 
     // when
     service.synchronizeAll()
@@ -63,7 +63,7 @@ class LunchServiceTest : FreeSpec({
         Repost.Skip
       )
 
-    every { postClient.fetch(any()) } returns PageOfPosts(somePageName(), emptyList())
+    every { postClient.fetch(any()) } returns PageOfPosts(somePageName(), emptySequence())
 
     // when
     service.synchronize(pageConfig)
@@ -90,7 +90,7 @@ class LunchServiceTest : FreeSpec({
     val repository = spyk(InMemorySynchronizedPostRepository())
     val service = LunchService(someLunchConfig(), mockk(), repository, postClient, postClassifier, reposter)
 
-    every { postClient.fetch(pageConfig) } returns PageOfPosts(pageName, listOf(post))
+    every { postClient.fetch(pageConfig) } returns PageOfPosts(pageName, sequenceOf(post))
     every { postClassifier.classify(post) } returns classification
     every { reposter.repost(post, pageName) } returns Unit
 
@@ -121,7 +121,7 @@ class LunchServiceTest : FreeSpec({
     val repository = spyk(InMemorySynchronizedPostRepository())
     val service = LunchService(someLunchConfig(), mockk(), repository, postClient, postClassifier, reposter)
 
-    every { postClient.fetch(pageConfig) } returns PageOfPosts(somePageName(), listOf(post))
+    every { postClient.fetch(pageConfig) } returns PageOfPosts(somePageName(), sequenceOf(post))
     every { postClassifier.classify(post) } returns classification
 
     // when

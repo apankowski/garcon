@@ -34,17 +34,17 @@ repositories {
 
 dependencyManagement {
   dependencies {
+    dependency("com.google.guava:guava:31.1-jre")
     dependency("org.jsoup:jsoup:1.15.4")
-    dependency("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
-    dependency("io.kotest:kotest-runner-junit5:5.5.5")
-    dependency("io.kotest:kotest-framework-datatest:5.5.5")
     dependency("org.mozilla:rhino:1.7.14")
     dependency("net.thisptr:jackson-jq:1.0.0-preview.20220705")
+    dependency("io.kotest:kotest-runner-junit5:5.5.5")
+    dependency("io.kotest:kotest-framework-datatest:5.5.5")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.2")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:1.0.3")
     dependency("io.mockk:mockk:1.13.4")
+    dependency("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
     dependency("com.tngtech.archunit:archunit-junit5:1.0.1")
-    dependency("com.google.guava:guava:31.1-jre")
   }
 }
 
@@ -73,16 +73,16 @@ dependencies {
   jooqGenerator("org.postgresql:postgresql")
 
   // Tests
-  testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("io.rest-assured:rest-assured")
-  testImplementation("com.github.tomakehurst:wiremock-jre8-standalone")
-  testImplementation("com.tngtech.archunit:archunit-junit5")
-
   testImplementation("io.mockk:mockk")
   testImplementation("io.kotest:kotest-runner-junit5")
   testImplementation("io.kotest:kotest-framework-datatest")
   testImplementation("io.kotest.extensions:kotest-extensions-wiremock")
   testImplementation("io.kotest.extensions:kotest-extensions-spring")
+
+  testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("io.rest-assured:rest-assured")
+  testImplementation("com.github.tomakehurst:wiremock-jre8-standalone")
+  testImplementation("com.tngtech.archunit:archunit-junit5")
 
   // Other
   kapt("org.springframework.boot:spring-boot-configuration-processor")

@@ -9,7 +9,7 @@ import java.net.URL
 import kotlin.random.Random
 
 interface FacebookPostExtractionStrategy {
-  fun extractPosts(document: Document): Posts
+  fun extractPosts(document: Document): Sequence<Post>
 }
 
 @Component
@@ -23,25 +23,11 @@ class JsoupFacebookPageClient(
   override fun fetch(pageConfig: PageConfig): PageOfPosts {
     val document = fetchDocument(pageConfig.url)
     val pageName = extractPageName(document, pageConfig) ?: PageName(pageConfig.id.value)
-    for (s in strategies) {
-      val posts = s.extractPosts(document)
-      if (posts.isNotEmpty()) return PageOfPosts(pageName, posts)
-    }
-    log.warn("None of the Facebook post extraction strategies was able to extract post data")
-    return PageOfPosts(pageName, emptyList())
-  }
-
-  private fun extractPageName(document: Document, pageConfig: PageConfig): PageName? {
-    val pageName = document.select("head meta[property=og:title]")
-      .attr("content")
-      .takeUnless(String::isEmpty)
-      ?.let(::PageName)
-
-    if (pageName == null) {
-      log.warn("Couldn't get facebook page name for ${pageConfig.url}")
-    }
-
-    return pageName
+    val posts = strategies.asSequence()
+      .map { it.extractPosts(document) }
+      .firstNonEmpty()
+      .onEmpty { log.warn("None of the Facebook post extraction strategies was able to extract post data") }
+    return PageOfPosts(pageName, posts)
   }
 
   private fun fetchDocument(url: URL): Document {
@@ -70,4 +56,34 @@ class JsoupFacebookPageClient(
     }
     return fetch()
   }
+
+  private fun extractPageName(document: Document, pageConfig: PageConfig): PageName? {
+    val pageName = document.select("head meta[property=og:title]")
+      .attr("content")
+      .takeUnless(String::isEmpty)
+      ?.let(::PageName)
+
+    if (pageName == null) {
+      log.warn("Couldn't get facebook page name for ${pageConfig.url}")
+    }
+
+    return pageName
+  }
+
+  fun <T> Sequence<Sequence<T>>.firstNonEmpty(): Sequence<T> {
+    val sequences = this
+    return object : Sequence<T> {
+      override fun iterator() =
+        sequences.map { it.iterator() }.firstOrNull { it.hasNext() } ?: emptySequence<T>().iterator()
+    }
+  }
+
+  fun <T> Sequence<T>.onEmpty(action: () -> Unit): Sequence<T> {
+    val original = this
+    return object : Sequence<T> {
+      override fun iterator() =
+        original.iterator().apply { if (!hasNext()) action.invoke() }
+    }
+  }
+
 }
