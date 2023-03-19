@@ -8,10 +8,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeType.NUMBER
 import com.fasterxml.jackson.databind.node.JsonNodeType.STRING
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.google.common.annotations.VisibleForTesting
-import dev.pankowski.garcon.domain.ExternalId
-import dev.pankowski.garcon.domain.Post
-import dev.pankowski.garcon.domain.Posts
-import dev.pankowski.garcon.domain.oneLinePreview
+import dev.pankowski.garcon.domain.*
 import net.thisptr.jackson.jq.BuiltinFunctionLoader
 import net.thisptr.jackson.jq.JsonQuery
 import net.thisptr.jackson.jq.Scope
@@ -65,8 +62,11 @@ class FacebookPostExtractionStrategyV2 : FacebookPostExtractionStrategy {
       .map { it.data() }
       .flatMap { JavaScriptObjectLiteralExtractor.extractFrom(it) }
       .flatMap { extractPostsFromObjectLiteral(it) }
-      .sortedBy { it.publishedAt }
-      .apply { if (isEmpty()) log.warn("No posts found. Returned representation might have changed.") }
+      .apply {
+        if (isEmpty()) log.warn("No posts found. Returned representation might have changed.")
+        else if (size > 1) log.warn("More than one post found. Returned representation might have changed.")
+      }
+      .asSequence()
 
   private fun extractPostsFromObjectLiteral(objectLiteral: ObjectNode): Posts {
     var result = emptyList<Post>()
@@ -129,7 +129,7 @@ object JavaScriptObjectLiteralExtractor {
     toJsonObject(javascript)?.let { listOf(it) }
       ?:
       // No. Let's try parsing as JavaScript and extracting object literals.
-      runCatching { collectObjectLiteralsFrom(javascript) }
+      runCatching { objectLiteralsIn(javascript) }
         .onFailure { log.warn("Error parsing as JavaScript: {}", javascript, it) }
         .getOrDefault(emptyList())
 
@@ -137,7 +137,7 @@ object JavaScriptObjectLiteralExtractor {
     runCatching { mapper.readValue(string, ObjectNode::class.java) }
       .getOrNull()
 
-  private fun collectObjectLiteralsFrom(javascript: String): List<ObjectNode> {
+  private fun objectLiteralsIn(javascript: String): List<ObjectNode> {
     val accumulator = mutableListOf<ObjectNode>()
     val detector = objectLiteralDetector(javascript) { accumulator.add(it) }
     traverseAst(javascript, detector)

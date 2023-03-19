@@ -27,8 +27,8 @@ class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
   override fun extractPosts(document: Document) =
     document
       .select(".userContentWrapper")
+      .asSequence()
       .mapNotNull(::processContentWrapper)
-      .sortedBy { it.publishedAt }
 
   private fun processContentWrapper(e: Element): Post? {
     // Wrap content wrapper element in a document shell to limit parent traversal.

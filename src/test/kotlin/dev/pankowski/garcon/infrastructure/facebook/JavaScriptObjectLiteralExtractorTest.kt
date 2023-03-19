@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import dev.pankowski.garcon.domain.oneLinePreview
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.datatest.withData
-import io.kotest.matchers.shouldBe
+import io.kotest.matchers.collections.shouldContainExactly
 
 class JavaScriptObjectLiteralExtractorTest : FreeSpec({
 
@@ -72,7 +72,7 @@ class JavaScriptObjectLiteralExtractorTest : FreeSpec({
       val result = extractor.extractFrom(testCase.script)
 
       // expect
-      result shouldBe testCase.outputs
+      result shouldContainExactly testCase.outputs
     }
   }
 })

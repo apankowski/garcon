@@ -3,7 +3,10 @@ package dev.pankowski.garcon.infrastructure.facebook
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.Post
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.shouldBe
+import io.kotest.matchers.sequences.beEmpty
+import io.kotest.matchers.sequences.shouldContainAllInAnyOrder
+import io.kotest.matchers.sequences.shouldContainExactly
+import io.kotest.matchers.should
 import org.jsoup.Jsoup
 import java.net.URL
 import java.time.Instant
@@ -29,7 +32,7 @@ class FacebookPostExtractionStrategyV1Test : FreeSpec({
     val result = strategy.extractPosts(document)
 
     // then
-    result shouldBe listOf(
+    result shouldContainExactly sequenceOf(
       Post(
         ExternalId("0"),
         URL("https://www.facebook.com/permalink.php?story_fbid=0"),
@@ -47,31 +50,7 @@ class FacebookPostExtractionStrategyV1Test : FreeSpec({
     val result = strategy.extractPosts(document)
 
     // then
-    result shouldBe emptyList()
-  }
-
-  "returns posts sorted by published date" {
-    // given
-    val document = documentFromFile("/lunch/facebook/v1/post-sorting-test.html")
-
-    // when
-    val result = strategy.extractPosts(document)
-
-    // then
-    result shouldBe listOf(
-      Post(
-        ExternalId("1"),
-        URL("https://www.facebook.com/permalink.php?story_fbid=1"),
-        Instant.ofEpochSecond(1),
-        "Some content 1"
-      ),
-      Post(
-        ExternalId("2"),
-        URL("https://www.facebook.com/permalink.php?story_fbid=2"),
-        Instant.ofEpochSecond(2),
-        "Some content 2"
-      )
-    )
+    result should beEmpty()
   }
 
   "extracts posts from a real page" {
@@ -82,7 +61,7 @@ class FacebookPostExtractionStrategyV1Test : FreeSpec({
     val result = strategy.extractPosts(document)
 
     // then
-    result shouldBe listOf(
+    result shouldContainAllInAnyOrder sequenceOf(
       Post(
         ExternalId("2342169022692189"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2342169022692189/?type=3"),
