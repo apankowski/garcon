@@ -6,15 +6,15 @@ import org.jooq.meta.jaxb.Logging
 // Gradle
 
 plugins {
-  kotlin("jvm") version "1.8.10"
-  kotlin("kapt") version "1.8.10"
-  kotlin("plugin.spring") version "1.8.10"
-  id("org.springframework.boot") version "3.0.4"
+  kotlin("jvm") version "1.8.20"
+  kotlin("kapt") version "1.8.20"
+  kotlin("plugin.spring") version "1.8.20"
+  id("org.springframework.boot") version "3.0.5"
   id("io.spring.dependency-management") version "1.1.0"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
-  id("com.avast.gradle.docker-compose") version "0.16.11"
-  id("org.flywaydb.flyway") version "9.15.2"
+  id("com.avast.gradle.docker-compose") version "0.16.12"
+  id("org.flywaydb.flyway") version "9.16.1"
   id("nu.studer.jooq") version "8.1"
   jacoco
   id("org.sonarqube") version "4.0.0.2929"
