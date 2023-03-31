@@ -1,16 +1,15 @@
 # OpenJDK images are quite large:
-# - openjdk:19-alpine is 185.34 MB compressed
-# - openjdk:19-slim is 218.92 MB MB compressed
+# - openjdk:20-alpine is 189.42 MB compressed
+# - openjdk:20-slim is 220.77 MB compressed
 # Whereas:
-# - azul/zulu-openjdk-alpine:19-jre-headless is 66.13 MB compressed
-FROM azul/zulu-openjdk-alpine:19-jre-headless as production
+# - azul/zulu-openjdk-alpine:20-jre-headless is 66.64 MB compressed
+FROM azul/zulu-openjdk-alpine:20-jre-headless as production
 
 RUN \
     # Install curl used in the healthcheck
     apk --no-cache add 'curl>=7.80.0' && \
-    # Upgrade libssl1.1 due to CVE-2022-4304, CVE-2022-4450, CVE-2023-0215, CVE-2023-0286. They
-    # have low severity but version 1.1.1t-r0 available in the Alpine repositories fixes them.
-    # Remove once default version in base image is >= 1.1.1t-r0.
+    # Update libssl and libcrypto defending against CVE-2023-0465
+    # Remove once default version in base image is >= 1.1.1t-r3
     apk --no-cache add --upgrade 'libssl1.1>=1.1.1t'
 
 RUN addgroup -S nonroot && \
