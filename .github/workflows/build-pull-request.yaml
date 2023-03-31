@@ -136,7 +136,7 @@ jobs:
         if-no-files-found: error
 
     - name: Submit Gradle dependencies
-      uses: mikepenz/gradle-dependency-submission@v0.8.5
+      uses: mikepenz/gradle-dependency-submission@v0.8.6
       with:
         include-build-environment: true
 
