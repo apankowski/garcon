@@ -153,7 +153,7 @@ class LunchControllerTest : FreeSpec({
           publishedAt = somePointInTime.plus(2, DAYS),
           content = "Some post content 1"
         ),
-        classification = Classification.LunchPost,
+        classification = Classification.LUNCH_POST,
         repost = Repost.Skip
       ),
       someSynchronizedPost(
@@ -163,7 +163,7 @@ class LunchControllerTest : FreeSpec({
           publishedAt = somePointInTime.plus(7, DAYS),
           content = "Some post content 2"
         ),
-        classification = Classification.MissingKeywords,
+        classification = Classification.REGULAR_POST,
         repost = Repost.Pending
       ),
       someSynchronizedPost(
@@ -173,7 +173,7 @@ class LunchControllerTest : FreeSpec({
           publishedAt = somePointInTime.plus(12, DAYS),
           content = "Some post content 3"
         ),
-        classification = Classification.LunchPost,
+        classification = Classification.LUNCH_POST,
         repost = Repost.Failed(13, somePointInTime.plus(13, DAYS))
       ),
       someSynchronizedPost(
@@ -183,7 +183,7 @@ class LunchControllerTest : FreeSpec({
           publishedAt = somePointInTime.plus(17, DAYS),
           content = "Some post content 4"
         ),
-        classification = Classification.MissingKeywords,
+        classification = Classification.REGULAR_POST,
         repost = Repost.Success(somePointInTime.plus(18, DAYS))
       ),
     )

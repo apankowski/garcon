@@ -9,7 +9,7 @@ CREATE TABLE synchronized_posts (
   post_url TEXT NOT NULL,
   post_published_at TIMESTAMP WITH TIME ZONE NOT NULL,
   post_content TEXT NOT NULL,
-  classification_status TEXT NOT NULL,
+  classification TEXT NOT NULL,
   repost_status TEXT NOT NULL,
   repost_attempts INTEGER,
   repost_last_attempt_at TIMESTAMP WITH TIME ZONE,

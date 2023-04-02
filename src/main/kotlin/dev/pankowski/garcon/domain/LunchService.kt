@@ -51,8 +51,8 @@ class LunchService(
       .map { p ->
         val classification = lunchPostClassifier.classify(p)
         val repost = when (classification) {
-          Classification.LunchPost -> Repost.Pending
-          Classification.MissingKeywords -> Repost.Skip
+          Classification.LUNCH_POST -> Repost.Pending
+          Classification.REGULAR_POST -> Repost.Skip
         }
         log.info("Post $p classified as $classification, repost decision $repost")
         StoreData(pageConfig.id, pageName, p, classification, repost)

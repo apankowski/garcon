@@ -7,7 +7,7 @@ fun someStoreData(
   pageId: PageId = PageId("some page id"),
   pageName: PageName? = PageName("some page name"),
   post: Post = somePost(),
-  classification: Classification = Classification.LunchPost,
+  classification: Classification = Classification.LUNCH_POST,
   repost: Repost = Repost.Pending,
 ) = StoreData(pageId, pageName, post, classification, repost)
 
