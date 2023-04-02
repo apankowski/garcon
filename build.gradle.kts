@@ -216,8 +216,8 @@ jooq {
                 converter = "dev.pankowski.garcon.infrastructure.persistence.VersionConverter"
               },
               ForcedType().apply {
-                includeExpression = "classification_status"
-                userType = "dev.pankowski.garcon.domain.ClassificationStatus"
+                includeExpression = "classification"
+                userType = "dev.pankowski.garcon.domain.Classification"
                 isEnumConverter = true
               },
               ForcedType().apply {

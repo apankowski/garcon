@@ -46,10 +46,10 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
     }
 
     withData(
-      PersistTestCase(null, Classification.MissingKeywords, Repost.Skip),
-      PersistTestCase(PageName("some page name"), Classification.LunchPost, Repost.Pending),
-      PersistTestCase(null, Classification.LunchPost, someFailedRepost()),
-      PersistTestCase(PageName("some page name"), Classification.LunchPost, someSuccessRepost()),
+      PersistTestCase(null, Classification.REGULAR_POST, Repost.Skip),
+      PersistTestCase(PageName("some page name"), Classification.LUNCH_POST, Repost.Pending),
+      PersistTestCase(null, Classification.LUNCH_POST, someFailedRepost()),
+      PersistTestCase(PageName("some page name"), Classification.LUNCH_POST, someSuccessRepost()),
     ) { (pageName, classification, repost) ->
       // given
       val storeData = someStoreData(

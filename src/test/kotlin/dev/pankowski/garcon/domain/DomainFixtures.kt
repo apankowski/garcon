@@ -68,6 +68,6 @@ fun someSynchronizedPost(
   pageId: PageId = PageId("Some Page ID"),
   pageName: PageName? = PageName("Some Page Name"),
   post: Post = somePost(),
-  classification: Classification = Classification.LunchPost,
+  classification: Classification = Classification.LUNCH_POST,
   repost: Repost = Repost.Skip,
 ) = SynchronizedPost(id, version, createdAt, updatedAt, pageId, pageName, post, classification, repost)

@@ -31,8 +31,8 @@ class LunchPostClassifierTest : FreeSpec({
         locale = PolishLocale,
         keywords = listOf(Keyword("lunch", 1)),
       ),
-      TestCase("Some text", Classification.MissingKeywords),
-      TestCase("Zapraszamy na pyszną świeżą sielawę", Classification.MissingKeywords),
+      TestCase("Some text", Classification.REGULAR_POST),
+      TestCase("Zapraszamy na pyszną świeżą sielawę", Classification.REGULAR_POST),
     )
   }
 
@@ -42,12 +42,12 @@ class LunchPostClassifierTest : FreeSpec({
         locale = PolishLocale,
         keywords = listOf(Keyword("lunch", 1), Keyword("lunchowa", 2)),
       ),
-      TestCase("Lunch wtorek", Classification.LunchPost),
-      TestCase("jemy lunch", Classification.LunchPost),
-      TestCase("dzisiejsza oferta lunchowa", Classification.LunchPost),
-      TestCase("lunch!!!", Classification.LunchPost),
-      TestCase("**Lunch**", Classification.LunchPost),
-      TestCase("😆😆😆lunch😆😆😆", Classification.LunchPost),
+      TestCase("Lunch wtorek", Classification.LUNCH_POST),
+      TestCase("jemy lunch", Classification.LUNCH_POST),
+      TestCase("dzisiejsza oferta lunchowa", Classification.LUNCH_POST),
+      TestCase("lunch!!!", Classification.LUNCH_POST),
+      TestCase("**Lunch**", Classification.LUNCH_POST),
+      TestCase("😆😆😆lunch😆😆😆", Classification.LUNCH_POST),
     )
   }
 
@@ -57,9 +57,9 @@ class LunchPostClassifierTest : FreeSpec({
         locale = PolishLocale,
         keywords = listOf(Keyword("lunch", 1), Keyword("lunchowa", 2)),
       ),
-      TestCase("luunch", Classification.LunchPost),
-      TestCase("Lnuch", Classification.LunchPost),
-      TestCase("dzisiejsza oferta lunhcowa", Classification.LunchPost),
+      TestCase("luunch", Classification.LUNCH_POST),
+      TestCase("Lnuch", Classification.LUNCH_POST),
+      TestCase("dzisiejsza oferta lunhcowa", Classification.LUNCH_POST),
     )
   }
 })

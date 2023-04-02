@@ -40,7 +40,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       postContent = data.post.content
 
       // Classification
-      classificationStatus = data.classification.status
+      classification = data.classification
 
       // Repost
       repostStatus = data.repost.status
@@ -123,12 +123,6 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
         content = r.postContent
       )
 
-    fun toClassification(r: SynchronizedPostsRecord) =
-      when (r.classificationStatus!!) {
-        ClassificationStatus.MISSING_KEYWORDS -> Classification.MissingKeywords
-        ClassificationStatus.LUNCH_POST -> Classification.LunchPost
-      }
-
     fun toRepost(r: SynchronizedPostsRecord) =
       when (r.repostStatus!!) {
         RepostStatus.SKIP -> Repost.Skip
@@ -152,7 +146,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       pageId = PageId(record.pageId),
       pageName = record.pageName?.let(::PageName),
       post = toFacebookPost(record),
-      classification = toClassification(record),
+      classification = record.classification,
       repost = toRepost(record)
     )
   }

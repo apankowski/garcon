@@ -74,8 +74,8 @@ class LunchController(
 
     fun classificationInfo(c: Classification) =
       when (c) {
-        is Classification.MissingKeywords -> ":heavy_minus_sign:"
-        is Classification.LunchPost -> ":heavy_check_mark:"
+        Classification.REGULAR_POST -> ":heavy_minus_sign:"
+        Classification.LUNCH_POST -> ":heavy_check_mark:"
       }
 
     fun repostInfo(r: Repost) =

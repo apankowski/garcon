@@ -59,7 +59,7 @@ class LunchServiceTest : FreeSpec({
         PageId("some id"),
         null,
         lastSeen,
-        Classification.LunchPost,
+        Classification.LUNCH_POST,
         Repost.Skip
       )
 
@@ -82,7 +82,7 @@ class LunchServiceTest : FreeSpec({
     val pageConfig = somePageConfig()
     val pageName = somePageName()
     val post = somePost()
-    val classification = Classification.LunchPost
+    val classification = Classification.LUNCH_POST
 
     val postClient = mockk<FacebookPageClient>()
     val postClassifier = mockk<LunchPostClassifier>()
@@ -113,7 +113,7 @@ class LunchServiceTest : FreeSpec({
     val pageConfig = somePageConfig()
     val pageName = somePageName()
     val post = somePost()
-    val classification = Classification.MissingKeywords
+    val classification = Classification.REGULAR_POST
 
     val postClient = mockk<FacebookPageClient>()
     val postClassifier = mockk<LunchPostClassifier>()

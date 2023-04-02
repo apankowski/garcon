@@ -25,21 +25,6 @@ sealed class Repost(val status: RepostStatus) {
 
 data class SynchronizedPostId(val value: String)
 
-enum class ClassificationStatus {
-  LUNCH_POST,
-  MISSING_KEYWORDS,
-}
-
-sealed class Classification(val status: ClassificationStatus) {
-  object LunchPost : Classification(status = ClassificationStatus.LUNCH_POST) {
-    override fun toString() = "LunchPost"
-  }
-
-  object MissingKeywords : Classification(status = ClassificationStatus.MISSING_KEYWORDS) {
-    override fun toString() = "MissingKeywords"
-  }
-}
-
 data class SynchronizedPost(
   val id: SynchronizedPostId,
   val version: Version,
