@@ -70,20 +70,19 @@ class JsoupFacebookPageClient(
     return pageName
   }
 
-  fun <T> Sequence<Sequence<T>>.firstNonEmpty(): Sequence<T> {
-    val sequences = this
-    return object : Sequence<T> {
-      override fun iterator() =
-        sequences.map { it.iterator() }.firstOrNull { it.hasNext() } ?: emptySequence<T>().iterator()
+  private fun <T> Sequence<Sequence<T>>.firstNonEmpty() =
+    Sequence {
+      // Access iterators lazily, at most once per invocation in case any of the sequences
+      // doesn't support iterating over it multiple times (see Sequence documentation).
+      this@firstNonEmpty
+        .map { it.iterator() }
+        .firstOrNull { it.hasNext() }
+        ?: emptySequence<T>().iterator()
     }
-  }
 
-  fun <T> Sequence<T>.onEmpty(action: () -> Unit): Sequence<T> {
-    val original = this
-    return object : Sequence<T> {
-      override fun iterator() =
-        original.iterator().apply { if (!hasNext()) action.invoke() }
+  private fun <T> Sequence<T>.onEmpty(action: () -> Unit) =
+    Sequence {
+      this@onEmpty.iterator()
+        .apply { if (!hasNext()) action.invoke() }
     }
-  }
-
 }

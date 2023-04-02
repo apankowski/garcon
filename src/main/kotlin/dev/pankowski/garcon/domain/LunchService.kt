@@ -41,10 +41,11 @@ class LunchService(
     log.info("Synchronizing posts of {}", pageConfig)
 
     val lastSeen = repository.findLastSeen(pageConfig.id)
+    val cutoffDate = lastSeen?.post?.publishedAt ?: Instant.MIN
     val (pageName, posts) = pageClient.fetch(pageConfig)
 
     return posts
-      .filter { it.publishedAt > (lastSeen?.post?.publishedAt ?: Instant.MIN) }
+      .filter { it.publishedAt > cutoffDate }
       .sortedBy { it.publishedAt }
       .onEach { log.info("Found new post: {}", it) }
       .map { p ->
