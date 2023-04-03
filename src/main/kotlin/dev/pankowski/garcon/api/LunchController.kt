@@ -88,7 +88,7 @@ class LunchController(
 
     fun buildItem(p: SynchronizedPost) =
       """
-      |• *${p.post.publishedAt.toSlackDate(linkUrl = p.post.url)}* from *${p.pageName?.value ?: p.pageId.value}*
+      |• *${p.post.publishedAt.toSlackDate(linkUrl = p.post.url)}* from *${p.pageName.value}*
       |Preview: ${p.post.content.oneLinePreview(120)}
       |Lunch post: ${classificationInfo(p.classification)}
       |Repost: ${repostInfo(p.repost)}

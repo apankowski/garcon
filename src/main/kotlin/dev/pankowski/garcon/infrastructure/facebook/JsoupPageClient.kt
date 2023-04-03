@@ -22,7 +22,7 @@ class JsoupPageClient(
 
   override fun load(pageConfig: PageConfig): Page {
     val document = fetchDocument(pageConfig.url)
-    val pageName = extractPageName(document, pageConfig) ?: PageName(pageConfig.id.value)
+    val pageName = extractPageName(document, pageConfig)
     val posts = strategies.asSequence()
       .map { it.extractPosts(document) }
       .firstNonEmpty()
@@ -57,17 +57,19 @@ class JsoupPageClient(
     return fetch()
   }
 
-  private fun extractPageName(document: Document, pageConfig: PageConfig): PageName? {
-    val pageName = document.select("head meta[property=og:title]")
-      .attr("content")
-      .takeUnless(String::isEmpty)
-      ?.let(::PageName)
-
-    if (pageName == null) {
-      log.warn("Couldn't get facebook page name for ${pageConfig.url}")
+  private fun extractPageName(document: Document, pageConfig: PageConfig): PageName {
+    val pageNameCandidates = sequence {
+      yield(document.select("head meta[property=og:title]").attr("content"))
+      yield(document.select("head meta[name=twitter:title]").attr("content"))
+      yieldAll(document.select("h1").eachText())
     }
 
-    return pageName
+    pageNameCandidates
+      .firstOrNull { it.isNotEmpty() }
+      ?.let { return PageName(it) }
+
+    log.warn("Couldn't extract page name from document at ${pageConfig.url}. Structure of the page might have changed")
+    throw IllegalArgumentException("Page name couldn't be extracted")
   }
 
   private fun <T> Sequence<Sequence<T>>.firstNonEmpty() =

@@ -27,7 +27,7 @@ class LunchServiceTest : FreeSpec({
     )
 
     every { repository.findLastSeen(any()) } returns null
-    every { pageClient.load(any()) } returns Page(null, emptySequence())
+    every { pageClient.load(any()) } returns Page(PageName("Some name"), emptySequence())
 
     // when
     service.synchronizeAll()
@@ -57,7 +57,7 @@ class LunchServiceTest : FreeSpec({
         now(),
         now(),
         PageId("some id"),
-        null,
+        PageName("Some name"),
         lastSeen,
         Classification.LUNCH_POST,
         Repost.Skip

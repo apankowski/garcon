@@ -89,7 +89,7 @@ class LunchService(
 
   private fun doRepost(p: SynchronizedPost) =
     try {
-      reposter.repost(p.post, p.pageName ?: PageName(p.pageId.value))
+      reposter.repost(p.post, p.pageName)
       log.info("Post ${p.post.url} reposted on Slack")
     } catch (e: Exception) {
       log.error("Failed to repost post ${p.post.url} on Slack", e)

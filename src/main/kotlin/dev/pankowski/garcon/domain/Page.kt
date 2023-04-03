@@ -5,7 +5,7 @@ data class PageId(val value: String)
 data class PageName(val value: String)
 
 data class Page(
-  val name: PageName?,
+  val name: PageName,
   val posts: Sequence<Post>,
 )
 

@@ -66,7 +66,7 @@ fun someSynchronizedPost(
   createdAt: Instant = now(),
   updatedAt: Instant = now(),
   pageId: PageId = PageId("Some Page ID"),
-  pageName: PageName? = PageName("Some Page Name"),
+  pageName: PageName = PageName("Some Page Name"),
   post: Post = somePost(),
   classification: Classification = Classification.LUNCH_POST,
   repost: Repost = Repost.Skip,

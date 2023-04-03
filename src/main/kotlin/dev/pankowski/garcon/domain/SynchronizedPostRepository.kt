@@ -7,7 +7,7 @@ class SynchronizedPostModifiedConcurrently(message: String) : RuntimeException(m
 
 data class StoreData(
   val pageId: PageId,
-  val pageName: PageName?,
+  val pageName: PageName,
   val post: Post,
   val classification: Classification,
   val repost: Repost,
