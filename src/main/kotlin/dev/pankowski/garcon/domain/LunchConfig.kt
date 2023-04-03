@@ -31,7 +31,7 @@ data class SyncConfig(
   val interval: Duration?,
 )
 
-/** Configuration of web client used to fetch lunch pages. */
+/** Configuration of web client used to load lunch pages. */
 @ConfigurationProperties("lunch.client")
 data class ClientConfig(
 

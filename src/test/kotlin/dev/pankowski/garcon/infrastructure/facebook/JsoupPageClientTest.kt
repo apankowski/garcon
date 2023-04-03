@@ -3,7 +3,10 @@ package dev.pankowski.garcon.infrastructure.facebook
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED
-import dev.pankowski.garcon.domain.*
+import dev.pankowski.garcon.domain.PageName
+import dev.pankowski.garcon.domain.someClientConfig
+import dev.pankowski.garcon.domain.somePageConfig
+import dev.pankowski.garcon.domain.somePost
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.extensions.wiremock.ListenerMode
@@ -20,7 +23,7 @@ import java.net.SocketTimeoutException
 import java.net.URL
 import java.time.Duration
 
-class JsoupFacebookPageClientTest : FreeSpec({
+class JsoupPageClientTest : FreeSpec({
 
   val server = WireMockServer(4321)
   listener(WireMockListener(server, ListenerMode.PER_SPEC))
@@ -37,7 +40,7 @@ class JsoupFacebookPageClientTest : FreeSpec({
   "retrieves given page" {
     // given
     val clientConfig = someClientConfig(userAgent = "Some User Agent")
-    val client = JsoupFacebookPageClient(clientConfig, listOf())
+    val client = JsoupPageClient(clientConfig, listOf())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -47,7 +50,7 @@ class JsoupFacebookPageClientTest : FreeSpec({
     )
 
     // when
-    client.fetch(pageConfig)
+    client.load(pageConfig)
 
     // then
     server.verify(
@@ -68,7 +71,7 @@ class JsoupFacebookPageClientTest : FreeSpec({
   "honors specified timeout" {
     // given
     val clientConfig = someClientConfig(timeout = Duration.ofMillis(100))
-    val client = JsoupFacebookPageClient(clientConfig, listOf())
+    val client = JsoupPageClient(clientConfig, listOf())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -79,13 +82,13 @@ class JsoupFacebookPageClientTest : FreeSpec({
 
     // expect
     shouldThrow<SocketTimeoutException> {
-      client.fetch(pageConfig)
+      client.load(pageConfig)
     }
   }
 
   "retries given page in case of failure" {
     // given
-    val client = JsoupFacebookPageClient(someClientConfig(retries = 2), listOf())
+    val client = JsoupPageClient(someClientConfig(retries = 2), listOf())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -115,16 +118,16 @@ class JsoupFacebookPageClientTest : FreeSpec({
     )
 
     // when
-    val result = client.fetch(pageConfig)
+    val result = client.load(pageConfig)
 
     // then
-    result.pageName shouldBe PageName(pageConfig.id.value)
+    result.name shouldBe PageName(pageConfig.id.value)
     result.posts should beEmpty()
   }
 
   "fails when all attempts to retrieve given page fail" {
     // given
-    val client = JsoupFacebookPageClient(someClientConfig(retries = 2), listOf())
+    val client = JsoupPageClient(someClientConfig(retries = 2), listOf())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -163,14 +166,14 @@ class JsoupFacebookPageClientTest : FreeSpec({
 
     // expect
     shouldThrow<HttpStatusException> {
-      client.fetch(pageConfig)
+      client.load(pageConfig)
     }
   }
 
   "extracts name from given page" {
     // given
     val clientConfig = someClientConfig(userAgent = "Some User Agent")
-    val client = JsoupFacebookPageClient(clientConfig, listOf())
+    val client = JsoupPageClient(clientConfig, listOf())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -180,16 +183,16 @@ class JsoupFacebookPageClientTest : FreeSpec({
     )
 
     // when
-    val result = client.fetch(pageConfig)
+    val result = client.load(pageConfig)
 
     // then
-    result.pageName shouldBe PageName("Some Lunch Page Name")
+    result.name shouldBe PageName("Some Lunch Page Name")
   }
 
   "falls back to page ID in case name can't be extracted" {
     // given
     val clientConfig = someClientConfig(userAgent = "Some User Agent")
-    val client = JsoupFacebookPageClient(clientConfig, listOf())
+    val client = JsoupPageClient(clientConfig, listOf())
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
 
     // and
@@ -199,20 +202,20 @@ class JsoupFacebookPageClientTest : FreeSpec({
     )
 
     // when
-    val result = client.fetch(pageConfig)
+    val result = client.load(pageConfig)
 
     // then
-    result.pageName shouldBe PageName(pageConfig.id.value)
+    result.name shouldBe PageName(pageConfig.id.value)
   }
 
   "passes retrieved document to extraction strategies" {
     // given
     val pageConfig = somePageConfig(url = URL(server.url("/posts")))
-    val strategy = mockk<FacebookPostExtractionStrategy>()
+    val strategy = mockk<PostExtractionStrategy>()
     val post = somePost()
     every { strategy.extractPosts(any()) } returns sequenceOf(post)
 
-    val client = JsoupFacebookPageClient(someClientConfig(), listOf(strategy))
+    val client = JsoupPageClient(someClientConfig(), listOf(strategy))
 
     // and
     server.givenThat(
@@ -221,7 +224,7 @@ class JsoupFacebookPageClientTest : FreeSpec({
     )
 
     // when
-    val actualResult = client.fetch(pageConfig)
+    val actualResult = client.load(pageConfig)
 
     // then
     actualResult.posts should containExactly(post)

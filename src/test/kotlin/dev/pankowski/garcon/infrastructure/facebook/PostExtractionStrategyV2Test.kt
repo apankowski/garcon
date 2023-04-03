@@ -6,14 +6,13 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.sequences.beEmpty
 import io.kotest.matchers.sequences.shouldContainExactly
 import io.kotest.matchers.should
-import io.kotest.matchers.shouldBe
 import org.jsoup.Jsoup
 import java.net.URL
 import java.time.Instant
 
-class FacebookPostExtractionStrategyV2Test : FreeSpec({
+class PostExtractionStrategyV2Test : FreeSpec({
 
-  val strategy = FacebookPostExtractionStrategyV2()
+  val strategy = PostExtractionStrategyV2()
 
   fun htmlFrom(file: String) =
     when (val url = javaClass.getResource(file)) {
