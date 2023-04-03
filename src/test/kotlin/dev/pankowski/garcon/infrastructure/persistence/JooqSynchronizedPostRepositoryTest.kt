@@ -37,7 +37,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
   "persists synchronized post" - {
 
     data class PersistTestCase(
-      val pageName: PageName?,
+      val pageName: PageName,
       val classification: Classification,
       val repost: Repost
     ) : WithDataTestName {
@@ -46,10 +46,10 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
     }
 
     withData(
-      PersistTestCase(null, Classification.REGULAR_POST, Repost.Skip),
+      PersistTestCase(PageName("some page name"), Classification.REGULAR_POST, Repost.Skip),
       PersistTestCase(PageName("some page name"), Classification.LUNCH_POST, Repost.Pending),
-      PersistTestCase(null, Classification.LUNCH_POST, someFailedRepost()),
-      PersistTestCase(PageName("some page name"), Classification.LUNCH_POST, someSuccessRepost()),
+      PersistTestCase(PageName("other page name"), Classification.LUNCH_POST, someFailedRepost()),
+      PersistTestCase(PageName("other page name"), Classification.LUNCH_POST, someSuccessRepost()),
     ) { (pageName, classification, repost) ->
       // given
       val storeData = someStoreData(

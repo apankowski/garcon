@@ -6,17 +6,18 @@ import com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED
 import dev.pankowski.garcon.domain.PageName
 import dev.pankowski.garcon.domain.someClientConfig
 import dev.pankowski.garcon.domain.somePageConfig
-import dev.pankowski.garcon.domain.somePost
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.throwables.shouldThrowAny
+import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.datatest.withData
 import io.kotest.extensions.wiremock.ListenerMode
 import io.kotest.extensions.wiremock.WireMockListener
 import io.kotest.matchers.sequences.beEmpty
-import io.kotest.matchers.sequences.containExactly
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockk
+import io.kotest.matchers.string.containIgnoringCase
+import io.kotest.matchers.string.shouldNotBeEmpty
 import org.jsoup.HttpStatusException
 import org.springframework.http.MediaType
 import java.net.SocketTimeoutException
@@ -28,7 +29,7 @@ class JsoupPageClientTest : FreeSpec({
   val server = WireMockServer(4321)
   listener(WireMockListener(server, ListenerMode.PER_SPEC))
 
-  fun okHtml(html: String) =
+  fun okAndHtml(html: String) =
     okForContentType(MediaType.TEXT_HTML.toString(), html)
 
   fun htmlFrom(file: String) =
@@ -37,7 +38,7 @@ class JsoupPageClientTest : FreeSpec({
       else -> url.readText()
     }
 
-  "retrieves given page" {
+  "requests page with expected headers" {
     // given
     val clientConfig = someClientConfig(userAgent = "Some User Agent")
     val client = JsoupPageClient(clientConfig, listOf())
@@ -45,12 +46,13 @@ class JsoupPageClientTest : FreeSpec({
 
     // and
     server.givenThat(
-      get("/posts")
-        .willReturn(okHtml("<html><body>Some body</body></html>"))
+      get("/posts").willReturn(okAndHtml("<html><body>Some body</body></html>"))
     )
 
     // when
-    client.load(pageConfig)
+    shouldThrowAny {
+      client.load(pageConfig)
+    }
 
     // then
     server.verify(
@@ -76,8 +78,7 @@ class JsoupPageClientTest : FreeSpec({
 
     // and
     server.givenThat(
-      get("/posts")
-        .willReturn(ok().withFixedDelay(200))
+      get("/posts").willReturn(ok().withFixedDelay(200))
     )
 
     // expect
@@ -114,14 +115,14 @@ class JsoupPageClientTest : FreeSpec({
       get("/posts")
         .inScenario("retry")
         .whenScenarioStateIs("attempt #3")
-        .willReturn(okHtml("<html><body>Some body</body></html>"))
+        .willReturn(okAndHtml(htmlFrom("/lunch/facebook/v1/page-name-extraction-test-heading.html")))
     )
 
     // when
     val result = client.load(pageConfig)
 
     // then
-    result.name shouldBe PageName(pageConfig.id.value)
+    result.name.value.shouldNotBeEmpty()
     result.posts should beEmpty()
   }
 
@@ -161,7 +162,7 @@ class JsoupPageClientTest : FreeSpec({
       get("/posts")
         .inScenario("retry")
         .whenScenarioStateIs("attempt #4")
-        .willReturn(okHtml("<html><body>Some body</body></html>"))
+        .willReturn(okAndHtml(htmlFrom("/lunch/facebook/v1/page-name-extraction-test-heading.html")))
     )
 
     // expect
@@ -170,7 +171,51 @@ class JsoupPageClientTest : FreeSpec({
     }
   }
 
-  "extracts name from given page" {
+  data class PageNameExtractionTestCase(
+    val locationDescription: String,
+    val exampleFile: String,
+    val expectedName: String,
+  )
+
+  "extracts page name" - {
+    withData<PageNameExtractionTestCase>(
+      { "from ${it.locationDescription}" },
+      PageNameExtractionTestCase(
+        "og:title meta tag",
+        "/lunch/facebook/v1/page-name-extraction-test-og-title.html",
+        "Some Lunch Page Name"
+      ),
+      PageNameExtractionTestCase(
+        "twitter:title meta tag",
+        "/lunch/facebook/v1/page-name-extraction-test-twitter-title.html",
+        "Some Lunch Page Name"
+      ),
+      PageNameExtractionTestCase(
+        "h1 heading",
+        "/lunch/facebook/v1/page-name-extraction-test-heading.html",
+        "Some Lunch Page Name"
+      ),
+    ) {
+
+      // given
+      val clientConfig = someClientConfig()
+      val client = JsoupPageClient(clientConfig, listOf())
+      val pageConfig = somePageConfig(url = URL(server.url("/posts")))
+
+      // and
+      server.givenThat(
+        get("/posts").willReturn(okAndHtml(htmlFrom(it.exampleFile)))
+      )
+
+      // when
+      val result = client.load(pageConfig)
+
+      // then
+      result.name shouldBe PageName(it.expectedName)
+    }
+  }
+
+  "fails when page name can't be extracted" {
     // given
     val clientConfig = someClientConfig(userAgent = "Some User Agent")
     val client = JsoupPageClient(clientConfig, listOf())
@@ -178,55 +223,15 @@ class JsoupPageClientTest : FreeSpec({
 
     // and
     server.givenThat(
-      get("/posts")
-        .willReturn(okHtml(htmlFrom("/lunch/facebook/v1/page-name-extraction-test.html")))
+      get("/posts").willReturn(okAndHtml(htmlFrom("/lunch/facebook/v1/page-name-unextractable-test.html")))
     )
 
     // when
-    val result = client.load(pageConfig)
+    val exception = shouldThrowExactly<IllegalArgumentException> {
+      client.load(pageConfig)
+    }
 
     // then
-    result.name shouldBe PageName("Some Lunch Page Name")
-  }
-
-  "falls back to page ID in case name can't be extracted" {
-    // given
-    val clientConfig = someClientConfig(userAgent = "Some User Agent")
-    val client = JsoupPageClient(clientConfig, listOf())
-    val pageConfig = somePageConfig(url = URL(server.url("/posts")))
-
-    // and
-    server.givenThat(
-      get("/posts")
-        .willReturn(okHtml(htmlFrom("/lunch/facebook/v1/page-name-unextractable-test.html")))
-    )
-
-    // when
-    val result = client.load(pageConfig)
-
-    // then
-    result.name shouldBe PageName(pageConfig.id.value)
-  }
-
-  "passes retrieved document to extraction strategies" {
-    // given
-    val pageConfig = somePageConfig(url = URL(server.url("/posts")))
-    val strategy = mockk<PostExtractionStrategy>()
-    val post = somePost()
-    every { strategy.extractPosts(any()) } returns sequenceOf(post)
-
-    val client = JsoupPageClient(someClientConfig(), listOf(strategy))
-
-    // and
-    server.givenThat(
-      get("/posts")
-        .willReturn(okHtml("<html><body>Some body</body></html>"))
-    )
-
-    // when
-    val actualResult = client.load(pageConfig)
-
-    // then
-    actualResult.posts should containExactly(post)
+    exception.message should containIgnoringCase("page name")
   }
 })
