@@ -20,7 +20,7 @@ import java.time.Instant
  * (more or less) searching for DOM elements with appropriate CSS selectors.
  */
 @Component
-class FacebookPostExtractionStrategyV1 : FacebookPostExtractionStrategy {
+class PostExtractionStrategyV1 : PostExtractionStrategy {
 
   private val log = LoggerFactory.getLogger(javaClass)
 

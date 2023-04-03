@@ -8,7 +8,10 @@ import com.fasterxml.jackson.databind.node.JsonNodeType.NUMBER
 import com.fasterxml.jackson.databind.node.JsonNodeType.STRING
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.google.common.annotations.VisibleForTesting
-import dev.pankowski.garcon.domain.*
+import dev.pankowski.garcon.domain.ExternalId
+import dev.pankowski.garcon.domain.Post
+import dev.pankowski.garcon.domain.Posts
+import dev.pankowski.garcon.domain.oneLinePreview
 import net.thisptr.jackson.jq.BuiltinFunctionLoader
 import net.thisptr.jackson.jq.JsonQuery
 import net.thisptr.jackson.jq.Scope
@@ -28,7 +31,7 @@ import java.time.Instant
  * See `${REPOSITORY_ROOT}/docs/facebook/post-extraction-strategy-v2.md` for a description of how it works.
  */
 @Component
-class FacebookPostExtractionStrategyV2 : FacebookPostExtractionStrategy {
+class PostExtractionStrategyV2 : PostExtractionStrategy {
 
   private val log = LoggerFactory.getLogger(javaClass)
   private val rootScope = Scope.newEmptyScope()

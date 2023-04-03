@@ -8,26 +8,26 @@ import org.springframework.stereotype.Component
 import java.net.URL
 import kotlin.random.Random
 
-interface FacebookPostExtractionStrategy {
+interface PostExtractionStrategy {
   fun extractPosts(document: Document): Sequence<Post>
 }
 
 @Component
-class JsoupFacebookPageClient(
+class JsoupPageClient(
   private val clientConfig: ClientConfig,
-  private val strategies: List<FacebookPostExtractionStrategy>
-) : FacebookPageClient {
+  private val strategies: List<PostExtractionStrategy>
+) : PageClient {
 
   private val log = LoggerFactory.getLogger(javaClass)
 
-  override fun fetch(pageConfig: PageConfig): PageOfPosts {
+  override fun load(pageConfig: PageConfig): Page {
     val document = fetchDocument(pageConfig.url)
     val pageName = extractPageName(document, pageConfig) ?: PageName(pageConfig.id.value)
     val posts = strategies.asSequence()
       .map { it.extractPosts(document) }
       .firstNonEmpty()
       .onEmpty { log.warn("None of the Facebook post extraction strategies was able to extract post data") }
-    return PageOfPosts(pageName, posts)
+    return Page(pageName, posts)
   }
 
   private fun fetchDocument(url: URL): Document {

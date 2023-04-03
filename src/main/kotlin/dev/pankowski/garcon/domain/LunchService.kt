@@ -10,7 +10,7 @@ class LunchService(
   private val lunchConfig: LunchConfig,
   private val repostRetryConfig: RepostRetryConfig,
   private val repository: SynchronizedPostRepository,
-  private val pageClient: FacebookPageClient,
+  private val pageClient: PageClient,
   private val lunchPostClassifier: LunchPostClassifier,
   private val reposter: SlackReposter,
 ) {
@@ -42,7 +42,7 @@ class LunchService(
 
     val lastSeen = repository.findLastSeen(pageConfig.id)
     val cutoffDate = lastSeen?.post?.publishedAt ?: Instant.MIN
-    val (pageName, posts) = pageClient.fetch(pageConfig)
+    val (pageName, posts) = pageClient.load(pageConfig)
 
     return posts
       .filter { it.publishedAt > cutoffDate }

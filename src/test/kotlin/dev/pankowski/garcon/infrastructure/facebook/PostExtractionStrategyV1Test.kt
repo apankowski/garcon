@@ -11,9 +11,9 @@ import org.jsoup.Jsoup
 import java.net.URL
 import java.time.Instant
 
-class FacebookPostExtractionStrategyV1Test : FreeSpec({
+class PostExtractionStrategyV1Test : FreeSpec({
 
-  val strategy = FacebookPostExtractionStrategyV1()
+  val strategy = PostExtractionStrategyV1()
 
   fun htmlFrom(file: String) =
     when (val url = javaClass.getResource(file)) {
