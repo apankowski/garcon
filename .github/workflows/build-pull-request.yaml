@@ -30,8 +30,8 @@ jobs:
     - name: Setup Java
       uses: actions/setup-java@v3
       with:
-        java-version: 17
-        distribution: temurin
+        java-version: 19
+        distribution: zulu
 
     - name: Validate Gradle wrapper
       uses: gradle/wrapper-validation-action@55e685c48d84285a5b0418cd094606e199cca3b6 # v1
