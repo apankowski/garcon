@@ -28,8 +28,8 @@ The whole procedure is repeated in regular intervals.
 
 The service is written in Kotlin and uses the following stack:
 
-* Kotlin 1.8 on Java 17+ (docker image is based on Java 20)
-* Gradle 7.6 (with build script in Kotlin)
+* Kotlin 1.8 on Java 19 (docker image is based on JRE 20)
+* Gradle 8.0 (with build script in Kotlin)
 * Spring Boot 3.0
 * Jooq for database access
 * PostgreSQL 10+
