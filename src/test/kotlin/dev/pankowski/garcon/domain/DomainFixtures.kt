@@ -6,20 +6,24 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit.MICROS
 import java.util.*
 
-// Idiom to be used instead of Instant.now(). Postgres supports timestamps with 6-digit second precision.
-// The goal is to make JVM-generated Instants compatible with Postgres so we can compare them by equality.
+/**
+ * Idiom to be used instead of `Instant.now()`.
+ *
+ * Postgres supports timestamps with 6-digit second precision.
+ * The goal is to make JVM-generated Instants compatible with Postgres, so we can compare them by equality.
+ */
 fun now() = Instant.now().truncatedTo(MICROS)!!
 
-val PolishLocale = Locale("pl", "PL")
+val PolishLocale = Locale.of("pl", "PL")!!
 
 // Configs
 fun someLunchConfig(
-  pages: List<PageConfig> = emptyList()
+  pages: List<PageConfig> = emptyList(),
 ) = LunchConfig(pages)
 
 fun somePageConfig(
   pageId: PageId = PageId("PID1"),
-  url: URL = URL("http://localhost:4321/posts")
+  url: URL = URL("http://localhost:4321/posts"),
 ) = PageConfig(pageId, url)
 
 fun someSyncConfig(
