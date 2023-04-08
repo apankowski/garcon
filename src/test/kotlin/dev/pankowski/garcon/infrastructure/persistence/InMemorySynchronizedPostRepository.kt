@@ -13,6 +13,11 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
   }
 
   override fun store(data: StoreData): SynchronizedPostId {
+    if (findByExternalId(data.post.externalId) != null)
+      throw SynchronizedPostHasDuplicateExternalId(
+        "Failed to store synchronized post due to duplicate external ID ${data.post.externalId}"
+      )
+
     val synchronizedPostId = SynchronizedPostId(UUID.randomUUID().toString())
     val now = now()
     val synchronizedPost = SynchronizedPost(

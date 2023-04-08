@@ -23,11 +23,6 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
 
   override fun store(data: StoreData): SynchronizedPostId =
     with(context.newRecord(SYNCHRONIZED_POSTS)) {
-      fun throwDuplicateExternalId(): Nothing =
-        throw SynchronizedPostHasDuplicateExternalId(
-          "Failed to store synchronized post due to duplicate external ID ${data.post.externalId}"
-        )
-
       val now = Instant.now()
 
       // Header
@@ -70,8 +65,10 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
         store()
       } catch (e: DuplicateKeyException) {
         if (e.message!!.contains(Indexes.SYNCHRONIZED_POSTS_POST_EXTERNAL_ID.name, ignoreCase = true))
-          throwDuplicateExternalId()
-        throw e
+          throw SynchronizedPostHasDuplicateExternalId(
+            "Failed to store synchronized post due to duplicate external ID ${data.post.externalId}"
+          )
+        else throw e
       }
 
       SynchronizedPostId(id.toString())
