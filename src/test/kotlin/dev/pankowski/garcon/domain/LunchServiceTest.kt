@@ -12,124 +12,86 @@ import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.beInstanceOf
 import io.kotest.matchers.types.beTheSameInstanceAs
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.*
 
 class LunchServiceTest : FreeSpec({
 
-  "synchronizes all pages from config" {
+  "synchronizes pages from config" {
     // given
     val pageConfig = somePageConfig()
+    val lunchConfig = someLunchConfig(pages = listOf(pageConfig))
 
-    val pageClient = mockk<PageClient>()
-    val repository = mockk<SynchronizedPostRepository>()
-    val service = spyk(
-      LunchService(someLunchConfig(pages = listOf(pageConfig)), mockk(), repository, pageClient, mockk(), mockk())
-    )
+    val pageSynchronizer = mockk<PageSynchronizer>()
+    val service = LunchService(lunchConfig, mockk(), mockk(), pageSynchronizer, mockk())
 
-    every { repository.findLastSeen(any()) } returns null
-    every { pageClient.load(any()) } returns Page(PageName("Some name"), emptySequence())
+    every { pageSynchronizer.synchronize(any()) } returns emptySequence()
 
     // when
     service.synchronizeAll()
 
     // then
     verify {
-      service.synchronize(pageConfig)
+      pageSynchronizer.synchronize(pageConfig)
     }
   }
 
-  "fetches new posts" {
+  "reposts synchronized lunch posts" {
     // given
     val pageConfig = somePageConfig()
-    val lastSeenPublishedAt = now()
-    val lastSeen = somePost(publishedAt = lastSeenPublishedAt)
+    val synchronizedPost = someSynchronizedPost(
+      classification = Classification.LUNCH_POST,
+      repost = Repost.Pending,
+    )
 
-    val pageClient = mockk<PageClient>()
-    val postClassifier = mockk<LunchPostClassifier>()
+    val repository = spyk(InMemorySynchronizedPostRepository()).apply { put(synchronizedPost) }
+    val pageSynchronizer = mockk<PageSynchronizer>()
     val reposter = mockk<SlackReposter>()
-    val repository = mockk<SynchronizedPostRepository>()
-    val service = LunchService(someLunchConfig(), mockk(), repository, pageClient, postClassifier, reposter)
+    val service = LunchService(someLunchConfig(), mockk(), repository, pageSynchronizer, reposter)
 
-    every { repository.findLastSeen(any()) } returns
-      SynchronizedPost(
-        SynchronizedPostId("some id"),
-        Version(1),
-        now(),
-        now(),
-        PageId("some id"),
-        PageName("Some name"),
-        lastSeen,
-        Classification.LUNCH_POST,
-        Repost.Skip
-      )
-
-    every { pageClient.load(any()) } returns Page(somePageName(), emptySequence())
+    every { pageSynchronizer.synchronize(any()) } returns sequenceOf(synchronizedPost)
+    every { reposter.repost(synchronizedPost.post, synchronizedPost.pageName) } returns Unit
 
     // when
+    val before = now()
     service.synchronize(pageConfig)
-
-    // then
-    verify {
-      repository.findLastSeen(pageConfig.id)
-      pageClient.load(pageConfig)
-      postClassifier wasNot Called
-      reposter wasNot Called
-    }
-  }
-
-  "saves & reposts fetched lunch posts" {
-    // given
-    val pageConfig = somePageConfig()
-    val pageName = somePageName()
-    val post = somePost()
-    val classification = Classification.LUNCH_POST
-
-    val pageClient = mockk<PageClient>()
-    val postClassifier = mockk<LunchPostClassifier>()
-    val reposter = mockk<SlackReposter>()
-    val repository = spyk(InMemorySynchronizedPostRepository())
-    val service = LunchService(someLunchConfig(), mockk(), repository, pageClient, postClassifier, reposter)
-
-    every { pageClient.load(pageConfig) } returns Page(pageName, sequenceOf(post))
-    every { postClassifier.classify(post) } returns classification
-    every { reposter.repost(post, pageName) } returns Unit
-
-    // when
-    service.synchronize(pageConfig)
+    val after = now()
 
     // then
     val updateDataSlot = slot<UpdateData>()
-    verify {
-      repository.store(StoreData(pageConfig.id, pageName, post, classification, Repost.Pending))
-      repository.updateExisting(capture(updateDataSlot))
-    }
+    verify { repository.updateExisting(capture(updateDataSlot)) }
 
-    updateDataSlot.captured.version shouldBe Version.first()
-    updateDataSlot.captured.repost should beInstanceOf(Repost.Success::class)
+    with (updateDataSlot.captured) {
+      version shouldBe synchronizedPost.version
+      with (repost) {
+        shouldBeInstanceOf<Repost.Success>()
+        repostedAt shouldBe between(before, after)
+      }
+    }
   }
 
-  "saves fetched non-lunch posts" {
+  "doesn't repost synchronized regular posts" {
     // given
     val pageConfig = somePageConfig()
-    val pageName = somePageName()
-    val post = somePost()
-    val classification = Classification.REGULAR_POST
+    val synchronizedPost = someSynchronizedPost(
+      classification = Classification.REGULAR_POST,
+      repost = Repost.Skip,
+    )
 
-    val pageClient = mockk<PageClient>()
-    val postClassifier = mockk<LunchPostClassifier>()
-    val reposter = mockk<SlackReposter>()
     val repository = spyk(InMemorySynchronizedPostRepository())
-    val service = LunchService(someLunchConfig(), mockk(), repository, pageClient, postClassifier, reposter)
+    val pageSynchronizer = mockk<PageSynchronizer>()
+    val reposter = mockk<SlackReposter>()
+    val service = LunchService(someLunchConfig(), mockk(), repository, pageSynchronizer, reposter)
 
-    every { pageClient.load(pageConfig) } returns Page(somePageName(), sequenceOf(post))
-    every { postClassifier.classify(post) } returns classification
+    every { pageSynchronizer.synchronize(any()) } returns sequenceOf(synchronizedPost)
+    every { reposter.repost(synchronizedPost.post, synchronizedPost.pageName) } returns Unit
 
     // when
     service.synchronize(pageConfig)
 
     // then
     verify {
-      repository.store(StoreData(pageConfig.id, pageName, post, classification, Repost.Skip))
+      repository wasNot Called
       reposter wasNot Called
     }
   }
@@ -139,7 +101,7 @@ class LunchServiceTest : FreeSpec({
     val log = ArrayList<SynchronizedPost>()
 
     val repository = mockk<SynchronizedPostRepository>()
-    val service = LunchService(someLunchConfig(), mockk(), repository, mockk(), mockk(), mockk())
+    val service = LunchService(someLunchConfig(), mockk(), repository, mockk(), mockk())
 
     every { repository.getLastSeen(20) } returns log
 
@@ -160,7 +122,7 @@ class LunchServiceTest : FreeSpec({
 
       val reposter = mockk<SlackReposter>()
       val repository = mockk<SynchronizedPostRepository>()
-      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), mockk(), reposter)
+      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), reposter)
 
       excludeRecords { repository.streamRetryable(any(), any(), any()) }
       every { repository.streamRetryable(retryConfig.baseDelay, retryConfig.maxAttempts, captureLambda()) } answers
@@ -187,7 +149,7 @@ class LunchServiceTest : FreeSpec({
 
       val reposter = mockk<SlackReposter>()
       val repository = mockk<SynchronizedPostRepository>()
-      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), mockk(), reposter)
+      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), reposter)
 
       every { repository.streamRetryable(retryConfig.baseDelay, retryConfig.maxAttempts, captureLambda()) } answers
         { lambda<(SynchronizedPost) -> Unit>().invoke(post) }
@@ -228,7 +190,7 @@ class LunchServiceTest : FreeSpec({
 
       val reposter = mockk<SlackReposter>()
       val repository = mockk<SynchronizedPostRepository>()
-      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), mockk(), reposter)
+      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), reposter)
 
       every { repository.streamRetryable(retryConfig.baseDelay, retryConfig.maxAttempts, captureLambda()) } answers
         { lambda<(SynchronizedPost) -> Unit>().invoke(post) }

@@ -8,6 +8,10 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
 
   private val posts = mutableMapOf<SynchronizedPostId, SynchronizedPost>()
 
+  fun put(synchronizedPost: SynchronizedPost) {
+    posts[synchronizedPost.id] = synchronizedPost
+  }
+
   override fun store(data: StoreData): SynchronizedPostId {
     val synchronizedPostId = SynchronizedPostId(UUID.randomUUID().toString())
     val now = now()
