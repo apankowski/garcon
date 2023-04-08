@@ -5,6 +5,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit.MICROS
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Idiom to be used instead of `Instant.now()`.
@@ -15,6 +16,13 @@ import java.util.*
 fun now() = Instant.now().truncatedTo(MICROS)!!
 
 val PolishLocale = Locale.of("pl", "PL")!!
+
+private val ExternalIdSequence = AtomicInteger(1)
+private fun generatedExternalId() =
+  ExternalIdSequence.getAndIncrement()
+    .toString()
+    .padStart(4, '0')
+    .let { ExternalId(it) }
 
 // Configs
 fun someLunchConfig(
@@ -56,7 +64,7 @@ fun someRepostRetryConfig(
 
 // Domain
 fun somePost(
-  externalId: ExternalId = ExternalId("FBID1"),
+  externalId: ExternalId = generatedExternalId(),
   url: URL = URL("https://facebook/post"),
   publishedAt: Instant = now(),
   content: String = "some post content",

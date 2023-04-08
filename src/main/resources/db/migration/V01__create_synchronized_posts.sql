@@ -15,3 +15,5 @@ CREATE TABLE synchronized_posts (
   repost_last_attempt_at TIMESTAMP WITH TIME ZONE,
   repost_reposted_at TIMESTAMP WITH TIME ZONE
 );
+
+CREATE UNIQUE INDEX synchronized_posts_post_external_id ON synchronized_posts(post_external_id);

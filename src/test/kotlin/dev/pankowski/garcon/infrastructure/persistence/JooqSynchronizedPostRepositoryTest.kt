@@ -73,6 +73,17 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
         repost shouldBe storeData.repost
       }
     }
+
+    "fails with 'duplicate key' when trying to store synchronized post with duplicate external ID" {
+      // given
+      val storeData = someStoreData()
+      repository.storeAndRetrieve(storeData)
+
+      // expect
+      shouldThrow<SynchronizedPostHasDuplicateExternalId> {
+        repository.store(storeData)
+      }
+    }
   }
 
   fun someStoredSynchronizedPost() = repository.storeAndRetrieve(someStoreData())
@@ -113,7 +124,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
     }
 
     withData<SynchronizedPostId>(
-      { "fails with 'not found' when trying to update nonexistent ID $it" },
+      { "fails with 'not found' when trying to update nonexistent $it" },
       SynchronizedPostId("1"),
       SynchronizedPostId("a"),
       SynchronizedPostId(randomUUID().toString()),
@@ -153,7 +164,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
     }
 
     withData<SynchronizedPostId>(
-      { "fails with 'not found' when trying to find nonexistent ID $it" },
+      { "fails with 'not found' when trying to find nonexistent $it" },
       SynchronizedPostId("1"),
       SynchronizedPostId("a"),
       SynchronizedPostId(randomUUID().toString())
@@ -166,6 +177,30 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       shouldThrow<SynchronizedPostNotFound> {
         repository.findExisting(nonexistentId)
       }
+    }
+  }
+
+  "finds synchronized post by external ID" - {
+
+    "finds existing synchronized post" {
+      // given
+      val stored = someStoredSynchronizedPost()
+
+      // expect
+      repository.findByExternalId(stored.post.externalId) shouldBe stored
+    }
+
+    withData<ExternalId>(
+      { "returns null for nonexistent $it" },
+      ExternalId("??"),
+      ExternalId("xyz"),
+    ) { nonexistentExternalId ->
+
+      // given
+      someStoredSynchronizedPost()
+
+      // expect
+      repository.findByExternalId(nonexistentExternalId) should beNull()
     }
   }
 

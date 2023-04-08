@@ -4,6 +4,7 @@ import java.time.Duration
 
 class SynchronizedPostNotFound(message: String) : RuntimeException(message)
 class SynchronizedPostModifiedConcurrently(message: String) : RuntimeException(message)
+class SynchronizedPostHasDuplicateExternalId(message: String) : RuntimeException(message)
 
 data class StoreData(
   val pageId: PageId,
@@ -26,6 +27,8 @@ interface SynchronizedPostRepository {
   fun updateExisting(data: UpdateData)
 
   fun findExisting(id: SynchronizedPostId): SynchronizedPost
+
+  fun findByExternalId(externalId: ExternalId): SynchronizedPost?
 
   fun findLastSeen(pageId: PageId): SynchronizedPost?
 

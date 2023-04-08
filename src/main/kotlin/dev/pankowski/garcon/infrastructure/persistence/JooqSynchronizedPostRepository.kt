@@ -1,11 +1,13 @@
 package dev.pankowski.garcon.infrastructure.persistence
 
 import dev.pankowski.garcon.domain.*
+import dev.pankowski.garcon.infrastructure.persistence.generated.Indexes
 import dev.pankowski.garcon.infrastructure.persistence.generated.Tables.SYNCHRONIZED_POSTS
 import dev.pankowski.garcon.infrastructure.persistence.generated.tables.records.SynchronizedPostsRecord
 import org.jooq.DSLContext
 import org.jooq.DatePart
 import org.jooq.impl.DSL.*
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -34,7 +36,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       pageName = data.pageName.value
 
       // Post
-      postExternalId = data.post.externalId.id
+      postExternalId = data.post.externalId.value
       postUrl = data.post.url.toString()
       postPublishedAt = data.post.publishedAt
       postContent = data.post.content
@@ -59,7 +61,15 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
           repostRepostedAt = data.repost.repostedAt
       }
 
-      store()
+      try {
+        store()
+      } catch (e: DuplicateKeyException) {
+        if (e.message!!.contains(Indexes.SYNCHRONIZED_POSTS_POST_EXTERNAL_ID.name, ignoreCase = true))
+          throw SynchronizedPostHasDuplicateExternalId(
+            "Failed to store synchronized post due to duplicate external ID ${data.post.externalId}"
+          )
+        else throw e
+      }
 
       SynchronizedPostId(id.toString())
     }
@@ -69,7 +79,9 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       throw SynchronizedPostNotFound("Could not find synchronized post with ID ${data.id.value}")
 
     fun throwModifiedConcurrently(): Nothing =
-      throw SynchronizedPostModifiedConcurrently("Synchronized post with ID ${data.id.value} was modified concurrently by another client")
+      throw SynchronizedPostModifiedConcurrently(
+        "Synchronized post with ID ${data.id.value} was modified concurrently by another client"
+      )
 
     val uuid: UUID
     try {
@@ -174,6 +186,14 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       .fetchOne()
       ?.let(::toDomainObject) ?: throwNotFound()
   }
+
+  @Transactional(readOnly = true)
+  override fun findByExternalId(externalId: ExternalId): SynchronizedPost? =
+    context
+      .selectFrom(SYNCHRONIZED_POSTS)
+      .where(SYNCHRONIZED_POSTS.POST_EXTERNAL_ID.equal(externalId.value))
+      .fetchOne()
+      ?.let(::toDomainObject)
 
   @Transactional(readOnly = true)
   override fun findLastSeen(pageId: PageId): SynchronizedPost? =

@@ -13,6 +13,11 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
   }
 
   override fun store(data: StoreData): SynchronizedPostId {
+    if (findByExternalId(data.post.externalId) != null)
+      throw SynchronizedPostHasDuplicateExternalId(
+        "Failed to store synchronized post due to duplicate external ID ${data.post.externalId}"
+      )
+
     val synchronizedPostId = SynchronizedPostId(UUID.randomUUID().toString())
     val now = now()
     val synchronizedPost = SynchronizedPost(
@@ -46,6 +51,9 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
 
   override fun findExisting(id: SynchronizedPostId): SynchronizedPost =
     posts[id] ?: throw IllegalArgumentException("Post with $id does not exist")
+
+  override fun findByExternalId(externalId: ExternalId): SynchronizedPost? =
+    posts.values.find { it.post.externalId == externalId }
 
   override fun findLastSeen(pageId: PageId): SynchronizedPost? =
     posts.values.filter { it.pageId == pageId }.maxByOrNull { it.post.publishedAt }
