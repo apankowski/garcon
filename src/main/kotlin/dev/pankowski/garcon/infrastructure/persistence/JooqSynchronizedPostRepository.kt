@@ -49,10 +49,12 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
         is Repost.Pending -> {
           // Nothing
         }
+
         is Repost.Failed -> {
           repostAttempts = data.repost.attempts
           repostLastAttemptAt = data.repost.lastAttemptAt
         }
+
         is Repost.Success ->
           repostRepostedAt = data.repost.repostedAt
       }
@@ -64,10 +66,10 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
 
   override fun updateExisting(data: UpdateData) {
     fun throwNotFound(): Nothing =
-      throw SynchronizedPostNotFound("Could not find synchronized post with ID " + data.id.value)
+      throw SynchronizedPostNotFound("Could not find synchronized post with ID ${data.id.value}")
 
     fun throwModifiedConcurrently(): Nothing =
-      throw SynchronizedPostModifiedConcurrently("Synchronized post with ID " + data.id.value + " was modified concurrently by another client")
+      throw SynchronizedPostModifiedConcurrently("Synchronized post with ID ${data.id.value} was modified concurrently by another client")
 
     val uuid: UUID
     try {
@@ -93,11 +95,13 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
           .setNull(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS)
           .setNull(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT)
           .setNull(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT)
+
       is Repost.Failed ->
         updateStatement
           .set(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS, data.repost.attempts)
           .set(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT, data.repost.lastAttemptAt)
           .setNull(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT)
+
       is Repost.Success ->
         updateStatement
           .setNull(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS)
@@ -132,6 +136,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
             attempts = r.repostAttempts,
             lastAttemptAt = r.repostLastAttemptAt
           )
+
         RepostStatus.SUCCESS ->
           Repost.Success(
             repostedAt = r.repostRepostedAt
@@ -154,7 +159,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
   @Transactional(readOnly = true)
   override fun findExisting(id: SynchronizedPostId): SynchronizedPost {
     fun throwNotFound(): Nothing =
-      throw SynchronizedPostNotFound("Could not find synchronized post with ID " + id.value)
+      throw SynchronizedPostNotFound("Could not find synchronized post with ID ${id.value}")
 
     val uuid: UUID
     try {

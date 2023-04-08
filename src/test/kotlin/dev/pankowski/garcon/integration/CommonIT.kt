@@ -56,7 +56,7 @@ class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
     RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
   }
 
-  override suspend fun beforeEach(testCase: TestCase) {
+  override suspend fun beforeTest(testCase: TestCase) {
     flyway.clean()
     flyway.migrate()
   }
