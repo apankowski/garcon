@@ -76,6 +76,8 @@ class PostExtractionStrategyV2 : PostExtractionStrategy {
     postsQuery.apply(rootScope, objectLiteral) { output ->
       if (output is ArrayNode) result = extractPostsFromQueryOutput(output)
     }
+    if (result.isNotEmpty())
+      log.debug("Extracted posts {} from payload {}", result, objectLiteral.toString())
     return result
   }
 
