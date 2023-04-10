@@ -6,6 +6,7 @@ import dev.pankowski.garcon.infrastructure.persistence.generated.Tables.SYNCHRON
 import dev.pankowski.garcon.infrastructure.persistence.generated.tables.records.SynchronizedPostsRecord
 import org.jooq.DSLContext
 import org.jooq.DatePart
+import org.jooq.UpdateSetMoreStep
 import org.jooq.impl.DSL.*
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Repository
@@ -74,7 +75,43 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       SynchronizedPostId(id.toString())
     }
 
-  override fun updateExisting(id: SynchronizedPostId, version: Version, repost: Repost) {
+  override fun updateExisting(id: SynchronizedPostId, version: Version, repost: Repost) =
+    doUpdateExisting(id, version) {
+      it.set(SYNCHRONIZED_POSTS.REPOST_STATUS, repost.status)
+      when (repost) {
+        is Repost.Skip,
+        is Repost.Pending -> it
+          .setNull(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS)
+          .setNull(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT)
+          .setNull(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT)
+
+        is Repost.Failed -> it
+          .set(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS, repost.attempts)
+          .set(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT, repost.lastAttemptAt)
+          .setNull(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT)
+
+        is Repost.Success -> it
+          .setNull(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS)
+          .setNull(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT)
+          .set(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT, repost.repostedAt)
+      }
+    }
+
+  override fun updateExisting(id: SynchronizedPostId, version: Version, post: Post, classification: Classification) =
+    doUpdateExisting(id, version) {
+      it.set(SYNCHRONIZED_POSTS.POST_EXTERNAL_ID, post.externalId.value)
+        .set(SYNCHRONIZED_POSTS.POST_URL, post.url.toString())
+        .set(SYNCHRONIZED_POSTS.POST_PUBLISHED_AT, post.publishedAt)
+        .set(SYNCHRONIZED_POSTS.POST_CONTENT, post.content)
+        .set(SYNCHRONIZED_POSTS.CLASSIFICATION, classification)
+    }
+
+  private fun doUpdateExisting(
+    id: SynchronizedPostId,
+    version: Version,
+    prepareUpdate: (UpdateSetMoreStep<SynchronizedPostsRecord>) -> Unit
+  ) {
+
     fun throwNotFound(): Nothing =
       throw SynchronizedPostNotFound("Could not find synchronized post with ID ${id.value}")
 
@@ -98,36 +135,16 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       .set(SYNCHRONIZED_POSTS.VERSION, version.next())
       .set(SYNCHRONIZED_POSTS.UPDATED_AT, Instant.now())
 
-    // Repost
-    updateStatement.set(SYNCHRONIZED_POSTS.REPOST_STATUS, repost.status)
-    when (repost) {
-      is Repost.Skip,
-      is Repost.Pending ->
-        updateStatement
-          .setNull(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS)
-          .setNull(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT)
-          .setNull(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT)
+    // Prepare statement
+    prepareUpdate(updateStatement)
 
-      is Repost.Failed ->
-        updateStatement
-          .set(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS, repost.attempts)
-          .set(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT, repost.lastAttemptAt)
-          .setNull(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT)
-
-      is Repost.Success ->
-        updateStatement
-          .setNull(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS)
-          .setNull(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT)
-          .set(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT, repost.repostedAt)
-    }
-
+    // Where condition
     val updatedRows = updateStatement
       .where(SYNCHRONIZED_POSTS.ID.equal(uuid))
       .and(SYNCHRONIZED_POSTS.VERSION.equal(version))
       .execute()
 
-    if (updatedRows == 0)
-      throwModifiedConcurrently()
+    if (updatedRows == 0) throwModifiedConcurrently()
   }
 
   private fun toDomainObject(record: SynchronizedPostsRecord): SynchronizedPost {

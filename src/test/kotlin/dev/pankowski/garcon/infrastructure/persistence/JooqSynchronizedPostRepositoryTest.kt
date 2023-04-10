@@ -14,6 +14,7 @@ import org.flywaydb.core.Flyway
 import org.jooq.DSLContext
 import org.springframework.boot.test.autoconfigure.jooq.JooqTest
 import org.springframework.test.context.ActiveProfiles
+import java.net.URL
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit.DAYS
@@ -105,8 +106,6 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       val before = now()
       repository.updateExisting(stored.id, stored.version, newRepost)
       val after = now()
-
-      // and
       val updated = repository.findExisting(stored.id)
 
       // then
@@ -119,6 +118,35 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
         post shouldBe stored.post
         classification shouldBe stored.classification
         repost shouldBe newRepost
+      }
+    }
+
+    "updates synchronized post with post and classification" {
+      // given
+      val oldPost = somePost(url = URL("https://old/url"), content = "old content")
+      val oldClassification = Classification.REGULAR_POST
+      val stored = repository.storeAndRetrieve(someStoreData(post = oldPost, classification = oldClassification))
+
+      // and
+      val newPost = somePost(url = URL("https://new/url"), content = "new content")
+      val newClassification = Classification.LUNCH_POST
+
+      // when
+      val before = now()
+      repository.updateExisting(stored.id, stored.version, newPost, newClassification)
+      val after = now()
+      val updated = repository.findExisting(stored.id)
+
+      // then
+      assertSoftly(updated) {
+        id shouldBe stored.id
+        version shouldBe stored.version.next()
+        createdAt shouldBe stored.createdAt
+        updatedAt shouldBe between(before, after)
+        pageId shouldBe stored.pageId
+        post shouldBe newPost
+        classification shouldBe newClassification
+        repost shouldBe stored.repost
       }
     }
 
@@ -136,6 +164,11 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       shouldThrow<SynchronizedPostNotFound> {
         repository.updateExisting(nonexistentId, stored.version, someSuccessRepost())
       }
+
+      // and expect
+      shouldThrow<SynchronizedPostNotFound> {
+        repository.updateExisting(nonexistentId, stored.version, somePost(), Classification.REGULAR_POST)
+      }
     }
 
     withData<Version>(
@@ -150,6 +183,11 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       // expect
       shouldThrow<SynchronizedPostModifiedConcurrently> {
         repository.updateExisting(stored.id, wrongVersion, someSuccessRepost())
+      }
+
+      // and expect
+      shouldThrow<SynchronizedPostModifiedConcurrently> {
+        repository.updateExisting(stored.id, wrongVersion, somePost(), Classification.REGULAR_POST)
       }
     }
   }
