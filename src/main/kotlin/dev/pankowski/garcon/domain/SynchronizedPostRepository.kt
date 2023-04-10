@@ -14,17 +14,11 @@ data class StoreData(
   val repost: Repost,
 )
 
-data class UpdateData(
-  val id: SynchronizedPostId,
-  val version: Version,
-  val repost: Repost,
-)
-
 interface SynchronizedPostRepository {
 
   fun store(data: StoreData): SynchronizedPostId
 
-  fun updateExisting(data: UpdateData)
+  fun updateExisting(id: SynchronizedPostId, version: Version, repost: Repost)
 
   fun findExisting(id: SynchronizedPostId): SynchronizedPost
 

@@ -74,18 +74,18 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       SynchronizedPostId(id.toString())
     }
 
-  override fun updateExisting(data: UpdateData) {
+  override fun updateExisting(id: SynchronizedPostId, version: Version, repost: Repost) {
     fun throwNotFound(): Nothing =
-      throw SynchronizedPostNotFound("Could not find synchronized post with ID ${data.id.value}")
+      throw SynchronizedPostNotFound("Could not find synchronized post with ID ${id.value}")
 
     fun throwModifiedConcurrently(): Nothing =
       throw SynchronizedPostModifiedConcurrently(
-        "Synchronized post with ID ${data.id.value} was modified concurrently by another client"
+        "Synchronized post with ID ${id.value} was modified concurrently by another client"
       )
 
     val uuid: UUID
     try {
-      uuid = UUID.fromString(data.id.value)
+      uuid = UUID.fromString(id.value)
     } catch (_: IllegalArgumentException) {
       throwNotFound()
     }
@@ -95,12 +95,12 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
 
     val updateStatement = context.update(SYNCHRONIZED_POSTS)
       // Header
-      .set(SYNCHRONIZED_POSTS.VERSION, data.version.next())
+      .set(SYNCHRONIZED_POSTS.VERSION, version.next())
       .set(SYNCHRONIZED_POSTS.UPDATED_AT, Instant.now())
 
     // Repost
-    updateStatement.set(SYNCHRONIZED_POSTS.REPOST_STATUS, data.repost.status)
-    when (data.repost) {
+    updateStatement.set(SYNCHRONIZED_POSTS.REPOST_STATUS, repost.status)
+    when (repost) {
       is Repost.Skip,
       is Repost.Pending ->
         updateStatement
@@ -110,20 +110,20 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
 
       is Repost.Failed ->
         updateStatement
-          .set(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS, data.repost.attempts)
-          .set(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT, data.repost.lastAttemptAt)
+          .set(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS, repost.attempts)
+          .set(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT, repost.lastAttemptAt)
           .setNull(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT)
 
       is Repost.Success ->
         updateStatement
           .setNull(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS)
           .setNull(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT)
-          .set(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT, data.repost.repostedAt)
+          .set(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT, repost.repostedAt)
     }
 
     val updatedRows = updateStatement
       .where(SYNCHRONIZED_POSTS.ID.equal(uuid))
-      .and(SYNCHRONIZED_POSTS.VERSION.equal(data.version))
+      .and(SYNCHRONIZED_POSTS.VERSION.equal(version))
       .execute()
 
     if (updatedRows == 0)

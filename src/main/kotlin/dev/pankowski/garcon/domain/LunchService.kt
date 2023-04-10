@@ -46,7 +46,7 @@ class LunchService(
         is Repost.Pending,
         is Repost.Failed -> {
           fun updateWith(r: Repost) =
-            repository.updateExisting(UpdateData(p.id, p.version, r))
+            repository.updateExisting(p.id, p.version, r)
           try {
             doRepost(p)
             updateWith(Repost.Success(Instant.now()))
