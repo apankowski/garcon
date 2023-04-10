@@ -3,14 +3,12 @@ package dev.pankowski.garcon.domain
 import dev.pankowski.garcon.infrastructure.persistence.InMemorySynchronizedPostRepository
 import dev.pankowski.garcon.infrastructure.persistence.someFailedRepost
 import dev.pankowski.garcon.infrastructure.persistence.someSuccessRepost
-import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.datatest.WithDataTestName
 import io.kotest.datatest.withData
 import io.kotest.matchers.date.between
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.beInstanceOf
 import io.kotest.matchers.types.beTheSameInstanceAs
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.*
@@ -49,6 +47,7 @@ class LunchServiceTest : FreeSpec({
     val reposter = mockk<SlackReposter>()
     val service = LunchService(someLunchConfig(), mockk(), repository, pageSynchronizer, reposter)
 
+    every { repository.updateExisting(synchronizedPost.id, synchronizedPost.version, any()) } returns Unit
     every { pageSynchronizer.synchronize(any()) } returns sequenceOf(synchronizedPost)
     every { reposter.repost(synchronizedPost.post, synchronizedPost.pageName) } returns Unit
 
@@ -58,15 +57,12 @@ class LunchServiceTest : FreeSpec({
     val after = now()
 
     // then
-    val updateDataSlot = slot<UpdateData>()
-    verify { repository.updateExisting(capture(updateDataSlot)) }
+    val repostSlot = slot<Repost>()
+    verify { repository.updateExisting(any(), any(), capture(repostSlot)) }
 
-    with (updateDataSlot.captured) {
-      version shouldBe synchronizedPost.version
-      with (repost) {
-        shouldBeInstanceOf<Repost.Success>()
-        repostedAt shouldBe between(before, after)
-      }
+    with(repostSlot.captured) {
+      shouldBeInstanceOf<Repost.Success>()
+      repostedAt shouldBe between(before, after)
     }
   }
 
@@ -154,7 +150,7 @@ class LunchServiceTest : FreeSpec({
       every { repository.streamRetryable(retryConfig.baseDelay, retryConfig.maxAttempts, captureLambda()) } answers
         { lambda<(SynchronizedPost) -> Unit>().invoke(post) }
       every { reposter.repost(post.post, any()) } returns Unit
-      every { repository.updateExisting(any()) } returns Unit
+      every { repository.updateExisting(post.id, post.version, any()) } returns Unit
 
       // when
       val before = now()
@@ -162,16 +158,12 @@ class LunchServiceTest : FreeSpec({
       val after = now()
 
       // then
-      val updateDataSlot = slot<UpdateData>()
-      verify { repository.updateExisting(capture(updateDataSlot)) }
+      val repostSlot = slot<Repost>()
+      verify { repository.updateExisting(any(), any(), capture(repostSlot)) }
 
-      assertSoftly(updateDataSlot.captured) {
-        id shouldBe post.id
-        version shouldBe post.version
-        repost should beInstanceOf<Repost.Success>()
-        assertSoftly(repost as Repost.Success) {
-          repostedAt shouldBe between(before, after)
-        }
+      with(repostSlot.captured) {
+        shouldBeInstanceOf<Repost.Success>()
+        repostedAt shouldBe between(before, after)
       }
     }
 
@@ -192,10 +184,10 @@ class LunchServiceTest : FreeSpec({
       val repository = mockk<SynchronizedPostRepository>()
       val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), reposter)
 
+      every { repository.updateExisting(post.id, post.version, any()) } returns Unit
       every { repository.streamRetryable(retryConfig.baseDelay, retryConfig.maxAttempts, captureLambda()) } answers
         { lambda<(SynchronizedPost) -> Unit>().invoke(post) }
       every { reposter.repost(post.post, any()) } throws RuntimeException("something went wrong")
-      every { repository.updateExisting(any()) } returns Unit
 
       // when
       val before = now()
@@ -203,17 +195,13 @@ class LunchServiceTest : FreeSpec({
       val after = now()
 
       // then
-      val updateDataSlot = slot<UpdateData>()
-      verify { repository.updateExisting(capture(updateDataSlot)) }
+      val repostSlot = slot<Repost>()
+      verify { repository.updateExisting(any(), any(), capture(repostSlot)) }
 
-      assertSoftly(updateDataSlot.captured) {
-        id shouldBe post.id
-        version shouldBe post.version
-        repost should beInstanceOf<Repost.Failed>()
-        assertSoftly(repost as Repost.Failed) {
-          attempts shouldBe newAttempts
-          lastAttemptAt shouldBe between(before, after)
-        }
+      with(repostSlot.captured) {
+        shouldBeInstanceOf<Repost.Failed>()
+        attempts shouldBe newAttempts
+        lastAttemptAt shouldBe between(before, after)
       }
     }
   }

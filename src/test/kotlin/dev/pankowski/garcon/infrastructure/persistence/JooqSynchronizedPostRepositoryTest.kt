@@ -96,15 +96,14 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       Repost.Pending,
       someFailedRepost(),
       someSuccessRepost()
-    ) { repost ->
+    ) { newRepost ->
 
       // given
       val stored = someStoredSynchronizedPost()
-      val updateData = UpdateData(stored.id, stored.version, repost)
 
       // when
       val before = now()
-      repository.updateExisting(updateData)
+      repository.updateExisting(stored.id, stored.version, newRepost)
       val after = now()
 
       // and
@@ -119,7 +118,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
         pageId shouldBe stored.pageId
         post shouldBe stored.post
         classification shouldBe stored.classification
-        this.repost shouldBe updateData.repost
+        repost shouldBe newRepost
       }
     }
 
@@ -132,11 +131,10 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
 
       // given
       val stored = someStoredSynchronizedPost()
-      val updateData = UpdateData(nonexistentId, stored.version, someSuccessRepost())
 
       // expect
       shouldThrow<SynchronizedPostNotFound> {
-        repository.updateExisting(updateData)
+        repository.updateExisting(nonexistentId, stored.version, someSuccessRepost())
       }
     }
 
@@ -148,11 +146,10 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
 
       // given
       val stored = someStoredSynchronizedPost()
-      val updateData = UpdateData(stored.id, wrongVersion, someSuccessRepost())
 
       // expect
       shouldThrow<SynchronizedPostModifiedConcurrently> {
-        repository.updateExisting(updateData)
+        repository.updateExisting(stored.id, wrongVersion, someSuccessRepost())
       }
     }
   }

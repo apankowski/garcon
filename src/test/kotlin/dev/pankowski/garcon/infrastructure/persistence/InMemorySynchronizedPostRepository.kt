@@ -37,16 +37,15 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
     return synchronizedPost.id
   }
 
-  override fun updateExisting(data: UpdateData) {
-    val synchronizedPost = findExisting(data.id)
+  override fun updateExisting(id: SynchronizedPostId, version: Version, repost: Repost) {
+    val synchronizedPost = findExisting(id)
 
-    if (synchronizedPost.version != data.version) {
+    if (synchronizedPost.version != version)
       throw SynchronizedPostModifiedConcurrently(
-        "Synchronized post with ID ${data.id.value} was modified concurrently by another client"
+        "Synchronized post with ID ${id.value} was modified concurrently by another client"
       )
-    }
 
-    posts[synchronizedPost.id] = synchronizedPost.copy(repost = data.repost)
+    posts[synchronizedPost.id] = synchronizedPost.copy(repost = repost)
   }
 
   override fun findExisting(id: SynchronizedPostId): SynchronizedPost =
