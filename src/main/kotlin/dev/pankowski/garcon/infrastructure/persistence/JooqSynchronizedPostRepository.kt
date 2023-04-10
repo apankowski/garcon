@@ -66,7 +66,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       } catch (e: DuplicateKeyException) {
         if (e.message!!.contains(Indexes.SYNCHRONIZED_POSTS_POST_EXTERNAL_ID.name, ignoreCase = true))
           throw SynchronizedPostHasDuplicateExternalId(
-            "Failed to store synchronized post due to duplicate external ID ${data.post.externalId}"
+            "Failed to store synchronized post due to duplicate external ID ${data.post.externalId.value}"
           )
         else throw e
       }

@@ -15,7 +15,7 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
   override fun store(data: StoreData): SynchronizedPostId {
     if (findByExternalId(data.post.externalId) != null)
       throw SynchronizedPostHasDuplicateExternalId(
-        "Failed to store synchronized post due to duplicate external ID ${data.post.externalId}"
+        "Failed to store synchronized post due to duplicate external ID ${data.post.externalId.value}"
       )
 
     val synchronizedPostId = SynchronizedPostId(UUID.randomUUID().toString())
@@ -41,8 +41,8 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
     val synchronizedPost = findExisting(data.id)
 
     if (synchronizedPost.version != data.version) {
-      throw IllegalArgumentException(
-        "Cannot update post with ${data.id} and ${data.version} as it has been already updated"
+      throw SynchronizedPostModifiedConcurrently(
+        "Synchronized post with ID ${data.id.value} was modified concurrently by another client"
       )
     }
 
@@ -50,7 +50,7 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
   }
 
   override fun findExisting(id: SynchronizedPostId): SynchronizedPost =
-    posts[id] ?: throw IllegalArgumentException("Post with $id does not exist")
+    posts[id] ?: throw SynchronizedPostNotFound("Could not find synchronized post with ID ${id.value}")
 
   override fun findByExternalId(externalId: ExternalId): SynchronizedPost? =
     posts.values.find { it.post.externalId == externalId }
