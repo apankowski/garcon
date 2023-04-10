@@ -20,6 +20,8 @@ interface SynchronizedPostRepository {
 
   fun updateExisting(id: SynchronizedPostId, version: Version, repost: Repost)
 
+  fun updateExisting(id: SynchronizedPostId, version: Version, post: Post, classification: Classification)
+
   fun findExisting(id: SynchronizedPostId): SynchronizedPost
 
   fun findByExternalId(externalId: ExternalId): SynchronizedPost?
