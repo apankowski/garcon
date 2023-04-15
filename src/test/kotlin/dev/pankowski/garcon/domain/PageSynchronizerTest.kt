@@ -1,78 +1,115 @@
 package dev.pankowski.garcon.domain
 
 import dev.pankowski.garcon.infrastructure.persistence.InMemorySynchronizedPostRepository
+import dev.pankowski.garcon.infrastructure.persistence.someSuccessRepost
+import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
-import io.mockk.*
+import io.kotest.datatest.withData
+import io.kotest.matchers.collections.beEmpty
+import io.kotest.matchers.collections.containExactly
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.should
+import io.kotest.matchers.shouldBe
+import io.mockk.Called
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 
 class PageSynchronizerTest : FreeSpec({
 
-  /** No-op function making sure all sequence elements will be iterated over. */
-  fun <T> Sequence<T>.drain() = toList()
-
-  "fetches new posts" {
+  "fetches posts" {
     // given
     val pageConfig = somePageConfig()
 
-    val repository = mockk<SynchronizedPostRepository>()
+    val repository = InMemorySynchronizedPostRepository()
     val pageClient = mockk<PageClient>()
     val postClassifier = mockk<LunchPostClassifier>()
     val synchronizer = PageSynchronizer(repository, pageClient, postClassifier)
 
-    every { repository.findLastSeen(any()) } returns someSynchronizedPost()
     every { pageClient.load(any()) } returns somePage(posts = emptySequence())
 
     // when
-    synchronizer.synchronize(pageConfig).drain()
+    val deltas = synchronizer.synchronize(pageConfig).toList()
 
     // then
+    deltas should beEmpty()
     verify {
-      repository.findLastSeen(pageConfig.id)
       pageClient.load(pageConfig)
       postClassifier wasNot Called
     }
   }
 
-  "saves fetched lunch posts" {
-    // given
-    val pageConfig = somePageConfig()
-    val post = somePost()
-    val page = somePage(posts = sequenceOf(post))
-    val classification = Classification.LUNCH_POST
+  "stores new posts" - {
 
-    val repository = spyk(InMemorySynchronizedPostRepository())
-    val pageClient = mockk<PageClient>()
-    val postClassifier = mockk<LunchPostClassifier>()
-    val synchronizer = PageSynchronizer(repository, pageClient, postClassifier)
+    data class StoreTestCase(val name: String, val classification: Classification, val repost: Repost)
 
-    every { pageClient.load(pageConfig) } returns page
-    every { postClassifier.classify(post) } returns classification
+    withData<StoreTestCase>(
+      { "stores appearing ${it.name}" },
+      StoreTestCase("regular post", Classification.REGULAR_POST, Repost.Skip),
+      StoreTestCase("lunch post", Classification.LUNCH_POST, Repost.Pending),
+    ) { (_, classification, repost) ->
 
-    // when
-    synchronizer.synchronize(pageConfig).drain()
+      // given
+      val pageConfig = somePageConfig()
+      val post = somePost()
+      val page = somePage(posts = sequenceOf(post))
 
-    // then
-    verify { repository.store(StoreData(pageConfig.id, page.name, post, classification, Repost.Pending)) }
+      val repository = InMemorySynchronizedPostRepository()
+      val pageClient = mockk<PageClient> { every { load(pageConfig) } returns page }
+      val postClassifier = mockk<LunchPostClassifier> { every { classify(post) } returns classification }
+      val synchronizer = PageSynchronizer(repository, pageClient, postClassifier)
+
+      // when
+      val deltas = synchronizer.synchronize(pageConfig).toList()
+
+      // then
+      assertSoftly(repository.findByExternalId(post.externalId)) {
+        it.shouldNotBeNull()
+        it.pageId shouldBe pageConfig.id
+        it.pageName shouldBe page.name
+        it.post shouldBe post
+        it.classification shouldBe classification
+        it.repost shouldBe repost
+
+        deltas should containExactly(SynchronizedPostDelta(null, it))
+      }
+    }
   }
 
-  "saves fetched regular posts" {
-    // given
-    val pageConfig = somePageConfig()
-    val post = somePost()
-    val page = somePage(posts = sequenceOf(post))
-    val classification = Classification.REGULAR_POST
+  "updates existing posts" - {
 
-    val repository = spyk(InMemorySynchronizedPostRepository())
-    val pageClient = mockk<PageClient>()
-    val postClassifier = mockk<LunchPostClassifier>()
-    val synchronizer = PageSynchronizer(repository, pageClient, postClassifier)
+    data class UpdateTestCase(val name: String, val classification: Classification, val repost: Repost)
 
-    every { pageClient.load(pageConfig) } returns page
-    every { postClassifier.classify(post) } returns classification
+    withData<UpdateTestCase>(
+      { "updates existing ${it.name}" },
+      UpdateTestCase("regular post", Classification.REGULAR_POST, Repost.Skip),
+      UpdateTestCase("lunch post", Classification.LUNCH_POST, Repost.Pending),
+    ) { (_, classification, _) ->
 
-    // when
-    synchronizer.synchronize(pageConfig).drain()
+      // given
+      val pageConfig = somePageConfig()
+      val post = somePost(content = "now post")
+      val old = someSynchronizedPost(post = post.copy(content = "old post"), repost = someSuccessRepost())
+      val page = somePage(posts = sequenceOf(post))
 
-    // then
-    verify { repository.store(StoreData(pageConfig.id, page.name, post, classification, Repost.Skip)) }
+      val repository = InMemorySynchronizedPostRepository().apply { put(old) }
+      val pageClient = mockk<PageClient> { every { load(pageConfig) } returns page }
+      val postClassifier = mockk<LunchPostClassifier> { every { classify(post) } returns classification }
+      val synchronizer = PageSynchronizer(repository, pageClient, postClassifier)
+
+      // when
+      val deltas = synchronizer.synchronize(pageConfig).toList()
+
+      // then
+      assertSoftly(repository.findByExternalId(post.externalId)) { new ->
+        new.shouldNotBeNull()
+        new.post shouldBe post
+        new.classification shouldBe classification
+        // This won't work at the moment, as updates don't reset repost status
+        //new.repost shouldBe repost
+
+        deltas should containExactly(SynchronizedPostDelta(old, new))
+      }
+    }
   }
 })

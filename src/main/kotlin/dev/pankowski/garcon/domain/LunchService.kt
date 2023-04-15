@@ -31,9 +31,9 @@ class LunchService(
   @VisibleForTesting
   fun synchronize(page: PageConfig) =
     Mdc.PageId.having(page.id) {
-      pageSynchronizer.synchronize(page)
-        .filter { it.repost != Repost.Skip }
-        .forEach(::repost)
+      pageSynchronizer.synchronize(page).forEach {
+        if (it.lunchPostAppeared) repost(it.new)
+      }
     }
 
   private fun repost(p: SynchronizedPost) =
