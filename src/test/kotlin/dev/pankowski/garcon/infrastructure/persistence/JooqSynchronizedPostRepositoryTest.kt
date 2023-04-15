@@ -16,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.jooq.JooqTest
 import org.springframework.test.context.ActiveProfiles
 import java.net.URL
 import java.time.Duration
-import java.time.Instant
 import java.time.temporal.ChronoUnit.DAYS
 import java.time.temporal.ChronoUnit.HOURS
 import java.util.UUID.randomUUID
@@ -237,57 +236,6 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       // expect
       repository.findByExternalId(nonexistentExternalId) should beNull()
     }
-  }
-
-  "finds last seen synchronized post of a given page" {
-    // given
-    val somePointInTime = Instant.parse("2000-01-01T00:00:00Z")
-
-    val somePageId = PageId("1")
-    repository.store(
-      someStoreData(
-        pageId = somePageId,
-        post = somePost(publishedAt = somePointInTime.plus(1, HOURS))
-      )
-    )
-
-    val somePageExpectedLastSeen = repository.storeAndRetrieve(
-      someStoreData(
-        pageId = somePageId,
-        post = somePost(publishedAt = somePointInTime.plus(3, HOURS))
-      )
-    )
-
-    repository.store(
-      someStoreData(
-        pageId = somePageId,
-        post = somePost(publishedAt = somePointInTime.plus(2, HOURS))
-      )
-    )
-
-    val otherPageId = PageId("2")
-    val otherPageExpectedLastSeen = repository.storeAndRetrieve(
-      someStoreData(
-        pageId = otherPageId,
-        post = somePost(publishedAt = somePointInTime.plus(2, HOURS))
-      )
-    )
-
-    repository.store(
-      someStoreData(
-        pageId = otherPageId,
-        post = somePost(publishedAt = somePointInTime.plus(1, HOURS))
-      )
-    )
-
-    // expect
-    repository.findLastSeen(somePageId) shouldBe somePageExpectedLastSeen
-    repository.findLastSeen(otherPageId) shouldBe otherPageExpectedLastSeen
-  }
-
-  "finds no last seen synchronized post when there are no posts" {
-    // expect
-    repository.findLastSeen(PageId("some page id")) should beNull()
   }
 
   "gets last seen synchronized posts" {

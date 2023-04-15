@@ -26,8 +26,6 @@ interface SynchronizedPostRepository {
 
   fun findByExternalId(externalId: ExternalId): SynchronizedPost?
 
-  fun findLastSeen(pageId: PageId): SynchronizedPost?
-
   fun getLastSeen(limit: Int): SynchronizedPosts
 
   fun streamRetryable(baseDelay: Duration, maxAttempts: Int, block: (SynchronizedPost) -> Unit)

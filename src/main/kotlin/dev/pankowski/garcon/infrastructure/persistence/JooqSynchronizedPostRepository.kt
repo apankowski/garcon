@@ -213,16 +213,6 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       ?.let(::toDomainObject)
 
   @Transactional(readOnly = true)
-  override fun findLastSeen(pageId: PageId): SynchronizedPost? =
-    context
-      .selectFrom(SYNCHRONIZED_POSTS)
-      .where(SYNCHRONIZED_POSTS.PAGE_ID.equal(pageId.value))
-      .orderBy(SYNCHRONIZED_POSTS.POST_PUBLISHED_AT.desc())
-      .limit(1)
-      .fetchOne()
-      ?.let(::toDomainObject)
-
-  @Transactional(readOnly = true)
   override fun getLastSeen(limit: Int): SynchronizedPosts =
     context.selectFrom(SYNCHRONIZED_POSTS)
       .orderBy(SYNCHRONIZED_POSTS.POST_PUBLISHED_AT.desc())
