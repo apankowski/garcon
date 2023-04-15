@@ -3,7 +3,6 @@ package dev.pankowski.garcon.infrastructure.persistence
 import dev.pankowski.garcon.domain.*
 import java.time.Duration
 import java.util.*
-import kotlin.math.exp
 import kotlin.math.pow
 
 open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
@@ -65,9 +64,6 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
 
   override fun findByExternalId(externalId: ExternalId): SynchronizedPost? =
     posts.values.find { it.post.externalId == externalId }
-
-  override fun findLastSeen(pageId: PageId): SynchronizedPost? =
-    posts.values.filter { it.pageId == pageId }.maxByOrNull { it.post.publishedAt }
 
   override fun getLastSeen(limit: Int): SynchronizedPosts =
     TODO("Not implemented")
