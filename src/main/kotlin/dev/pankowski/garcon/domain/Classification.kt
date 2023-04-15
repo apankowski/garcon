@@ -8,6 +8,8 @@ enum class Classification {
   REGULAR_POST,
 }
 
+data class ClassifiedPost(val post: Post, val classification: Classification)
+
 @Component
 class LunchPostClassifier(private val postConfig: PostConfig) {
 
