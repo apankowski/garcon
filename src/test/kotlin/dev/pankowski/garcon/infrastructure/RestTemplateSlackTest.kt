@@ -13,7 +13,7 @@ import org.springframework.test.web.client.match.MockRestRequestMatchers.*
 import org.springframework.test.web.client.response.MockRestResponseCreators.withStatus
 import java.net.URL
 
-class RestTemplateSlackReposterTest : FreeSpec({
+class RestTemplateSlackTest : FreeSpec({
 
   "synchronized post is reposted via incoming webhook" {
     // given
@@ -24,9 +24,8 @@ class RestTemplateSlackReposterTest : FreeSpec({
     )
 
     val slackConfig = someSlackConfig(webhookUrl = URL("https://slack/webhook"))
-
-    val repostingClient = RestTemplateSlackReposter(slackConfig, RestTemplateBuilder())
-    val mockServer = MockRestServiceServer.createServer(repostingClient.restTemplate)
+    val slack = RestTemplateSlack(slackConfig, RestTemplateBuilder())
+    val mockServer = MockRestServiceServer.createServer(slack.restTemplate)
 
     mockServer.expect(requestTo(slackConfig.webhookUrl.toURI()))
       .andExpect(method(HttpMethod.POST))
@@ -43,7 +42,7 @@ class RestTemplateSlackReposterTest : FreeSpec({
       .andRespond(withStatus(HttpStatus.OK))
 
     // when
-    repostingClient.repost(post, pageName)
+    slack.repost(post, pageName)
 
     // then
     mockServer.verify()

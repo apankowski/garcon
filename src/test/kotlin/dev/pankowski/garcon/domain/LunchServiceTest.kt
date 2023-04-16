@@ -40,12 +40,9 @@ class LunchServiceTest : FreeSpec({
 
     val repository = spyk(InMemorySynchronizedPostRepository()).apply { put(synchronizedPost) }
     val synchronizer = mockk<PageSynchronizer> { every { synchronize(any()) } returns sequenceOf(delta) }
+    val slack = mockk<Slack> { every { repost(synchronizedPost.post, synchronizedPost.pageName) } returns Unit }
 
-    val reposter = mockk<SlackReposter> {
-      every { repost(synchronizedPost.post, synchronizedPost.pageName) } returns Unit
-    }
-
-    val service = LunchService(someLunchConfig(), mockk(), repository, synchronizer, reposter)
+    val service = LunchService(someLunchConfig(), mockk(), repository, synchronizer, slack)
 
     // when
     val before = now()
@@ -70,12 +67,9 @@ class LunchServiceTest : FreeSpec({
 
     val repository = spyk(InMemorySynchronizedPostRepository())
     val synchronizer = mockk<PageSynchronizer> { every { synchronize(any()) } returns sequenceOf(delta) }
+    val slack = mockk<Slack> { every { repost(synchronizedPost.post, synchronizedPost.pageName) } returns Unit }
 
-    val reposter = mockk<SlackReposter> {
-      every { repost(synchronizedPost.post, synchronizedPost.pageName) } returns Unit
-    }
-
-    val service = LunchService(someLunchConfig(), mockk(), repository, synchronizer, reposter)
+    val service = LunchService(someLunchConfig(), mockk(), repository, synchronizer, slack)
 
     // when
     service.synchronize(pageConfig)
@@ -83,7 +77,7 @@ class LunchServiceTest : FreeSpec({
     // then
     verify {
       repository wasNot Called
-      reposter wasNot Called
+      slack wasNot Called
     }
   }
 
@@ -116,8 +110,8 @@ class LunchServiceTest : FreeSpec({
         excludeRecords { streamRetryable(any()) }
       }
 
-      val reposter = mockk<SlackReposter>()
-      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), reposter)
+      val slack = mockk<Slack>()
+      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), slack)
 
       // when
       service.retryFailedReposts()
@@ -125,7 +119,7 @@ class LunchServiceTest : FreeSpec({
       // then
       verify {
         repository wasNot Called
-        reposter wasNot Called
+        slack wasNot Called
       }
     }
 
@@ -145,8 +139,8 @@ class LunchServiceTest : FreeSpec({
         every { updateExisting(post.id, post.version, any()) } returns Unit
       }
 
-      val reposter = mockk<SlackReposter> { every { repost(post.post, any()) } returns Unit }
-      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), reposter)
+      val slack = mockk<Slack> { every { repost(post.post, any()) } returns Unit }
+      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), slack)
 
       // when
       val before = now()
@@ -183,11 +177,11 @@ class LunchServiceTest : FreeSpec({
         every { updateExisting(post.id, post.version, any()) } returns Unit
       }
 
-      val reposter = mockk<SlackReposter> {
+      val slack = mockk<Slack> {
         every { repost(post.post, any()) } throws RuntimeException("something went wrong")
       }
 
-      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), reposter)
+      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), slack)
 
       // when
       val before = now()

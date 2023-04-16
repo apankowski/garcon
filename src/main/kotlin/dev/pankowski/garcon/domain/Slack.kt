@@ -20,3 +20,8 @@ data class SlackMessage(
   val responseType: ResponseType? = null,
   val attachments: List<Attachment>? = null,
 )
+
+interface Slack {
+
+  fun repost(post: Post, pageName: PageName)
+}

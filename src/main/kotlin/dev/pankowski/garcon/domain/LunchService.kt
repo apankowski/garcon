@@ -11,7 +11,7 @@ class LunchService(
   private val repostRetryConfig: RepostRetryConfig,
   private val repository: SynchronizedPostRepository,
   private val pageSynchronizer: PageSynchronizer,
-  private val reposter: SlackReposter,
+  private val slack: Slack,
 ) {
 
   private val log = LoggerFactory.getLogger(javaClass)
@@ -74,7 +74,7 @@ class LunchService(
 
   private fun doRepost(p: SynchronizedPost) =
     try {
-      reposter.repost(p.post, p.pageName)
+      slack.repost(p.post, p.pageName)
       log.info("Post ${p.post.url} reposted on Slack")
     } catch (e: Exception) {
       log.error("Failed to repost post ${p.post.url} on Slack", e)
