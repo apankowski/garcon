@@ -121,12 +121,8 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
         "Synchronized post with ID ${id.value} was modified concurrently by another client"
       )
 
-    val uuid: UUID
-    try {
-      uuid = UUID.fromString(id.value)
-    } catch (_: IllegalArgumentException) {
-      throwNotFound()
-    }
+    val uuid = runCatching { UUID.fromString(id.value) }
+      .getOrElse { throwNotFound() }
 
     if (!context.fetchExists(selectFrom(SYNCHRONIZED_POSTS).where(SYNCHRONIZED_POSTS.ID.equal(uuid))))
       throwNotFound()
@@ -192,12 +188,8 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
     fun throwNotFound(): Nothing =
       throw SynchronizedPostNotFound("Could not find synchronized post with ID ${id.value}")
 
-    val uuid: UUID
-    try {
-      uuid = UUID.fromString(id.value)
-    } catch (_: IllegalArgumentException) {
-      throwNotFound()
-    }
+    val uuid = runCatching { UUID.fromString(id.value) }
+      .getOrElse { throwNotFound() }
 
     return context
       .selectFrom(SYNCHRONIZED_POSTS)
