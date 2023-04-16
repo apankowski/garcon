@@ -2,6 +2,7 @@ package dev.pankowski.garcon.infrastructure.persistence
 
 import dev.pankowski.garcon.domain.*
 import java.time.Instant
+import java.time.temporal.ChronoUnit.MINUTES
 
 fun someStoreData(
   pageId: PageId = PageId("some page id"),
@@ -14,6 +15,7 @@ fun someStoreData(
 fun someFailedRepost(
   attempts: Int = 10,
   lastAttemptAt: Instant = now(),
-) = Repost.Failed(attempts, lastAttemptAt)
+  nextAttemptAt: Instant = lastAttemptAt.plus(5, MINUTES)
+) = Repost.Failed(attempts, lastAttemptAt, nextAttemptAt)
 
 fun someSuccessRepost() = Repost.Success(now())

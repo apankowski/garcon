@@ -5,16 +5,13 @@ import dev.pankowski.garcon.infrastructure.persistence.generated.Indexes
 import dev.pankowski.garcon.infrastructure.persistence.generated.Tables.SYNCHRONIZED_POSTS
 import dev.pankowski.garcon.infrastructure.persistence.generated.tables.records.SynchronizedPostsRecord
 import org.jooq.DSLContext
-import org.jooq.DatePart
 import org.jooq.UpdateSetMoreStep
-import org.jooq.impl.DSL.*
+import org.jooq.impl.DSL.selectFrom
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.net.URL
-import java.sql.Timestamp
-import java.time.Duration
 import java.time.Instant
 import java.util.*
 
@@ -56,6 +53,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
         is Repost.Failed -> {
           repostAttempts = data.repost.attempts
           repostLastAttemptAt = data.repost.lastAttemptAt
+          repostNextAttemptAt = data.repost.nextAttemptAt
         }
 
         is Repost.Success ->
@@ -83,16 +81,19 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
         is Repost.Pending -> it
           .setNull(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS)
           .setNull(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT)
+          .setNull(SYNCHRONIZED_POSTS.REPOST_NEXT_ATTEMPT_AT)
           .setNull(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT)
 
         is Repost.Failed -> it
           .set(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS, repost.attempts)
           .set(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT, repost.lastAttemptAt)
+          .set(SYNCHRONIZED_POSTS.REPOST_NEXT_ATTEMPT_AT, repost.nextAttemptAt)
           .setNull(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT)
 
         is Repost.Success -> it
           .setNull(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS)
           .setNull(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT)
+          .setNull(SYNCHRONIZED_POSTS.REPOST_NEXT_ATTEMPT_AT)
           .set(SYNCHRONIZED_POSTS.REPOST_REPOSTED_AT, repost.repostedAt)
       }
     }
@@ -163,7 +164,8 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
         RepostStatus.FAILED ->
           Repost.Failed(
             attempts = r.repostAttempts,
-            lastAttemptAt = r.repostLastAttemptAt
+            lastAttemptAt = r.repostLastAttemptAt,
+            nextAttemptAt = r.repostNextAttemptAt,
           )
 
         RepostStatus.SUCCESS ->
@@ -222,23 +224,12 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       .toList()
 
   @Transactional(readOnly = true)
-  override fun streamRetryable(baseDelay: Duration, maxAttempts: Int, block: (SynchronizedPost) -> Unit) =
+  override fun streamRetryable(block: (SynchronizedPost) -> Unit) =
     context.selectFrom(SYNCHRONIZED_POSTS)
       .where(SYNCHRONIZED_POSTS.REPOST_STATUS.equal(RepostStatus.FAILED))
-      .and(SYNCHRONIZED_POSTS.REPOST_ATTEMPTS.lessThan(maxAttempts))
-      .and(
-        timestampAdd(
-          SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT.coerce(Timestamp::class.java),
-          power(2, SYNCHRONIZED_POSTS.REPOST_ATTEMPTS - 1) * baseDelay.toSeconds(),
-          DatePart.SECOND
-        )
-          .coerce(SYNCHRONIZED_POSTS.REPOST_LAST_ATTEMPT_AT)
-          .lessThan(Instant.now())
-      )
+      .and(SYNCHRONIZED_POSTS.REPOST_NEXT_ATTEMPT_AT.lessThan(Instant.now()))
       .orderBy(SYNCHRONIZED_POSTS.POST_PUBLISHED_AT.asc())
       .fetchSize(50)
       .stream()
-      .use {
-        it.map(::toDomainObject).forEach(block)
-      }
+      .use { it.map(::toDomainObject).forEach(block) }
 }

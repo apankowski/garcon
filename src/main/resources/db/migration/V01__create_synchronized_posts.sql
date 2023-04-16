@@ -13,6 +13,7 @@ CREATE TABLE synchronized_posts (
   repost_status TEXT NOT NULL,
   repost_attempts INTEGER,
   repost_last_attempt_at TIMESTAMP WITH TIME ZONE,
+  repost_next_attempt_at TIMESTAMP WITH TIME ZONE,
   repost_reposted_at TIMESTAMP WITH TIME ZONE
 );
 

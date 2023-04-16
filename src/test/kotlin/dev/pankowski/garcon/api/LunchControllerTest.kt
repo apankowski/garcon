@@ -174,7 +174,11 @@ class LunchControllerTest : FreeSpec({
           content = "Some post content 3"
         ),
         classification = Classification.LUNCH_POST,
-        repost = Repost.Failed(13, somePointInTime.plus(13, DAYS))
+        repost = Repost.Failed(
+          attempts = 13,
+          lastAttemptAt = somePointInTime.plus(13, DAYS),
+          nextAttemptAt = somePointInTime.plus(14, DAYS),
+        )
       ),
       someSynchronizedPost(
         pageName = PageName("Page name 4"),

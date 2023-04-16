@@ -1,9 +1,7 @@
 package dev.pankowski.garcon.infrastructure.persistence
 
 import dev.pankowski.garcon.domain.*
-import java.time.Duration
 import java.util.*
-import kotlin.math.pow
 
 open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
 
@@ -68,14 +66,12 @@ open class InMemorySynchronizedPostRepository : SynchronizedPostRepository {
   override fun getLastSeen(limit: Int): SynchronizedPosts =
     TODO("Not implemented")
 
-  override fun streamRetryable(baseDelay: Duration, maxAttempts: Int, block: (SynchronizedPost) -> Unit) {
+  override fun streamRetryable(block: (SynchronizedPost) -> Unit) {
     val now = now()
     posts.values
       .filter {
         val repost = it.repost
-        repost is Repost.Failed &&
-          repost.attempts < maxAttempts &&
-          repost.lastAttemptAt + baseDelay.multipliedBy(2.0.pow(repost.attempts - 1).toLong()) < now
+        repost is Repost.Failed && (repost.nextAttemptAt?.isBefore(now) ?: false)
       }
       .sortedBy { it.post.publishedAt }
       .onEach(block)
