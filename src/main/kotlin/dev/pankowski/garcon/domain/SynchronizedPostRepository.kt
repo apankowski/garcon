@@ -1,7 +1,5 @@
 package dev.pankowski.garcon.domain
 
-import java.time.Duration
-
 class SynchronizedPostNotFound(message: String) : RuntimeException(message)
 class SynchronizedPostModifiedConcurrently(message: String) : RuntimeException(message)
 class SynchronizedPostHasDuplicateExternalId(message: String) : RuntimeException(message)
@@ -28,5 +26,5 @@ interface SynchronizedPostRepository {
 
   fun getLastSeen(limit: Int): SynchronizedPosts
 
-  fun streamRetryable(baseDelay: Duration, maxAttempts: Int, block: (SynchronizedPost) -> Unit)
+  fun streamRetryable(block: (SynchronizedPost) -> Unit)
 }

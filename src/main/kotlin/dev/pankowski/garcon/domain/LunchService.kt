@@ -52,8 +52,18 @@ class LunchService(
             updateWith(Repost.Success(Instant.now()))
           } catch (e: Exception) {
             val newRepost = when (p.repost) {
-              is Repost.Pending -> Repost.Failed(1, Instant.now())
-              is Repost.Failed -> Repost.Failed(p.repost.attempts + 1, Instant.now())
+              is Repost.Pending -> Repost.failedWithExponentialBackoff(
+                1,
+                repostRetryConfig.maxAttempts,
+                repostRetryConfig.baseDelay
+              )
+
+              is Repost.Failed -> Repost.failedWithExponentialBackoff(
+                p.repost.attempts + 1,
+                repostRetryConfig.maxAttempts,
+                repostRetryConfig.baseDelay
+              )
+
               else -> throw IllegalStateException("Unhandled repost ${p.repost}")
             }
             updateWith(newRepost)
@@ -75,5 +85,5 @@ class LunchService(
     repository.getLastSeen(20)
 
   fun retryFailedReposts() =
-    repository.streamRetryable(repostRetryConfig.baseDelay, repostRetryConfig.maxAttempts, ::repost)
+    repository.streamRetryable(::repost)
 }

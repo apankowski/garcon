@@ -268,51 +268,43 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
 
         // when
         val retryable = mutableListOf<SynchronizedPost>()
-        repository.streamRetryable(Duration.ofMinutes(1), 10, retryable::add)
+        repository.streamRetryable(retryable::add)
 
         // then
         retryable should beEmpty()
       }
 
-    "streams failed reposts for which required delay has elapsed" {
+    "considers failed repost with next attempt in the past as retryable" {
       // given
       val now = now()
-      val dayAgo = now.minus(1, DAYS)
-      val baseDelay = Duration.ofMinutes(1)
+
+      fun monotonePublishedAt(i: Int) = now.minus(1, DAYS).plus(i.toLong(), HOURS)
 
       val qualifyingPosts = mutableListOf<SynchronizedPost>()
       for (i in 1..5) {
-        val requiredWaitTime = baseDelay.multipliedBy((1 shl (i - 1)).toLong()) // = baseDelay * 2 ^ (attempt - 1)
-
         qualifyingPosts += repository.storeAndRetrieve(
           someStoreData(
-            post = somePost(publishedAt = dayAgo.plus(i.toLong(), HOURS), content = "post $i"),
-            repost = Repost.Failed(i, now - requiredWaitTime)
+            // Published at establishes order of results
+            post = somePost(publishedAt = monotonePublishedAt(i), content = "post $i"),
+            repost = Repost.Failed(i, now, now)
           )
         )
 
-        // Not enough time has passed for below post to qualify as retryable
+        // Shouldn't qualify as next attempt date-time is in the future
         repository.storeAndRetrieve(
           someStoreData(
-            post = somePost(publishedAt = dayAgo.plus(i.toLong(), HOURS), content = "post $i, not qualifying"),
-            repost = Repost.Failed(i, now - requiredWaitTime + Duration.ofMinutes(1)),
+            post = somePost(publishedAt = monotonePublishedAt(i), content = "post $i, not qualifying"),
+            repost = Repost.Failed(i, now, now + Duration.ofMinutes(1)),
           )
         )
       }
 
       // when
       val retryable = mutableListOf<SynchronizedPost>()
-      repository.streamRetryable(baseDelay, 10, retryable::add)
+      repository.streamRetryable(retryable::add)
 
       // then
       retryable shouldBe qualifyingPosts
-
-      // when
-      retryable.clear()
-      repository.streamRetryable(baseDelay, 4, retryable::add)
-
-      // then
-      retryable shouldBe qualifyingPosts.take(3)
     }
   }
 })

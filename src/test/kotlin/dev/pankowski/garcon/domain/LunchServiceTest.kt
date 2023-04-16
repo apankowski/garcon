@@ -20,10 +20,8 @@ class LunchServiceTest : FreeSpec({
     val pageConfig = somePageConfig()
     val lunchConfig = someLunchConfig(pages = listOf(pageConfig))
 
-    val synchronizer = mockk<PageSynchronizer>()
+    val synchronizer = mockk<PageSynchronizer> { every { synchronize(any()) } returns emptySequence() }
     val service = LunchService(lunchConfig, mockk(), mockk(), synchronizer, mockk())
-
-    every { synchronizer.synchronize(any()) } returns emptySequence()
 
     // when
     service.synchronizeAll()
@@ -41,12 +39,13 @@ class LunchServiceTest : FreeSpec({
     val delta = SynchronizedPostDelta(old = null, new = synchronizedPost).also { assert(it.lunchPostAppeared) }
 
     val repository = spyk(InMemorySynchronizedPostRepository()).apply { put(synchronizedPost) }
-    val synchronizer = mockk<PageSynchronizer>()
-    val reposter = mockk<SlackReposter>()
-    val service = LunchService(someLunchConfig(), mockk(), repository, synchronizer, reposter)
+    val synchronizer = mockk<PageSynchronizer> { every { synchronize(any()) } returns sequenceOf(delta) }
 
-    every { synchronizer.synchronize(any()) } returns sequenceOf(delta)
-    every { reposter.repost(synchronizedPost.post, synchronizedPost.pageName) } returns Unit
+    val reposter = mockk<SlackReposter> {
+      every { repost(synchronizedPost.post, synchronizedPost.pageName) } returns Unit
+    }
+
+    val service = LunchService(someLunchConfig(), mockk(), repository, synchronizer, reposter)
 
     // when
     val before = now()
@@ -70,12 +69,13 @@ class LunchServiceTest : FreeSpec({
     val delta = SynchronizedPostDelta(old = null, new = synchronizedPost).also { assert(!it.lunchPostAppeared) }
 
     val repository = spyk(InMemorySynchronizedPostRepository())
-    val synchronizer = mockk<PageSynchronizer>()
-    val reposter = mockk<SlackReposter>()
-    val service = LunchService(someLunchConfig(), mockk(), repository, synchronizer, reposter)
+    val synchronizer = mockk<PageSynchronizer> { every { synchronize(any()) } returns sequenceOf(delta) }
 
-    every { synchronizer.synchronize(any()) } returns sequenceOf(delta)
-    every { reposter.repost(synchronizedPost.post, synchronizedPost.pageName) } returns Unit
+    val reposter = mockk<SlackReposter> {
+      every { repost(synchronizedPost.post, synchronizedPost.pageName) } returns Unit
+    }
+
+    val service = LunchService(someLunchConfig(), mockk(), repository, synchronizer, reposter)
 
     // when
     service.synchronize(pageConfig)
@@ -91,10 +91,8 @@ class LunchServiceTest : FreeSpec({
     // given
     val log = ArrayList<SynchronizedPost>()
 
-    val repository = mockk<SynchronizedPostRepository>()
+    val repository = mockk<SynchronizedPostRepository> { every { getLastSeen(20) } returns log }
     val service = LunchService(someLunchConfig(), mockk(), repository, mockk(), mockk())
-
-    every { repository.getLastSeen(20) } returns log
 
     // expect
     service.getLog() should beTheSameInstanceAs(log)
@@ -107,17 +105,19 @@ class LunchServiceTest : FreeSpec({
       Repost.Skip,
       someSuccessRepost(),
     ) { r ->
+
       // given
       val post = someSynchronizedPost(repost = r)
       val retryConfig = someRepostRetryConfig()
 
-      val reposter = mockk<SlackReposter>()
-      val repository = mockk<SynchronizedPostRepository>()
-      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), reposter)
+      val repository = mockk<SynchronizedPostRepository> {
+        val lambdaSlot = slot<(SynchronizedPost) -> Unit>()
+        every { streamRetryable(capture(lambdaSlot)) } answers { lambdaSlot.captured(post) }
+        excludeRecords { streamRetryable(any()) }
+      }
 
-      excludeRecords { repository.streamRetryable(any(), any(), any()) }
-      every { repository.streamRetryable(retryConfig.baseDelay, retryConfig.maxAttempts, captureLambda()) } answers
-        { lambda<(SynchronizedPost) -> Unit>().invoke(post) }
+      val reposter = mockk<SlackReposter>()
+      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), reposter)
 
       // when
       service.retryFailedReposts()
@@ -134,18 +134,19 @@ class LunchServiceTest : FreeSpec({
       Repost.Pending,
       someFailedRepost(),
     ) { r ->
+
       // given
       val post = someSynchronizedPost(repost = r)
       val retryConfig = someRepostRetryConfig()
 
-      val reposter = mockk<SlackReposter>()
-      val repository = mockk<SynchronizedPostRepository>()
-      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), reposter)
+      val repository = mockk<SynchronizedPostRepository> {
+        val lambdaSlot = slot<(SynchronizedPost) -> Unit>()
+        every { streamRetryable(capture(lambdaSlot)) } answers { lambdaSlot.captured(post) }
+        every { updateExisting(post.id, post.version, any()) } returns Unit
+      }
 
-      every { repository.streamRetryable(retryConfig.baseDelay, retryConfig.maxAttempts, captureLambda()) } answers
-        { lambda<(SynchronizedPost) -> Unit>().invoke(post) }
-      every { reposter.repost(post.post, any()) } returns Unit
-      every { repository.updateExisting(post.id, post.version, any()) } returns Unit
+      val reposter = mockk<SlackReposter> { every { repost(post.post, any()) } returns Unit }
+      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), reposter)
 
       // when
       val before = now()
@@ -171,18 +172,22 @@ class LunchServiceTest : FreeSpec({
       FailedRetryTestCase(Repost.Pending, 1),
       FailedRetryTestCase(someFailedRepost(attempts = 2), 3),
     ) { (r, newAttempts) ->
+
       // given
       val post = someSynchronizedPost(repost = r)
       val retryConfig = someRepostRetryConfig()
 
-      val reposter = mockk<SlackReposter>()
-      val repository = mockk<SynchronizedPostRepository>()
-      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), reposter)
+      val repository = mockk<SynchronizedPostRepository> {
+        val lambdaSlot = slot<(SynchronizedPost) -> Unit>()
+        every { streamRetryable(capture(lambdaSlot)) } answers { lambdaSlot.captured(post) }
+        every { updateExisting(post.id, post.version, any()) } returns Unit
+      }
 
-      every { repository.updateExisting(post.id, post.version, any()) } returns Unit
-      every { repository.streamRetryable(retryConfig.baseDelay, retryConfig.maxAttempts, captureLambda()) } answers
-        { lambda<(SynchronizedPost) -> Unit>().invoke(post) }
-      every { reposter.repost(post.post, any()) } throws RuntimeException("something went wrong")
+      val reposter = mockk<SlackReposter> {
+        every { repost(post.post, any()) } throws RuntimeException("something went wrong")
+      }
+
+      val service = LunchService(someLunchConfig(), retryConfig, repository, mockk(), reposter)
 
       // when
       val before = now()
