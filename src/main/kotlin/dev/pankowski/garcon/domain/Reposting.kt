@@ -65,41 +65,29 @@ class Reposter(
           log.warn("Ignoring request to repost $post because of its repost decision")
 
         is Repost.Pending,
-        is Repost.Failed -> {
-          fun updateWith(r: Repost) =
-            repository.updateExisting(post.id, post.version, r)
-          try {
-            doRepost(post)
-            updateWith(Repost.Success(Instant.now()))
-          } catch (e: Exception) {
-            val newRepost = when (post.repost) {
-              is Repost.Pending -> Repost.failedWithExponentialBackoff(
-                1,
-                retryConfig.maxAttempts,
-                retryConfig.baseDelay
-              )
-
-              is Repost.Failed -> Repost.failedWithExponentialBackoff(
-                post.repost.attempts + 1,
-                retryConfig.maxAttempts,
-                retryConfig.baseDelay
-              )
-
-              else -> throw IllegalStateException("Unhandled repost ${post.repost}")
-            }
-            updateWith(newRepost)
-          }
-        }
+        is Repost.Failed ->
+          doRepost(post)
       }
     }
 
   private fun doRepost(post: SynchronizedPost) =
     try {
       slack.repost(post.post, post.pageName)
+      post.update(Repost.Success(Instant.now()))
       log.info("Post ${post.post.url} reposted on Slack")
     } catch (e: Exception) {
       log.error("Failed to repost post ${post.post.url} on Slack", e)
-      throw e
+      when (post.repost) {
+        is Repost.Pending -> post.update(failedRepost(1))
+        is Repost.Failed -> post.update(failedRepost(post.repost.attempts + 1))
+        else -> throw IllegalStateException("Unhandled repost kind ${post.repost}")
+      }
     }
+
+  private fun SynchronizedPost.update(repost: Repost) =
+    repository.updateExisting(id, version, repost)
+
+  private fun failedRepost(attempt: Int) =
+    Repost.failedWithExponentialBackoff(attempt, retryConfig.maxAttempts, retryConfig.baseDelay)
 }
 
