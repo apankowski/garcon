@@ -5,7 +5,7 @@ import org.hamcrest.Matchers.notNullValue
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 
-class LunchIT : CommonIT({
+class LunchCommandIT : CommonIT({
 
   "lunch endpoint is responding" {
     // given
