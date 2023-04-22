@@ -47,7 +47,7 @@ class LunchServiceTest : FreeSpec({
     val delta = SynchronizedPostDelta(old = null, new = synchronizedPost).also { assert(!it.lunchPostAppeared) }
 
     val synchronizer = mockk<PageSynchronizer> { every { synchronize(any()) } returns sequenceOf(delta) }
-    val reposter = mockk<Reposter> { every { repost(synchronizedPost) } returns Unit }
+    val reposter = mockk<Reposter>()
 
     val service = LunchService(someLunchConfig(), mockk(), synchronizer, reposter)
 
