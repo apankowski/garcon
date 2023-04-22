@@ -50,42 +50,42 @@ sealed class Repost(val status: RepostStatus) {
 
 @Component
 class Reposter(
-  private val repostRetryConfig: RepostRetryConfig,
+  private val retryConfig: RepostRetryConfig,
   private val repository: SynchronizedPostRepository,
   private val slack: Slack,
 ) {
 
   private val log = LoggerFactory.getLogger(javaClass)
 
-  fun repost(p: SynchronizedPost) =
-    Mdc.SynchronizedPostId.having(p.id) {
-      when (p.repost) {
+  fun repost(post: SynchronizedPost) =
+    Mdc.extendedWith(post.id) {
+      when (post.repost) {
         is Repost.Skip,
         is Repost.Success ->
-          log.warn("Ignoring request to repost $p because of its repost decision")
+          log.warn("Ignoring request to repost $post because of its repost decision")
 
         is Repost.Pending,
         is Repost.Failed -> {
           fun updateWith(r: Repost) =
-            repository.updateExisting(p.id, p.version, r)
+            repository.updateExisting(post.id, post.version, r)
           try {
-            doRepost(p)
+            doRepost(post)
             updateWith(Repost.Success(Instant.now()))
           } catch (e: Exception) {
-            val newRepost = when (p.repost) {
+            val newRepost = when (post.repost) {
               is Repost.Pending -> Repost.failedWithExponentialBackoff(
                 1,
-                repostRetryConfig.maxAttempts,
-                repostRetryConfig.baseDelay
+                retryConfig.maxAttempts,
+                retryConfig.baseDelay
               )
 
               is Repost.Failed -> Repost.failedWithExponentialBackoff(
-                p.repost.attempts + 1,
-                repostRetryConfig.maxAttempts,
-                repostRetryConfig.baseDelay
+                post.repost.attempts + 1,
+                retryConfig.maxAttempts,
+                retryConfig.baseDelay
               )
 
-              else -> throw IllegalStateException("Unhandled repost ${p.repost}")
+              else -> throw IllegalStateException("Unhandled repost ${post.repost}")
             }
             updateWith(newRepost)
           }
@@ -93,12 +93,12 @@ class Reposter(
       }
     }
 
-  private fun doRepost(p: SynchronizedPost) =
+  private fun doRepost(post: SynchronizedPost) =
     try {
-      slack.repost(p.post, p.pageName)
-      log.info("Post ${p.post.url} reposted on Slack")
+      slack.repost(post.post, post.pageName)
+      log.info("Post ${post.post.url} reposted on Slack")
     } catch (e: Exception) {
-      log.error("Failed to repost post ${p.post.url} on Slack", e)
+      log.error("Failed to repost post ${post.post.url} on Slack", e)
       throw e
     }
 }

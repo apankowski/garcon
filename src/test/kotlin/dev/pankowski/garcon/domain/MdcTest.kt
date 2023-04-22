@@ -15,7 +15,7 @@ class MdcTest : FreeSpec({
     MDC.get("pageId") should beNull()
 
     // when
-    val capturedValue = Mdc.PageId.having(id) { MDC.get("pageId") }
+    val capturedValue = Mdc.extendedWith(id) { MDC.get("pageId") }
 
     // then
     capturedValue shouldBe id.value
@@ -25,7 +25,7 @@ class MdcTest : FreeSpec({
   "clears page ID when closure fails" {
     // when
     shouldThrowAny {
-      Mdc.PageId.having(PageId("1234")) {
+      Mdc.extendedWith(PageId("1234")) {
         throw RuntimeException("Something went wrong")
       }
     }
@@ -40,17 +40,17 @@ class MdcTest : FreeSpec({
     MDC.get("synchronizedPostId") should beNull()
 
     // when
-    val capturedValue = Mdc.SynchronizedPostId.having(id) { MDC.get("synchronizedPostId") }
+    val capturedValue = Mdc.extendedWith(id) { MDC.get("synchronizedPostId") }
 
     // then
     capturedValue shouldBe id.value
     MDC.get("synchronizedPostId") should beNull()
   }
 
-  "clears PageId when closure fails" {
+  "clears synchronized post ID when closure fails" {
     // when
     shouldThrowAny {
-      Mdc.SynchronizedPostId.having(SynchronizedPostId("1234")) {
+      Mdc.extendedWith(SynchronizedPostId("1234")) {
         throw RuntimeException("Something went wrong")
       }
     }
