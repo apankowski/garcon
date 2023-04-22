@@ -4,23 +4,21 @@ import org.slf4j.MDC
 import dev.pankowski.garcon.domain.PageId as PageIdData
 import dev.pankowski.garcon.domain.SynchronizedPostId as SynchronizedPostIdData
 
-sealed class Mdc(private val key: String) {
+class Mdc {
 
-  fun <T> having(value: String, f: () -> T): T =
-    try {
-      MDC.put(key, value)
-      f()
-    } finally {
-      MDC.remove(key)
-    }
+  companion object {
+    private fun <T> extendedWith(key: String, value: String, f: () -> T): T =
+      try {
+        MDC.put(key, value)
+        f()
+      } finally {
+        MDC.remove(key)
+      }
 
-  object PageId : Mdc("pageId") {
-    fun <T> having(pageId: PageIdData, f: () -> T): T =
-      having(pageId.value, f)
-  }
+    fun <T> extendedWith(pageId: PageIdData, f: () -> T): T =
+      extendedWith("pageId", pageId.value, f)
 
-  object SynchronizedPostId : Mdc("synchronizedPostId") {
-    fun <T> having(synchronizedPostId: SynchronizedPostIdData, f: () -> T): T =
-      having(synchronizedPostId.value, f)
+    fun <T> extendedWith(synchronizedPostId: SynchronizedPostIdData, f: () -> T): T =
+      extendedWith("synchronizedPostId", synchronizedPostId.value, f)
   }
 }

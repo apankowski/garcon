@@ -28,7 +28,7 @@ class LunchService(
 
   @VisibleForTesting
   fun synchronize(page: PageConfig) =
-    Mdc.PageId.having(page.id) {
+    Mdc.extendedWith(page.id) {
       pageSynchronizer.synchronize(page).forEach {
         if (it.lunchPostAppeared) reposter.repost(it.new)
       }
