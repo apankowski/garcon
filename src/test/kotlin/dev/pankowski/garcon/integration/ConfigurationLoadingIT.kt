@@ -5,7 +5,7 @@ import io.kotest.matchers.shouldBe
 import java.net.URL
 import java.time.Duration
 
-class LunchConfigIT(
+class ConfigurationLoadingIT(
   config: LunchConfig,
   syncConfig: SyncConfig,
   clientConfig: ClientConfig,
