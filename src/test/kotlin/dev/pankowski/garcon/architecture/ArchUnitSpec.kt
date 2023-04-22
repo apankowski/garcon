@@ -26,5 +26,5 @@ object Packages {
   const val Api = "..api.."
   const val Infrastructure = "..infrastructure.."
   const val Configuration = "..configuration.."
-  const val Spring = "..springframework.."
+  const val SpringFramework = "..springframework.."
 }
