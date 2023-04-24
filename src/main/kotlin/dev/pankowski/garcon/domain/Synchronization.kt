@@ -35,12 +35,14 @@ class PageSynchronizer(
         Classification.LUNCH_POST -> Repost.Pending
         Classification.REGULAR_POST -> Repost.Skip
       }
-      val id = repository.store(StoreData(pageConfig.id, pageName, new.post, new.classification, repost))
+      val id = repository.store(
+        SynchronizedPostStoreData(pageConfig.id, pageName, new.post, new.classification, repost)
+      )
       return repository.findExisting(id)
     }
 
     fun process(post: Post): SynchronizedPostDelta? {
-      val old = repository.findByExternalId(post.externalId)
+      val old = repository.findBy(post.externalId)
       val postDelta = PostDelta(old?.post, post)
 
       if (!postDelta.changed) return null

@@ -4,7 +4,7 @@ class SynchronizedPostNotFound(message: String) : RuntimeException(message)
 class SynchronizedPostModifiedConcurrently(message: String) : RuntimeException(message)
 class SynchronizedPostHasDuplicateExternalId(message: String) : RuntimeException(message)
 
-data class StoreData(
+data class SynchronizedPostStoreData(
   val pageId: PageId,
   val pageName: PageName,
   val post: Post,
@@ -14,7 +14,7 @@ data class StoreData(
 
 interface SynchronizedPostRepository {
 
-  fun store(data: StoreData): SynchronizedPostId
+  fun store(data: SynchronizedPostStoreData): SynchronizedPostId
 
   fun updateExisting(id: SynchronizedPostId, version: Version, repost: Repost)
 
@@ -22,7 +22,7 @@ interface SynchronizedPostRepository {
 
   fun findExisting(id: SynchronizedPostId): SynchronizedPost
 
-  fun findByExternalId(externalId: ExternalId): SynchronizedPost?
+  fun findBy(externalId: ExternalId): SynchronizedPost?
 
   fun getLastSeen(limit: Int): SynchronizedPosts
 

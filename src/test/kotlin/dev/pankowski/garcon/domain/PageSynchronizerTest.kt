@@ -63,7 +63,7 @@ class PageSynchronizerTest : FreeSpec({
       val deltas = synchronizer.synchronize(pageConfig).toList()
 
       // then
-      assertSoftly(repository.findByExternalId(post.externalId)) {
+      assertSoftly(repository.findBy(post.externalId)) {
         it.shouldNotBeNull()
         it.pageId shouldBe pageConfig.id
         it.pageName shouldBe page.name
@@ -101,7 +101,7 @@ class PageSynchronizerTest : FreeSpec({
       val deltas = synchronizer.synchronize(pageConfig).toList()
 
       // then
-      assertSoftly(repository.findByExternalId(post.externalId)) { new ->
+      assertSoftly(repository.findBy(post.externalId)) { new ->
         new.shouldNotBeNull()
         new.post shouldBe post
         new.classification shouldBe classification

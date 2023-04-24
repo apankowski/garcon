@@ -10,7 +10,7 @@ fun someStoreData(
   post: Post = somePost(),
   classification: Classification = Classification.LUNCH_POST,
   repost: Repost = Repost.Pending,
-) = StoreData(pageId, pageName, post, classification, repost)
+) = SynchronizedPostStoreData(pageId, pageName, post, classification, repost)
 
 fun someFailedRepost(
   attempts: Int = 10,
