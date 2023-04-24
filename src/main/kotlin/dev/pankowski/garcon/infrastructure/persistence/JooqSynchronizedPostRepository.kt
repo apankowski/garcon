@@ -19,7 +19,7 @@ import java.util.*
 @Transactional(propagation = Propagation.NESTED)
 class JooqSynchronizedPostRepository(private val context: DSLContext) : SynchronizedPostRepository {
 
-  override fun store(data: StoreData): SynchronizedPostId =
+  override fun store(data: SynchronizedPostStoreData): SynchronizedPostId =
     with(context.newRecord(SYNCHRONIZED_POSTS)) {
       val now = Instant.now()
 
@@ -199,7 +199,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
   }
 
   @Transactional(readOnly = true)
-  override fun findByExternalId(externalId: ExternalId): SynchronizedPost? =
+  override fun findBy(externalId: ExternalId): SynchronizedPost? =
     context
       .selectFrom(SYNCHRONIZED_POSTS)
       .where(SYNCHRONIZED_POSTS.POST_EXTERNAL_ID.equal(externalId.value))

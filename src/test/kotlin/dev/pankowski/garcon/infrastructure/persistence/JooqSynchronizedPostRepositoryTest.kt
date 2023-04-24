@@ -31,7 +31,8 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
 
   val repository = JooqSynchronizedPostRepository(context)
 
-  fun SynchronizedPostRepository.storeAndRetrieve(data: StoreData) = findExisting(store(data))
+  fun SynchronizedPostRepository.storeAndRetrieve(data: SynchronizedPostStoreData) =
+    findExisting(store(data))
 
   "persists synchronized post" - {
 
@@ -221,7 +222,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       val stored = someStoredSynchronizedPost()
 
       // expect
-      repository.findByExternalId(stored.post.externalId) shouldBe stored
+      repository.findBy(stored.post.externalId) shouldBe stored
     }
 
     withData<ExternalId>(
@@ -234,7 +235,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       someStoredSynchronizedPost()
 
       // expect
-      repository.findByExternalId(nonexistentExternalId) should beNull()
+      repository.findBy(nonexistentExternalId) should beNull()
     }
   }
 
