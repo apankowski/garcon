@@ -16,7 +16,7 @@ class ClassLocationTest : ArchUnitSpec({
     rule.check(classes)
   }
 
-  "configuration classes are in configuration or API package" {
+  "configuration classes are in infrastructure, configuration or API package" {
     // given
     val rule = classes()
       .that().areAnnotatedWith(Configuration::class.java)

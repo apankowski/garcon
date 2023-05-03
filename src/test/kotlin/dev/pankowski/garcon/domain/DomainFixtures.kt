@@ -52,9 +52,10 @@ fun somePostConfig(
 ) = PostConfig(locale, keywords)
 
 fun someSlackConfig(
-  webhookUrl: URL = URL("https://slack/webhook"),
   signingSecret: String? = null,
-) = SlackConfig(webhookUrl, signingSecret)
+  token: String = "xoxb-some-token",
+  channel: String = "#random",
+) = SlackConfig(signingSecret, token, channel)
 
 fun someRepostRetryConfig(
   interval: Duration? = Duration.ofMinutes(10),

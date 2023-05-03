@@ -1,5 +1,6 @@
 package dev.pankowski.garcon.domain
 
+// TODO: Move Slack types out to API. Afterwards, replace with Slack SDK types.
 enum class ResponseType(private val apiName: String) {
   EPHEMERAL("ephemeral"),
   IN_CHANNEL("in_channel"),
@@ -21,7 +22,9 @@ data class SlackMessage(
   val attachments: List<Attachment>? = null,
 )
 
+data class SlackMessageId(val value: String)
+
 interface Slack {
 
-  fun repost(post: Post, pageName: PageName)
+  fun repost(post: Post, pageName: PageName): SlackMessageId
 }

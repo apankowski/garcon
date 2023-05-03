@@ -66,11 +66,14 @@ data class PostConfig(
 @ConfigurationProperties("lunch.slack")
 data class SlackConfig(
 
-  /** URL of Slack's Incoming Webhook that will be used to send lunch messages. */
-  val webhookUrl: URL,
-
   /** Signing secret of the Slack app used for request verification. */
   val signingSecret: String?,
+
+  /** Token of the Slack app privileged to send and update reposts. Starts with `xoxb-`. */
+  val token: String,
+
+  /** Channel ID (`C1234567`) or name (`#random`) to send reposts to. */
+  val channel: String,
 )
 
 /** Configuration of retrying failed reposts. */
