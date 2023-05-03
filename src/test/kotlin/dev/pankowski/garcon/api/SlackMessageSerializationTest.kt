@@ -1,8 +1,5 @@
 package dev.pankowski.garcon.api
 
-import dev.pankowski.garcon.domain.Attachment
-import dev.pankowski.garcon.domain.ResponseType
-import dev.pankowski.garcon.domain.SlackMessage
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.extensions.spring.SpringExtension
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
