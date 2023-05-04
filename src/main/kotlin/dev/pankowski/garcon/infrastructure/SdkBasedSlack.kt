@@ -19,10 +19,10 @@ class SdkBasedSlack(private val slackConfig: SlackConfig, slackApi: SlackApi) : 
       .channel(slackConfig.channel)
       .text(
         """
-          |New <${post.url}|lunch post> from *${pageName.value}* :tada:
-          |
-          |>>>${post.content}
-          """.trimMargin()
+        |New <${post.url}|lunch post> from *${pageName.value}* :tada:
+        |
+        |>>>${post.content}
+        """.trimMargin()
       )
       .build()
 
