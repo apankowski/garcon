@@ -39,8 +39,6 @@ dependencyManagement {
     dependency("org.mozilla:rhino:1.7.14")
     dependency("net.thisptr:jackson-jq:1.0.0-preview.20220705")
     dependency("com.slack.api:slack-api-client:1.29.2")
-    dependency("com.slack.api:slack-api-model-kotlin-extension:1.29.2")
-    dependency("com.slack.api:slack-api-client-kotlin-extension:1.29.2")
     dependency("io.kotest:kotest-runner-junit5:5.5.5")
     dependency("io.kotest:kotest-framework-datatest:5.5.5")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.2")
@@ -77,8 +75,6 @@ dependencies {
 
   // Slack
   implementation("com.slack.api:slack-api-client")
-  implementation("com.slack.api:slack-api-model-kotlin-extension")
-  implementation("com.slack.api:slack-api-client-kotlin-extension")
 
   // Tests
   testImplementation("io.mockk:mockk")
