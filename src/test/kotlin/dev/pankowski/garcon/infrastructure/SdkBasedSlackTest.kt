@@ -26,6 +26,8 @@ class SdkBasedSlackTest : FreeSpec({
 
     // and
     val slackConfig = someSlackConfig(token = "xoxb-token", channel = "#channel")
+    // Matchers in chained verifications don't seem to work: https://github.com/mockk/mockk/issues/447
+    // So, we're declaring the capturing here and assert on the captured value later.
     val requestSlot = slot<ChatPostMessageRequest>()
     val slackApi = mockk<Slack> {
       every { methods("xoxb-token").chatPostMessage(capture(requestSlot)).ts } returns "some-message-id"
