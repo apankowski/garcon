@@ -62,14 +62,15 @@ The service listens on HTTP port 8080 by default.
 Create a Slack app if you don't have one already:
 
 1. Go to [Slack Apps](https://api.slack.com/apps) → _Create New App_.
-1. Pick a name & workspace to which the app should belong.
-1. Configure additional stuff like description & icon.
+2. Pick a name & workspace to which the app should belong.
+3. Configure additional stuff like description & icon.
 
 Configure _Incoming Webhooks_ and _Slash Commands_ for the app:
 
 1. Go to [Slack Apps](https://api.slack.com/apps) → click on the name of your app.
-1. Go to _Incoming Webhooks_ (under _Features_ submenu) → _Add New Webhook to Workspace_ → select channel to which lunch posts will be reposted → _Allow_ → take note of the _Webhook URL_.
-1. Go to _Slash Commands_ (under _Features_ submenu) → _Create New Command_ → _Command_: `/lunch`, _Request URL_: `{BASE_URI}/commands/lunch` where `{BASE_URI}` is the base URI under which the bot will be deployed/will handle requests → _Save_.
+2. Go to _Slash Commands_ (under _Features_ submenu) → _Create New Command_ → _Command_: `/lunch`, _Request URL_: `{BASE_URI}/commands/lunch` where `{BASE_URI}` is the base URI under which the bot will be deployed/will handle requests → _Save_.
+3. Go to _OAuth & Permissions_ (under _Features_ submenu) → _Scopes_ section → _Bot Token Scopes_ subsection → _Add an OAuth Scope_ → select `chat:write` scope → confirm.
+4. Go to _OAuth & Permissions_ (under _Features_ submenu) → _OAuth Tokens for Your Workspace_ section → Take note of the _Bot User OAuth Token_ (it starts with `xoxb-`). Set bot's `LUNCH_SLACK_TOKEN` [environment variable](#environment-variables) to this value.
 
 ### Docker image
 
