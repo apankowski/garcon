@@ -17,7 +17,7 @@ class ReposterTest : FreeSpec({
     val synchronizedPost = someSynchronizedPost(classification = Classification.LUNCH_POST, repost = Repost.Pending)
 
     val repository = spyk(InMemorySynchronizedPostRepository()).apply { put(synchronizedPost) }
-    val slack = mockk<Slack> { every { repost(synchronizedPost.post, synchronizedPost.pageName) } returns Unit }
+    val slack = mockk<Slack> { every { repost(synchronizedPost.post, synchronizedPost.pageName) } returns mockk() }
     val reposter = Reposter(mockk(), repository, slack)
 
     // when
@@ -75,7 +75,7 @@ class ReposterTest : FreeSpec({
         every { updateExisting(post.id, post.version, any()) } returns Unit
       }
 
-      val slack = mockk<Slack> { every { repost(post.post, any()) } returns Unit }
+      val slack = mockk<Slack> { every { repost(post.post, any()) } returns mockk() }
       val reposter = Reposter(retryConfig, repository, slack)
 
       // when

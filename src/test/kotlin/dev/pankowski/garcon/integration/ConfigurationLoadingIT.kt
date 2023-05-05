@@ -56,8 +56,9 @@ class ConfigurationLoadingIT(
   "slack config is set based on configuration properties" {
     // expect
     slackConfig shouldBe SlackConfig(
-      webhookUrl = URL("http://localhost:9876/lunch/slack/webhook"),
       signingSecret = "some-signing-secret",
+      token = "xoxb-lunch-bot",
+      channel = "#lunch",
     )
   }
 

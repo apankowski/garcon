@@ -62,14 +62,15 @@ The service listens on HTTP port 8080 by default.
 Create a Slack app if you don't have one already:
 
 1. Go to [Slack Apps](https://api.slack.com/apps) → _Create New App_.
-1. Pick a name & workspace to which the app should belong.
-1. Configure additional stuff like description & icon.
+2. Pick a name & workspace to which the app should belong.
+3. Configure additional stuff like description & icon.
 
 Configure _Incoming Webhooks_ and _Slash Commands_ for the app:
 
 1. Go to [Slack Apps](https://api.slack.com/apps) → click on the name of your app.
-1. Go to _Incoming Webhooks_ (under _Features_ submenu) → _Add New Webhook to Workspace_ → select channel to which lunch posts will be reposted → _Allow_ → take note of the _Webhook URL_.
-1. Go to _Slash Commands_ (under _Features_ submenu) → _Create New Command_ → _Command_: `/lunch`, _Request URL_: `{BASE_URI}/commands/lunch` where `{BASE_URI}` is the base URI under which the bot will be deployed/will handle requests → _Save_.
+2. Go to _Slash Commands_ (under _Features_ submenu) → _Create New Command_ → _Command_: `/lunch`, _Request URL_: `{BASE_URI}/commands/lunch` where `{BASE_URI}` is the base URI under which the bot will be deployed/will handle requests → _Save_.
+3. Go to _OAuth & Permissions_ (under _Features_ submenu) → _Scopes_ section → _Bot Token Scopes_ subsection → _Add an OAuth Scope_ → select `chat:write` scope → confirm.
+4. Go to _OAuth & Permissions_ (under _Features_ submenu) → _OAuth Tokens for Your Workspace_ section → Take note of the _Bot User OAuth Token_ (it starts with `xoxb-`). Set bot's `LUNCH_SLACK_TOKEN` [environment variable](#environment-variables) to this value.
 
 ### Docker image
 
@@ -111,8 +112,9 @@ Create an empty PostgreSQL database for the bot with UTF-8 encoding to support e
 | `LUNCH_POST_LOCALE` | Locale of text of posts used while extracting their keywords. | ✗ | `Locale.ENGLISH` |
 | `LUNCH_POST_KEYWORDS_<INDEX>_TEXT`, e.g. `LUNCH_POST_KEYWORDS_0_TEXT` | The keyword that makes a post be considered as a lunch post, e.g. `lunch` or `menu`. | ✗ | `lunch` |
 | `LUNCH_POST_KEYWORDS_<INDEX>_EDIT_DISTANCE`, e.g. `LUNCH_POST_KEYWORDS_0_EDIT_DISTANCE` | Maximum allowed [Damerau-Levenshtein distance](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance) between any word from a post and the lunch keyword. Typically `1` or `2`. | ✗ | `1` |
-| `LUNCH_SLACK_WEBHOOK_URL` | URL of Slack's Incoming Webhook that will be used to repost lunch offers. | ✓ | `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX` |
 | `LUNCH_SLACK_SIGNING_SECRET` | Signing secret of the Slack app used for request verification. Request verification is disabled if the property is not set. | ✗ | `******` |
+| `LUNCH_SLACK_TOKEN` | Token of the Slack app privileged to send and update reposts. Starts with `xoxb-`. | ✓ | `xoxb-some-token` |
+| `LUNCH_SLACK_CHANNEL` | Channel ID (`C1234567`) or name (`#random`) to send reposts to. | ✓ | `#random` |
 | `LUNCH_REPOST_RETRY_INTERVAL` | Interval between consecutive attempts to retry failed reposts. | ✗ | `PT10M` |
 | `LUNCH_REPOST_RETRY_BASE_DELAY` | Base delay in the exponential backoff between consecutive retries of a failed repost. | ✗ | `PT1M` |
 | `LUNCH_REPOST_RETRY_MAX_ATTEMPTS` | Max retry attempts for a failed repost. | ✗ | `10` |
