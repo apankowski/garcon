@@ -35,7 +35,7 @@ class JavaScriptObjectLiteralExtractorTest : FreeSpec({
         """{"another":"one"}""",
       ),
       TestCase(
-        """object.call(1,{"some":"object"},true,[another.call({"another":"one"})])""",
+        """object.call(1,{"a":"b"},true,[another.call({"another":"one"})])""",
         """{"a":"b"}""",
         """{"another":"one"}""",
       ),
