@@ -14,8 +14,8 @@ plugins {
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
   id("com.avast.gradle.docker-compose") version "0.16.12"
-  id("org.flywaydb.flyway") version "9.16.1"
-  id("nu.studer.jooq") version "8.1"
+  id("org.flywaydb.flyway") version "9.18.0"
+  id("nu.studer.jooq") version "8.2"
   jacoco
   id("org.sonarqube") version "4.0.0.2929"
 }
@@ -188,7 +188,7 @@ tasks.flywayMigrate {
 // Jooq
 
 jooq {
-  version.set("3.17.4")
+  version.set("3.18.2")
 
   configurations {
     create("main") {
