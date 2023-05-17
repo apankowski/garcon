@@ -6,10 +6,10 @@ import org.jooq.meta.jaxb.Logging
 // Gradle
 
 plugins {
-  kotlin("jvm") version "1.8.20"
-  kotlin("kapt") version "1.8.20"
-  kotlin("plugin.spring") version "1.8.20"
-  id("org.springframework.boot") version "3.0.5"
+  kotlin("jvm") version "1.8.21"
+  kotlin("kapt") version "1.8.21"
+  kotlin("plugin.spring") version "1.8.21"
+  id("org.springframework.boot") version "3.0.6"
   id("io.spring.dependency-management") version "1.1.0"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
@@ -37,7 +37,7 @@ dependencyManagement {
     dependency("com.google.guava:guava:31.1-jre")
     dependency("org.jsoup:jsoup:1.16.1")
     dependency("org.mozilla:rhino:1.7.14")
-    dependency("net.thisptr:jackson-jq:1.0.0-preview.20220705")
+    dependency("net.thisptr:jackson-jq:1.0.0-preview.20230409")
     dependency("com.slack.api:slack-api-client:1.29.2")
     dependency("io.kotest:kotest-runner-junit5:5.6.2")
     dependency("io.kotest:kotest-framework-datatest:5.6.2")
