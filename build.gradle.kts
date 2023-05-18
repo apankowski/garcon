@@ -9,7 +9,7 @@ plugins {
   kotlin("jvm") version "1.8.21"
   kotlin("kapt") version "1.8.21"
   kotlin("plugin.spring") version "1.8.21"
-  id("org.springframework.boot") version "3.0.6"
+  id("org.springframework.boot") version "3.0.7"
   id("io.spring.dependency-management") version "1.1.0"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
