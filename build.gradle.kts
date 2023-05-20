@@ -126,8 +126,13 @@ val isCiEnv = System.getenv("CI") == "true"
 
 // Tests & code coverage
 
-tasks.withType<Test> {
+tasks.test {
   useJUnitPlatform()
+  finalizedBy(tasks.jacocoTestReport)
+}
+
+jacoco {
+  toolVersion = "0.8.10"
 }
 
 tasks.jacocoTestReport {
@@ -135,10 +140,6 @@ tasks.jacocoTestReport {
     html.required.set(true)
     xml.required.set(true)
   }
-}
-
-tasks.test {
-  finalizedBy(tasks.jacocoTestReport)
 }
 
 // SonarCloud
