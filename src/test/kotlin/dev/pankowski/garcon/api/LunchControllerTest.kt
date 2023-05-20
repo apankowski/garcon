@@ -71,8 +71,18 @@ class LunchControllerTest : FreeSpec({
     // given
     val command = someLunchCommand()
 
+    // Don't spy DirectExecutor directly, but via a delegate. Since DirectExecutor is implemented as an
+    // enum-based singleton, MockK tries to create its full copy, including its Enum parts. This leads
+    // to reflective access to java.base/java.lang.Enum from our tests, which fails with: IllegalAccessException:
+    // class io.mockk.impl.InternalPlatform cannot access a member of class java.lang.Enum (in module java.base)
+    // Doing it via a delegate avoids this access. An alternative would be to open java.base module to any unnamed
+    // module (see https://github.com/mockk/mockk/issues/681#issuecomment-970130387) but it seems like an overkill.
+    val executor = spyk(object : Executor {
+      override fun execute(command: Runnable) {
+        MoreExecutors.directExecutor().execute(command)
+      }
+    })
     val parser = mockk<LunchSubcommandParser>()
-    val executor = spyk(MoreExecutors.directExecutor())
     val service = mockk<LunchService>()
     val controller = LunchController(parser, executor, service)
 
