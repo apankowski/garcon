@@ -1,5 +1,6 @@
 package dev.pankowski.garcon.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.hash.Hashing
 import dev.pankowski.garcon.domain.SlackConfig
 import io.kotest.core.extensions.Extension
@@ -33,16 +34,19 @@ import java.util.*
 class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
 
   @LocalServerPort
-  protected var serverPort: Int = 0
+  private var serverPort: Int = 0
 
   @LocalManagementPort
-  protected var managementPort: Int = 0
+  private var managementPort: Int = 0
 
   @Autowired
   private lateinit var flyway: Flyway
 
   @Autowired
   private lateinit var slackConfig: SlackConfig
+
+  @Autowired
+  private lateinit var objectMapper: ObjectMapper
 
   init {
     body()
@@ -54,6 +58,10 @@ class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
 
   override suspend fun beforeSpec(spec: Spec) {
     RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
+    // Make RestAssured use Spring-configured ObjectMapper for (de)serialization.
+    config = config().objectMapperConfig(
+      config.objectMapperConfig.jackson2ObjectMapperFactory { _, _ -> objectMapper }
+    )
   }
 
   override suspend fun beforeTest(testCase: TestCase) {
@@ -86,7 +94,7 @@ class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
       .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)!!
 }
 
-class SlackRequestSigningInterceptor(signingSecret: String) : HttpRequestInterceptor {
+private class SlackRequestSigningInterceptor(signingSecret: String) : HttpRequestInterceptor {
 
   private val supportedHttpMethods = setOf(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH)
   private val hashFunction = Hashing.hmacSha256(signingSecret.toByteArray())
