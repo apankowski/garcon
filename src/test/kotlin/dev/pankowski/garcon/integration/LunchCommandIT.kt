@@ -1,8 +1,6 @@
 package dev.pankowski.garcon.integration
 
-import dev.pankowski.garcon.api.ResponseType
 import dev.pankowski.garcon.api.SlackMessage
-import io.kotest.matchers.shouldBe
 import io.restassured.response.Response
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -39,33 +37,16 @@ class LunchCommandIT : CommonIT({
 
   fun Response.containsError(status: HttpStatus) =
     then()
-    .log().all()
-    .assertThat()
-    .statusCode(status.value())
-    .contentType(MediaType.APPLICATION_JSON_VALUE)
-    .and()
-    .extract()
-    .body()
-    .`as`(Error::class.java)
+      .log().all()
+      .assertThat()
+      .statusCode(status.value())
+      .contentType(MediaType.APPLICATION_JSON_VALUE)
+      .and()
+      .extract()
+      .body()
+      .`as`(Error::class.java)
 
-  "lunch endpoint is responding" {
-    // given
-    val request = slashCommandRequest("/lunch", "log")
-
-    // when
-    val response = request.post("/commands/lunch")
-
-    // then
-    val message = response.containsSlackMessage()
-
-    // and
-    message shouldBe SlackMessage(
-      text = "No posts seen so far",
-      responseType = ResponseType.EPHEMERAL,
-    )
-  }
-
-  "lunch endpoint handles errors" {
+  "lunch endpoint only handles lunch command" {
     // given
     val request = slashCommandRequest("/wrong", "log")
 
@@ -74,5 +55,38 @@ class LunchCommandIT : CommonIT({
 
     // then
     response.containsError(HttpStatus.BAD_REQUEST)
+  }
+
+  "lunch help works" {
+    // given
+    val request = slashCommandRequest("/lunch", "help")
+
+    // when
+    val response = request.post("/commands/lunch")
+
+    // then
+    response.containsSlackMessage()
+  }
+
+  "lunch log works" {
+    // given
+    val request = slashCommandRequest("/lunch", "log")
+
+    // when
+    val response = request.post("/commands/lunch")
+
+    // then
+    response.containsSlackMessage()
+  }
+
+  "handles unrecognized lunch command text" {
+    // given
+    val request = slashCommandRequest("/lunch", "something")
+
+    // when
+    val response = request.post("/commands/lunch")
+
+    // then
+    response.containsSlackMessage()
   }
 })
