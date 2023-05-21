@@ -22,11 +22,8 @@ class SlackConfigurationTest : FreeSpec({
   "converts OK-not-OK responses to Slack API exceptions" {
     // given
     server.givenThat(
-      post(UrlPattern.ANY).willReturn(
-        ok(
-          """{"ok": false,"error": "some_error"}"""
-        )
-      )
+      post(UrlPattern.ANY)
+        .willReturn(ok("""{"ok": false,"error": "some_error"}"""))
     )
 
     // and
