@@ -4,7 +4,6 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.ok
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.matching.UrlPattern
-import com.slack.api.SlackConfig
 import com.slack.api.methods.SlackApiException
 import com.slack.api.methods.request.chat.ChatPostMessageRequest
 import io.kotest.assertions.assertSoftly
@@ -27,10 +26,7 @@ class SlackConfigurationTest : FreeSpec({
     )
 
     // and
-    val baseSlackConfig = SlackConfig().apply {
-      methodsEndpointUrlPrefix = server.url("/")
-    }
-    val methodsApi = SlackConfiguration(baseSlackConfig).slackApi().methods()
+    val methodsApi = SlackConfiguration(server.url("/")).slackApi().methods()
     val request = ChatPostMessageRequest.builder().text("some text").build()
 
     // when
