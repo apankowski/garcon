@@ -55,7 +55,8 @@ fun someSlackConfig(
   signingSecret: String? = null,
   token: String = "xoxb-some-token",
   channel: String = "#random",
-) = SlackConfig(signingSecret, token, channel)
+  methodsApiBaseUrl: String? = null,
+) = SlackConfig(signingSecret, token, channel, methodsApiBaseUrl)
 
 fun someRepostRetryConfig(
   interval: Duration? = Duration.ofMinutes(10),

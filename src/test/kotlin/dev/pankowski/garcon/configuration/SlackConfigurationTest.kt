@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.matching.UrlPattern
 import com.slack.api.methods.SlackApiException
 import com.slack.api.methods.request.chat.ChatPostMessageRequest
+import dev.pankowski.garcon.domain.someSlackConfig
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
@@ -22,16 +23,17 @@ class SlackConfigurationTest : FreeSpec({
     // given
     server.givenThat(
       post(UrlPattern.ANY)
-        .willReturn(ok("""{"ok": false,"error": "some_error"}"""))
+        .willReturn(ok("""{"ok": false, "error": "some_error"}"""))
     )
 
     // and
-    val methodsApi = SlackConfiguration(server.url("/")).slackApi().methods()
+    val slackConfig = someSlackConfig(methodsApiBaseUrl = server.url("/"))
+    val slackMethodsApi = SlackConfiguration(slackConfig).slackMethodsApi()
     val request = ChatPostMessageRequest.builder().text("some text").build()
 
     // when
     val exception = shouldThrow<SlackApiException> {
-      methodsApi.chatPostMessage(request)
+      slackMethodsApi.chatPostMessage(request)
     }
 
     // then
