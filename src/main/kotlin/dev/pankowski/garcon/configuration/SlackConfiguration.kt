@@ -1,30 +1,32 @@
 package dev.pankowski.garcon.configuration
 
-import com.slack.api.Slack
 import com.slack.api.methods.SlackApiException
 import com.slack.api.util.http.listener.HttpResponseListener
-import org.springframework.beans.factory.annotation.Value
+import dev.pankowski.garcon.domain.SlackConfig
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import com.slack.api.SlackConfig
+import com.slack.api.Slack as SlackApi
+import com.slack.api.SlackConfig as SdkSlackConfig
+import com.slack.api.methods.MethodsClient as SlackMethodsApi
 
 // Declared Slack SDK beans are AutoCloseable. Therefore, Spring will close them on context shutdown.
 @Configuration
-class SlackConfiguration(
-  // Base URL of Slack's Methods API. Not in application configuration as it's only used for testing.
-  @Value("\${lunch.slack.api.methods-base-url:#{null}}") private val slackApiMethodsBaseUrl: String?,
-) {
+class SlackConfiguration(private val slackConfig: SlackConfig) {
 
   @Bean
   fun slackConfig() =
-    SlackConfig().apply {
+    SdkSlackConfig().apply {
       httpClientResponseHandlers.add(OkNotOkResponseHandler())
-      if (slackApiMethodsBaseUrl != null) methodsEndpointUrlPrefix = slackApiMethodsBaseUrl
+      if (slackConfig.methodsApiBaseUrl != null) methodsEndpointUrlPrefix = slackConfig.methodsApiBaseUrl
     }
 
   @Bean
-  fun slackApi(): Slack =
-    Slack.getInstance(slackConfig())
+  fun slackApi(): SlackApi =
+    SlackApi.getInstance(slackConfig())
+
+  @Bean
+  fun slackMethodsApi(): SlackMethodsApi =
+    slackApi().methods(slackConfig.token)
 
   /**
    * Handler of HTTP OK-but-not-"OK" Slack API responses, converting them to proper exceptions.

@@ -1,6 +1,5 @@
 package dev.pankowski.garcon.infrastructure
 
-import com.slack.api.Slack
 import com.slack.api.methods.request.chat.ChatPostMessageRequest
 import dev.pankowski.garcon.domain.PageName
 import dev.pankowski.garcon.domain.SlackMessageId
@@ -12,7 +11,9 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
 import java.net.URL
+import com.slack.api.methods.MethodsClient as SlackMethodsApi
 
 class SdkBasedSlackTest : FreeSpec({
 
@@ -26,18 +27,18 @@ class SdkBasedSlackTest : FreeSpec({
 
     // and
     val slackConfig = someSlackConfig(token = "xoxb-token", channel = "#channel")
-    // Matchers in chained verifications don't seem to work: https://github.com/mockk/mockk/issues/447
-    // So, we're declaring the capturing here and assert on the captured value later.
-    val requestSlot = slot<ChatPostMessageRequest>()
-    val slackApi = mockk<Slack> {
-      every { methods("xoxb-token").chatPostMessage(capture(requestSlot)).ts } returns "some-message-id"
+    val slackMethodsApi = mockk<SlackMethodsApi> {
+      every { chatPostMessage(any<ChatPostMessageRequest>()).ts } returns "some-message-id"
     }
-    val slack = SdkBasedSlack(slackConfig, slackApi)
+    val slack = SdkBasedSlack(slackConfig, slackMethodsApi)
 
     // when
     val slackMessageId = slack.repost(post, pageName)
 
     // then
+    val requestSlot = slot<ChatPostMessageRequest>()
+    verify { slackMethodsApi.chatPostMessage(capture(requestSlot)) }
+
     assertSoftly {
       requestSlot.captured.channel shouldBe "#channel"
       requestSlot.captured.text shouldBe

@@ -4,13 +4,15 @@ import com.slack.api.methods.request.chat.ChatPostMessageRequest
 import dev.pankowski.garcon.domain.*
 import org.slf4j.LoggerFactory.getLogger
 import org.springframework.stereotype.Component
-import com.slack.api.Slack as SlackApi
+import com.slack.api.methods.MethodsClient as SlackMethodsApi
 
 @Component
-class SdkBasedSlack(private val slackConfig: SlackConfig, slackApi: SlackApi) : Slack {
+class SdkBasedSlack(
+  private val slackConfig: SlackConfig,
+  private val slackMethodsApi: SlackMethodsApi,
+) : Slack {
 
   private val log = getLogger(javaClass)
-  private val methodsApi = slackApi.methods(slackConfig.token)
 
   override fun repost(post: Post, pageName: PageName): SlackMessageId {
     log.debug("Reposting on Slack: {}", post)
@@ -26,7 +28,7 @@ class SdkBasedSlack(private val slackConfig: SlackConfig, slackApi: SlackApi) : 
       )
       .build()
 
-    return methodsApi
+    return slackMethodsApi
       .chatPostMessage(request)
       .let { SlackMessageId(it.ts) }
   }

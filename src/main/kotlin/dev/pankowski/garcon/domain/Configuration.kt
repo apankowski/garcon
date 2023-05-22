@@ -74,6 +74,9 @@ data class SlackConfig(
 
   /** Channel ID (`C1234567`) or name (`#random`) to send reposts to. */
   val channel: String,
+
+  /** Base URL of Slack's Methods API. Used for testing purposes. */
+  val methodsApiBaseUrl: String? = null,
 )
 
 /** Configuration of retrying failed reposts. */
