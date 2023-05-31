@@ -14,10 +14,10 @@ plugins {
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
   id("com.avast.gradle.docker-compose") version "0.16.12"
-  id("org.flywaydb.flyway") version "9.19.0"
-  id("nu.studer.jooq") version "8.2"
+  id("org.flywaydb.flyway") version "9.19.1"
+  id("nu.studer.jooq") version "8.2.1"
   jacoco
-  id("org.sonarqube") version "4.0.0.2929"
+  id("org.sonarqube") version "4.2.0.3129"
 }
 
 tasks.wrapper {
