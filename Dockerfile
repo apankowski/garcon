@@ -10,7 +10,7 @@ RUN \
     apk --no-cache add 'curl>=7.80.0' && \
     # Update libssl and libcrypto defending against CVE-2023-0465
     # Remove once default version in base image is >= 1.1.1t-r3
-    apk --no-cache add --upgrade 'libssl1.1>=1.1.1t'
+    apk --no-cache add --upgrade 'libssl1.1>=1.1.1u-r1' 'libcrypto1.1>=1.1.1u-r1'
 
 RUN addgroup -S nonroot && \
     adduser -S -H -G nonroot nonroot && \
