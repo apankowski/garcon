@@ -6,6 +6,7 @@ import io.kotest.matchers.ints.beGreaterThan
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.test.context.TestPropertySource
@@ -14,12 +15,11 @@ import kotlin.time.Duration.Companion.seconds
 
 @TestPropertySource(
   properties = [
-    "lunch.sync.interval: PT0.2S",
-    "lunch.repost.retry.interval: PT0.2S",
-    "spring.main.allow-bean-definition-overriding: true"
+    "lunch.sync.interval = PT0.5S",
+    "lunch.repost.retry.interval = PT0.5S",
   ]
 )
-class ScheduledTaskIT(private val lunchService: LunchService) : CommonIT() {
+class ScheduledTaskIT : CommonIT() {
 
   // Maybe use https://github.com/Ninja-Squad/springmockk ?
   @TestConfiguration
@@ -29,8 +29,11 @@ class ScheduledTaskIT(private val lunchService: LunchService) : CommonIT() {
     fun lunchService() = mockk<LunchService>()
   }
 
+  @Autowired
+  private lateinit var lunchService: LunchService
+
   init {
-    "post synchronization is called regularly" {
+    "post synchronization scheduled task runs regularly" {
       // given
       val counter = AtomicInteger(0)
 
@@ -42,7 +45,7 @@ class ScheduledTaskIT(private val lunchService: LunchService) : CommonIT() {
       }
     }
 
-    "retrying of failed reposts is called regularly" {
+    "failed repost retrying scheduled task runs regularly" {
       // given
       val counter = AtomicInteger(0)
 

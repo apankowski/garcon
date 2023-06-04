@@ -3,6 +3,7 @@ package dev.pankowski.garcon.domain
 import com.google.common.annotations.VisibleForTesting
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
 import java.time.Instant
 
@@ -57,6 +58,7 @@ class Reposter(
 
   private val log = LoggerFactory.getLogger(javaClass)
 
+  @Transactional
   fun repost(post: SynchronizedPost) =
     Mdc.extendedWith(post.id) {
       when (post.repost) {

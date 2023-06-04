@@ -11,6 +11,9 @@ import dev.pankowski.garcon.architecture.Packages.Infrastructure
 import dev.pankowski.garcon.architecture.Packages.SpringFramework
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Isolation
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 
 class PackageDependencyTest : ArchUnitSpec({
 
@@ -33,6 +36,9 @@ class PackageDependencyTest : ArchUnitSpec({
           resideInAPackage(SpringFramework),
           not(type(Component::class.java)),
           not(type(ConfigurationProperties::class.java)),
+          not(type(Transactional::class.java)),
+          not(type(Isolation::class.java)),
+          not(type(Propagation::class.java)),
         )
       )
 

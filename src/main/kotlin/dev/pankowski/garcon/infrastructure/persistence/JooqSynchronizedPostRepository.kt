@@ -215,7 +215,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       .map(::toDomainObject)
       .toList()
 
-  @Transactional(readOnly = true)
+  // Don't define read-only @Transactional since the block might modify the database
   override fun streamRetryable(block: (SynchronizedPost) -> Unit) =
     context.selectFrom(SYNCHRONIZED_POSTS)
       .where(SYNCHRONIZED_POSTS.REPOST_STATUS.equal(RepostStatus.FAILED))

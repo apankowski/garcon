@@ -29,7 +29,10 @@ import org.springframework.test.context.ActiveProfiles
 import java.time.Instant
 import java.util.*
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+  webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+  properties = ["spring.main.allow-bean-definition-overriding = true"],
+)
 @ActiveProfiles("no-scheduled-tasks")
 class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
 
