@@ -65,7 +65,7 @@ Create a Slack app if you don't have one already:
 2. Pick a name & workspace to which the app should belong.
 3. Configure additional stuff like description & icon.
 
-Configure _Incoming Webhooks_ and _Slash Commands_ for the app:
+Configure permissions and _Slash Commands_ for the app:
 
 1. Go to [Slack Apps](https://api.slack.com/apps) → click on the name of your app.
 2. Go to _Slash Commands_ (under _Features_ submenu) → _Create New Command_ → _Command_: `/lunch`, _Request URL_: `{BASE_URI}/commands/lunch` where `{BASE_URI}` is the base URI under which the bot will be deployed/will handle requests → _Save_.
@@ -129,9 +129,18 @@ The service exposes [many metrics](https://docs.spring.io/spring-boot/docs/curre
 
 ## Possible further work
 
-* Slack webhook testing subcommand
+* Slack configuration testing subcommand sending a test message
 * Update/delete reposts based on upstream
 * Custom business & technical metrics
 * Adding verification of Slack request timestamps to prevent replay attacks
 * Management / backoffice UI
 * [Instagram](https://www.instagram.com/) support
+
+## Checks
+
+The repository contains definition of [pre-commit](https://pre-commit.com/) hooks in `.pre-commit-config.yaml`. After installation, before each commit, it automatically runs [Gitleaks](https://gitleaks.io/) on all staged changes.
+
+To run these checks without making a commit:
+
+* on staged files: `pre-commit run`,
+* on all files: `pre-commit run -a`.

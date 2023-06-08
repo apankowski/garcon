@@ -1,0 +1,22 @@
+title = "Garcon Gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Global allow list"
+paths = [
+  # Ignore this file.
+  '''gitleaks\.toml''',
+  # Ignore HTML dumps as they typically contain values resembling secrets.
+  '''\.html''',
+]
+
+stopwords = [
+  # Slack request signing secrets from example in official documentation, used in tests.
+  # See: https://api.slack.com/authentication/verifying-requests-from-slack
+  '''8f742231b10e8888abcd99yyyzzz85a5''',
+  '''xyzz0WbapA4vBCDEFasx0q6G''',
+  # Fake example of a Slack webhook, used in the past in README.
+  '''https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX''',
+]
