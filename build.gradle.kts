@@ -9,12 +9,12 @@ plugins {
   kotlin("jvm") version "1.8.22"
   kotlin("kapt") version "1.8.22"
   kotlin("plugin.spring") version "1.8.22"
-  id("org.springframework.boot") version "3.1.0"
+  id("org.springframework.boot") version "3.1.1"
   id("io.spring.dependency-management") version "1.1.0"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
   id("com.avast.gradle.docker-compose") version "0.16.12"
-  id("org.flywaydb.flyway") version "9.19.4"
+  id("org.flywaydb.flyway") version "9.20.0"
   id("nu.studer.jooq") version "8.2.1"
   jacoco
   id("org.sonarqube") version "4.2.1.3168"
@@ -34,7 +34,7 @@ repositories {
 
 dependencyManagement {
   dependencies {
-    dependency("com.google.guava:guava:32.0.1-jre")
+    dependency("com.google.guava:guava:32.1.1-jre")
     dependency("org.jsoup:jsoup:1.16.1")
     dependency("org.mozilla:rhino:1.7.14")
     dependency("net.thisptr:jackson-jq:1.0.0-preview.20230409")
