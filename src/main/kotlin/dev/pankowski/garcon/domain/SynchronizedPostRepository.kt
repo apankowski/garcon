@@ -5,7 +5,7 @@ class SynchronizedPostModifiedConcurrently(message: String) : RuntimeException(m
 class SynchronizedPostHasDuplicateExternalId(message: String) : RuntimeException(message)
 
 data class SynchronizedPostStoreData(
-  val pageId: PageId,
+  val pageKey: PageKey,
   val pageName: PageName,
   val post: Post,
   val classification: Classification,

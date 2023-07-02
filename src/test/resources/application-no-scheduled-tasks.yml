@@ -11,7 +11,7 @@ lunch:
     retryMinJitter: PT1S
     retryMaxJitter: PT4S
   pages:
-  - id: PŻPS
+  - key: PŻPS
     url: http://localhost:9876/lunch/facebook/pzps/posts
   post:
     locale: pl_PL

@@ -9,7 +9,7 @@ data class SynchronizedPost(
   val version: Version,
   val createdAt: Instant,
   val updatedAt: Instant,
-  val pageId: PageId,
+  val pageKey: PageKey,
   val pageName: PageName,
   val post: Post,
   val classification: Classification,

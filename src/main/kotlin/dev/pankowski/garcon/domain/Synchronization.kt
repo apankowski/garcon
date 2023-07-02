@@ -36,7 +36,7 @@ class PageSynchronizer(
         Classification.REGULAR_POST -> Repost.Skip
       }
       val id = repository.store(
-        SynchronizedPostStoreData(pageConfig.id, pageName, new.post, new.classification, repost)
+        SynchronizedPostStoreData(pageConfig.key, pageName, new.post, new.classification, repost)
       )
       return repository.findExisting(id)
     }

@@ -9,29 +9,29 @@ import org.slf4j.MDC
 
 class MdcTest : FreeSpec({
 
-  "allows setting page ID for a closure" {
+  "allows setting page key for a closure" {
     // given
-    val id = PageId("1234")
-    MDC.get("pageId") should beNull()
+    val id = PageKey("SomePageKey")
+    MDC.get("pageKey") should beNull()
 
     // when
-    val capturedValue = Mdc.extendedWith(id) { MDC.get("pageId") }
+    val capturedValue = Mdc.extendedWith(id) { MDC.get("pageKey") }
 
     // then
     capturedValue shouldBe id.value
-    MDC.get("pageId") should beNull()
+    MDC.get("pageKey") should beNull()
   }
 
-  "clears page ID when closure fails" {
+  "clears page key when closure fails" {
     // when
     shouldThrowAny {
-      Mdc.extendedWith(PageId("1234")) {
+      Mdc.extendedWith(PageKey("SomePageKey")) {
         throw RuntimeException("Something went wrong")
       }
     }
 
     // then
-    MDC.get("pageId") should beNull()
+    MDC.get("pageKey") should beNull()
   }
 
   "allows setting synchronized post ID for a closure" {

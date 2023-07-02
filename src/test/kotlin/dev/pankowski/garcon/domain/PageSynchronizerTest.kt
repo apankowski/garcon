@@ -65,7 +65,7 @@ class PageSynchronizerTest : FreeSpec({
       // then
       assertSoftly(repository.findBy(post.externalId)) {
         it.shouldNotBeNull()
-        it.pageId shouldBe pageConfig.id
+        it.pageKey shouldBe pageConfig.key
         it.pageName shouldBe page.name
         it.post shouldBe post
         it.classification shouldBe classification

@@ -3,7 +3,7 @@ CREATE TABLE synchronized_posts (
   version INTEGER NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
-  page_id TEXT NOT NULL,
+  page_key TEXT NOT NULL,
   page_name TEXT NOT NULL,
   post_external_id TEXT NOT NULL,
   post_url TEXT NOT NULL,

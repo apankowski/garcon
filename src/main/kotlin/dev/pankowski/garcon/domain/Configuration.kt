@@ -16,8 +16,8 @@ data class LunchConfig(
 /** Configuration of a single lunch page to synchronize. */
 data class PageConfig(
 
-  /** ID of Facebook post page containing lunch posts. */
-  val id: PageId,
+  /** Key of Facebook post page containing lunch posts. */
+  val key: PageKey,
 
   /** URL of Facebook post page containing lunch posts. */
   val url: URL,
