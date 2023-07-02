@@ -12,7 +12,7 @@ class LunchServiceTest : FreeSpec({
     val pageConfig = somePageConfig()
     val lunchConfig = someLunchConfig(pages = listOf(pageConfig))
 
-    val synchronizer = mockk<PageSynchronizer> { every { synchronize(any()) } returns emptySequence() }
+    val synchronizer = mockk<PageSynchronizer> { every { synchronize(any()) } returns emptyList() }
     val service = LunchService(lunchConfig, mockk(), synchronizer, mockk())
 
     // when
@@ -28,7 +28,7 @@ class LunchServiceTest : FreeSpec({
     val synchronizedPost = someSynchronizedPost(classification = Classification.LUNCH_POST, repost = Repost.Pending)
     val delta = SynchronizedPostDelta(old = null, new = synchronizedPost).also { assert(it.lunchPostAppeared) }
 
-    val synchronizer = mockk<PageSynchronizer> { every { synchronize(any()) } returns sequenceOf(delta) }
+    val synchronizer = mockk<PageSynchronizer> { every { synchronize(any()) } returns listOf(delta) }
     val reposter = mockk<Reposter> { every { repost(synchronizedPost) } returns Unit }
 
     val service = LunchService(someLunchConfig(), mockk(), synchronizer, reposter)
@@ -46,7 +46,7 @@ class LunchServiceTest : FreeSpec({
     val synchronizedPost = someSynchronizedPost(classification = Classification.REGULAR_POST)
     val delta = SynchronizedPostDelta(old = null, new = synchronizedPost).also { assert(!it.lunchPostAppeared) }
 
-    val synchronizer = mockk<PageSynchronizer> { every { synchronize(any()) } returns sequenceOf(delta) }
+    val synchronizer = mockk<PageSynchronizer> { every { synchronize(any()) } returns listOf(delta) }
     val reposter = mockk<Reposter>()
 
     val service = LunchService(someLunchConfig(), mockk(), synchronizer, reposter)

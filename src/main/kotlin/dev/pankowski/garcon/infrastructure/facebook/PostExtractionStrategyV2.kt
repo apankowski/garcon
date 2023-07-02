@@ -69,10 +69,9 @@ class PostExtractionStrategyV2 : PostExtractionStrategy {
         if (isEmpty()) log.warn("No posts found. Returned representation might have changed.")
         else if (size > 1) log.warn("More than one post found. Returned representation might have changed.")
       }
-      .asSequence()
 
   private fun extractPostsFromObjectLiteral(objectLiteral: ObjectNode): Posts {
-    var result = emptyList<Post>()
+    var result: Posts = emptyList()
     postsQuery.apply(rootScope, objectLiteral) { output ->
       if (output is ArrayNode) result = extractPostsFromQueryOutput(output)
     }

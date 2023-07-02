@@ -125,7 +125,7 @@ class LunchIT : CommonIT() {
       val pageName = somePageName()
       val post = somePost(content = "some lunch offer") // Note the keyword
 
-      every { pageClient.load(any()) } returns Page(pageName, sequenceOf(post))
+      every { pageClient.load(any()) } returns Page(pageName, listOf(post))
       every { slack.repost(post, pageName) } returns SlackMessageId("some-slack-id")
 
       val request = slashCommandRequest("/lunch", "check")
@@ -157,7 +157,7 @@ class LunchIT : CommonIT() {
       val pageName = somePageName()
       val post = somePost(content = "some lunch offer") // Note the keyword
 
-      every { pageClient.load(any()) } returns Page(pageName, sequenceOf(post))
+      every { pageClient.load(any()) } returns Page(pageName, listOf(post))
       every { slack.repost(any(), any()) } returns SlackMessageId("some-slack-id")
 
       // when

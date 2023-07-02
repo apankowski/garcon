@@ -9,7 +9,7 @@ import java.net.URL
 import kotlin.random.Random
 
 interface PostExtractionStrategy {
-  fun extractPosts(document: Document): Sequence<Post>
+  fun extractPosts(document: Document): Posts
 }
 
 @Component
@@ -23,11 +23,14 @@ class JsoupPageClient(
   override fun load(pageConfig: PageConfig): Page {
     val document = fetchDocument(pageConfig.url)
     val pageName = extractPageName(document, pageConfig)
-    val posts = strategies.asSequence()
+    return strategies.asSequence()
       .map { it.extractPosts(document) }
-      .firstNonEmpty()
-      .onEmpty { log.warn("None of the Facebook post extraction strategies was able to extract post data") }
-    return Page(pageName, posts)
+      .firstOrNull { it.isNotEmpty() }
+      .orEmpty()
+      .apply {
+        if (isEmpty()) log.warn("None of the Facebook post extraction strategies was able to extract post data")
+      }
+      .let { Page(pageName, it) }
   }
 
   private fun fetchDocument(url: URL): Document {
@@ -71,20 +74,4 @@ class JsoupPageClient(
     log.warn("Couldn't extract page name from document at ${pageConfig.url}. Structure of the page might have changed")
     throw IllegalArgumentException("Page name couldn't be extracted")
   }
-
-  private fun <T> Sequence<Sequence<T>>.firstNonEmpty() =
-    Sequence {
-      // Access iterators lazily, at most once per invocation in case any of the sequences
-      // doesn't support iterating over it multiple times (see Sequence documentation).
-      this@firstNonEmpty
-        .map { it.iterator() }
-        .firstOrNull { it.hasNext() }
-        ?: emptySequence<T>().iterator()
-    }
-
-  private fun <T> Sequence<T>.onEmpty(action: () -> Unit) =
-    Sequence {
-      this@onEmpty.iterator()
-        .apply { if (!hasNext()) action.invoke() }
-    }
 }

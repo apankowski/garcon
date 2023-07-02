@@ -25,7 +25,7 @@ class PageSynchronizer(
 
   private val log = LoggerFactory.getLogger(javaClass)
 
-  fun synchronize(pageConfig: PageConfig): Sequence<SynchronizedPostDelta> {
+  fun synchronize(pageConfig: PageConfig): Iterable<SynchronizedPostDelta> {
     log.info("Synchronizing posts of {}", pageConfig)
 
     val (pageName, posts) = pageClient.load(pageConfig)
