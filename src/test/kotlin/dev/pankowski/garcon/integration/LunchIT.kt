@@ -173,7 +173,7 @@ class LunchIT : CommonIT() {
 
       repository.store(
         SynchronizedPostStoreData(
-          pageId = somePageConfig().id,
+          pageKey = somePageConfig().key,
           pageName = somePageName(),
           post = somePost(),
           classification = Classification.LUNCH_POST,

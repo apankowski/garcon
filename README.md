@@ -47,7 +47,7 @@ Useful commands:
 * `./gradlew test` - runs all tests
 * `./gradlew bootJar` - build & package the service as a fat JAR
 * `./gradlew bootRun` - build & run the service locally
-* `./gradlew jooq-codegen-database` - (re)generate Jooq classes
+* `./gradlew generateJooq` - (re)generate Jooq classes
 * `./gradlew databaseUp` - run a local, empty, fully migrated PostgreSQL database (convenient for testing the service locally or running integration tests from IDE)
 * `./gradlew databaseDown` - shut down local PostgreSQL database
 
@@ -107,7 +107,7 @@ Create an empty PostgreSQL database for the bot with UTF-8 encoding to support e
 | `LUNCH_CLIENT_RETRY_COUNT` | Number of retries in case of failure. | ✗ | `2` |
 | `LUNCH_CLIENT_RETRY_MIN_JITTER` | Min wait time between retries. | ✗ | `PT0.05S` |
 | `LUNCH_CLIENT_RETRY_MAX_JITTER` | Max wait time between retries. | ✗ | `PT3S` |
-| `LUNCH_PAGES_<INDEX>_ID`, e.g. `LUNCH_PAGES_0_ID` | Textual identifier of the lunch page presented as the name of the page when reposting. Should not change once assigned. | ✓ | `PŻPS` |
+| `LUNCH_PAGES_<INDEX>_KEY`, e.g. `LUNCH_PAGES_0_KEY` | Textual key of the lunch page, used as fallback for the page name when reposting. Should not change once assigned. | ✓ | `PŻPS` |
 | `LUNCH_PAGES_<INDEX>_URL`, e.g. `LUNCH_PAGES_0_URL` | URL of the lunch page. | ✓ | `https://www.facebook.com/1597565460485886/posts/` |
 | `LUNCH_POST_LOCALE` | Locale of text of posts used while extracting their keywords. | ✗ | `Locale.ENGLISH` |
 | `LUNCH_POST_KEYWORDS_<INDEX>_TEXT`, e.g. `LUNCH_POST_KEYWORDS_0_TEXT` | The keyword that makes a post be considered as a lunch post, e.g. `lunch` or `menu`. | ✗ | `lunch` |

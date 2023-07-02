@@ -29,8 +29,8 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       createdAt = now
       updatedAt = now
 
-      // Page ID & name
-      pageId = data.pageId.value
+      // Page key & name
+      pageKey = data.pageKey.value
       pageName = data.pageName.value
 
       // Post
@@ -175,7 +175,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       version = record.version,
       createdAt = record.createdAt,
       updatedAt = record.updatedAt,
-      pageId = PageId(record.pageId),
+      pageKey = PageKey(record.pageKey),
       pageName = PageName(record.pageName),
       post = toFacebookPost(record),
       classification = record.classification,

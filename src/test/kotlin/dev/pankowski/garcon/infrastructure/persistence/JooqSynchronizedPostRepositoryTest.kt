@@ -68,7 +68,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
         version shouldBe Version.first()
         createdAt shouldBe between(before, after)
         updatedAt shouldBe createdAt
-        pageId shouldBe storeData.pageId
+        pageKey shouldBe storeData.pageKey
         post shouldBe storeData.post
         classification shouldBe storeData.classification
         repost shouldBe storeData.repost
@@ -114,7 +114,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
         version shouldBe stored.version.next()
         createdAt shouldBe stored.createdAt
         updatedAt shouldBe between(before, after)
-        pageId shouldBe stored.pageId
+        pageKey shouldBe stored.pageKey
         post shouldBe stored.post
         classification shouldBe stored.classification
         repost shouldBe newRepost
@@ -143,7 +143,7 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
         version shouldBe stored.version.next()
         createdAt shouldBe stored.createdAt
         updatedAt shouldBe between(before, after)
-        pageId shouldBe stored.pageId
+        pageKey shouldBe stored.pageKey
         post shouldBe newPost
         classification shouldBe newClassification
         repost shouldBe stored.repost

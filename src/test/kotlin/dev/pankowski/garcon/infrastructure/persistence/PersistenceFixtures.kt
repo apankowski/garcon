@@ -5,12 +5,12 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit.MINUTES
 
 fun someStoreData(
-  pageId: PageId = PageId("some page id"),
+  pageKey: PageKey = PageKey("SomePageKey"),
   pageName: PageName = PageName("some page name"),
   post: Post = somePost(),
   classification: Classification = Classification.LUNCH_POST,
   repost: Repost = Repost.Pending,
-) = SynchronizedPostStoreData(pageId, pageName, post, classification, repost)
+) = SynchronizedPostStoreData(pageKey, pageName, post, classification, repost)
 
 fun someFailedRepost(
   attempts: Int = 10,

@@ -30,9 +30,9 @@ fun someLunchConfig(
 ) = LunchConfig(pages)
 
 fun somePageConfig(
-  pageId: PageId = PageId("PID1"),
+  pageKey: PageKey = PageKey("PageKey"),
   url: URL = URL("http://localhost:4321/posts"),
-) = PageConfig(pageId, url)
+) = PageConfig(pageKey, url)
 
 fun someSyncConfig(
   interval: Duration? = Duration.ofMinutes(5),
@@ -84,9 +84,9 @@ fun someSynchronizedPost(
   version: Version = Version.first(),
   createdAt: Instant = now(),
   updatedAt: Instant = now(),
-  pageId: PageId = PageId("Some Page ID"),
+  pageKey: PageKey = PageKey("SomePageKey"),
   pageName: PageName = PageName("Some Page Name"),
   post: Post = somePost(),
   classification: Classification = Classification.LUNCH_POST,
   repost: Repost = Repost.Skip,
-) = SynchronizedPost(id, version, createdAt, updatedAt, pageId, pageName, post, classification, repost)
+) = SynchronizedPost(id, version, createdAt, updatedAt, pageKey, pageName, post, classification, repost)

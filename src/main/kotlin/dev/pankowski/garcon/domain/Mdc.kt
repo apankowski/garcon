@@ -1,8 +1,6 @@
 package dev.pankowski.garcon.domain
 
 import org.slf4j.MDC
-import dev.pankowski.garcon.domain.PageId as PageIdData
-import dev.pankowski.garcon.domain.SynchronizedPostId as SynchronizedPostIdData
 
 class Mdc {
 
@@ -15,10 +13,10 @@ class Mdc {
         MDC.remove(key)
       }
 
-    fun <T> extendedWith(pageId: PageIdData, f: () -> T): T =
-      extendedWith("pageId", pageId.value, f)
+    fun <T> extendedWith(pageKey: PageKey, f: () -> T): T =
+      extendedWith("pageKey", pageKey.value, f)
 
-    fun <T> extendedWith(synchronizedPostId: SynchronizedPostIdData, f: () -> T): T =
+    fun <T> extendedWith(synchronizedPostId: SynchronizedPostId, f: () -> T): T =
       extendedWith("synchronizedPostId", synchronizedPostId.value, f)
   }
 }
