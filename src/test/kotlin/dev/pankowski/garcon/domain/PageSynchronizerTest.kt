@@ -26,7 +26,7 @@ class PageSynchronizerTest : FreeSpec({
     val postClassifier = mockk<LunchPostClassifier>()
     val synchronizer = PageSynchronizer(repository, pageClient, postClassifier)
 
-    every { pageClient.load(any()) } returns somePage(posts = emptySequence())
+    every { pageClient.load(any()) } returns somePage(posts = emptyList())
 
     // when
     val deltas = synchronizer.synchronize(pageConfig).toList()
@@ -52,7 +52,7 @@ class PageSynchronizerTest : FreeSpec({
       // given
       val pageConfig = somePageConfig()
       val post = somePost()
-      val page = somePage(posts = sequenceOf(post))
+      val page = somePage(posts = listOf(post))
 
       val repository = InMemorySynchronizedPostRepository()
       val pageClient = mockk<PageClient> { every { load(pageConfig) } returns page }
@@ -90,7 +90,7 @@ class PageSynchronizerTest : FreeSpec({
       val pageConfig = somePageConfig()
       val post = somePost(content = "now post")
       val old = someSynchronizedPost(post = post.copy(content = "old post"), repost = someSuccessRepost())
-      val page = somePage(posts = sequenceOf(post))
+      val page = somePage(posts = listOf(post))
 
       val repository = InMemorySynchronizedPostRepository().apply { put(old) }
       val pageClient = mockk<PageClient> { every { load(pageConfig) } returns page }

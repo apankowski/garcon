@@ -3,9 +3,8 @@ package dev.pankowski.garcon.infrastructure.facebook
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.Post
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.sequences.beEmpty
-import io.kotest.matchers.sequences.shouldContainAllInAnyOrder
-import io.kotest.matchers.sequences.shouldContainExactly
+import io.kotest.matchers.collections.beEmpty
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.should
 import org.jsoup.Jsoup
 import java.net.URL
@@ -32,7 +31,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
     val result = strategy.extractPosts(document)
 
     // then
-    result shouldContainExactly sequenceOf(
+    result shouldContainExactly listOf(
       Post(
         ExternalId("0"),
         URL("https://www.facebook.com/permalink.php?story_fbid=0"),
@@ -61,7 +60,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
     val result = strategy.extractPosts(document)
 
     // then
-    result shouldContainAllInAnyOrder sequenceOf(
+    result shouldContainExactly listOf(
       Post(
         ExternalId("2342169022692189"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2342169022692189/?type=3"),

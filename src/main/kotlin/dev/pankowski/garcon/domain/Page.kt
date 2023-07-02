@@ -6,7 +6,7 @@ data class PageName(val value: String)
 
 data class Page(
   val name: PageName,
-  val posts: Sequence<Post>,
+  val posts: Posts,
 )
 
 interface PageClient {

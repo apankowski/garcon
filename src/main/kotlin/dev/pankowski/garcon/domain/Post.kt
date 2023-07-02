@@ -12,4 +12,4 @@ data class Post(
   val content: String,
 )
 
-typealias Posts = List<Post>
+typealias Posts = Collection<Post>

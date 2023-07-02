@@ -3,8 +3,8 @@ package dev.pankowski.garcon.infrastructure.facebook
 import dev.pankowski.garcon.domain.ExternalId
 import dev.pankowski.garcon.domain.Post
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.sequences.beEmpty
-import io.kotest.matchers.sequences.shouldContainExactly
+import io.kotest.matchers.collections.beEmpty
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.should
 import org.jsoup.Jsoup
 import java.net.URL
@@ -200,7 +200,7 @@ class PostExtractionStrategyV2Test : FreeSpec({
       </html>
       """.trimIndent()
 
-    val posts = sequenceOf(
+    val posts = listOf(
       Post(
         externalId = ExternalId("some-post-id-1"),
         url = URL("https://facebook.com/some-post1-permalink"),
@@ -239,7 +239,7 @@ class PostExtractionStrategyV2Test : FreeSpec({
     val result = strategy.extractPosts(document)
 
     // then
-    result shouldContainExactly sequenceOf(
+    result shouldContainExactly listOf(
       Post(
         ExternalId("1054930068793510"),
         URL("https://www.facebook.com/permalink.php?story_fbid=pfbid0L45BV7SFeSH8Gc3SQvCLHC2VUwqPc7bYtJB7kh1EN12T2uBYXYFx7BLDqoGLjDNjl&id=100028295814975"),
@@ -334,7 +334,7 @@ class PostExtractionStrategyV2Test : FreeSpec({
     val result = strategy.extractPosts(document)
 
     // then
-    result shouldContainExactly sequenceOf(
+    result shouldContainExactly listOf(
       Post(
         ExternalId("1053189635634220"),
         URL("https://www.facebook.com/permalink.php?story_fbid=pfbid0NPAVi78AX53SAGKhpdixFZH9GJ7Y54JaqUxr9hR5TNXaYDW29fKcUKHMM5bLPniXl&id=100028295814975"),

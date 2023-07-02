@@ -76,7 +76,7 @@ fun somePageName(name: String = "some name") = PageName(name)
 
 fun somePage(
   name: PageName = somePageName(),
-  posts: Sequence<Post> = emptySequence(),
+  posts: Posts = emptyList(),
 ) = Page(name, posts)
 
 fun someSynchronizedPost(

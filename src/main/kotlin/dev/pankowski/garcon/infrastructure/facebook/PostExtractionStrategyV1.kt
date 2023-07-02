@@ -27,8 +27,8 @@ class PostExtractionStrategyV1 : PostExtractionStrategy {
   override fun extractPosts(document: Document) =
     document
       .select(".userContentWrapper")
-      .asSequence()
       .mapNotNull(::processContentWrapper)
+      .sortedBy { it.publishedAt }
 
   private fun processContentWrapper(e: Element): Post? {
     // Wrap content wrapper element in a document shell to limit parent traversal.
@@ -38,14 +38,12 @@ class PostExtractionStrategyV1 : PostExtractionStrategy {
 
     val url = timestampElement
       ?.parents()
-      ?.mapNotNull(::getUrl)
-      ?.firstOrNull()
+      ?.firstNotNullOfOrNull(::getUrl)
     val facebookId = url?.let(FacebookIdExtractor::extractFacebookId)
 
     val publishedAt = timestampElement
       ?.parents()
-      ?.mapNotNull(::getTimestampData)
-      ?.firstOrNull()
+      ?.firstNotNullOfOrNull(::getTimestampData)
 
     val contentElement = e.selectFirst(".userContent")
     val content = contentElement?.let(::extractContent)
