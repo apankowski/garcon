@@ -15,13 +15,10 @@ enum class RepostStatus {
 }
 
 sealed class Repost(val status: RepostStatus) {
-  object Skip : Repost(status = RepostStatus.SKIP) {
-    override fun toString() = "Skip"
-  }
 
-  object Pending : Repost(status = RepostStatus.PENDING) {
-    override fun toString() = "Pending"
-  }
+  data object Skip : Repost(status = RepostStatus.SKIP)
+
+  data object Pending : Repost(status = RepostStatus.PENDING)
 
   data class Success(val repostedAt: Instant) : Repost(status = RepostStatus.SUCCESS)
 

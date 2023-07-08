@@ -2,19 +2,11 @@ package dev.pankowski.garcon.domain
 
 sealed class LunchSubcommand {
 
-  object Help : LunchSubcommand() {
-    override fun toString() = "Help"
-  }
+  data object Help : LunchSubcommand()
 
-  object Log : LunchSubcommand() {
-    override fun toString() = "Log"
-  }
+  data object Log : LunchSubcommand()
 
-  object CheckForLunchPost : LunchSubcommand() {
-    override fun toString() = "CheckForLunchPost"
-  }
+  data object CheckForLunchPost : LunchSubcommand()
 
-  object Unrecognized : LunchSubcommand() {
-    override fun toString() = "Unrecognized"
-  }
+  data object Unrecognized : LunchSubcommand()
 }

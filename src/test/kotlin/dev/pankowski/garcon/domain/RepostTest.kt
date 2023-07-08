@@ -14,16 +14,6 @@ import kotlin.time.toJavaDuration
 
 class RepostTest : FreeSpec({
 
-  "skipped repost defines its string representation" {
-    // expect
-    Repost.Skip.toString() shouldBe "Skip"
-  }
-
-  "pending repost defines its string representation" {
-    // expect
-    Repost.Pending.toString() shouldBe "Pending"
-  }
-
   "repost has correct status" - {
 
     data class RepostStatusTestCase(val repost: Repost, val status: RepostStatus) : WithDataTestName {
