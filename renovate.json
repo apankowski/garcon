@@ -5,7 +5,7 @@
   ],
   "configMigration": true,
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
   "packageRules": [
     {
