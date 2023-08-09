@@ -45,7 +45,7 @@ dependencyManagement {
     dependency("io.kotest.extensions:kotest-extensions-wiremock:2.0.0")
     dependency("io.mockk:mockk:1.13.5")
     dependency("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
-    dependency("com.tngtech.archunit:archunit-junit5:1.0.1")
+    dependency("com.tngtech.archunit:archunit-junit5:1.1.0")
   }
 }
 
