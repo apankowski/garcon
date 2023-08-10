@@ -10,10 +10,10 @@ plugins {
   kotlin("kapt") version "1.9.0"
   kotlin("plugin.spring") version "1.9.0"
   id("org.springframework.boot") version "3.1.2"
-  id("io.spring.dependency-management") version "1.1.2"
+  id("io.spring.dependency-management") version "1.1.3"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
-  id("com.avast.gradle.docker-compose") version "0.17.2"
+  id("com.avast.gradle.docker-compose") version "0.17.4"
   id("org.flywaydb.flyway") version "9.21.1"
   id("nu.studer.jooq") version "8.2.1"
   jacoco
