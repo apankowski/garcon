@@ -34,7 +34,7 @@ class PostSynchronizerTest : FreeSpec({
       val synchronizer = PostSynchronizer(repository, eventPublisher)
 
       // when
-      synchronizer.synchronize(pageConfig.key, page.name, listOf(classifiedPost))
+      synchronizer.synchronize(pageConfig.key, page.name, classifiedPost)
 
       // then
       val new = repository.findBy(post.externalId)!!
@@ -76,7 +76,7 @@ class PostSynchronizerTest : FreeSpec({
       val synchronizer = PostSynchronizer(repository, eventPublisher)
 
       // when
-      synchronizer.synchronize(pageConfig.key, page.name, listOf(classifiedPost))
+      synchronizer.synchronize(pageConfig.key, page.name, classifiedPost)
 
       // then
       val new = repository.findBy(post.externalId)!!
