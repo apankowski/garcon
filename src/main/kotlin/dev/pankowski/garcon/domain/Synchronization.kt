@@ -1,6 +1,7 @@
 package dev.pankowski.garcon.domain
 
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 
 @Component
@@ -8,7 +9,6 @@ class PageSynchronizer(
   private val pageClient: PageClient,
   private val lunchPostClassifier: LunchPostClassifier,
   private val postSynchronizer: PostSynchronizer,
-  private val reposter: Reposter,
 ) {
 
   private val log = LoggerFactory.getLogger(javaClass)
@@ -19,7 +19,6 @@ class PageSynchronizer(
       val page = pageClient.load(pageConfig)
       val classifiedPosts = page.posts.map { lunchPostClassifier.classified(it) }
       postSynchronizer.synchronize(pageConfig.key, page.name, classifiedPosts)
-        .forEach { if (it.lunchPostAppeared) reposter.repost(it.new) }
     }
 }
 
@@ -28,23 +27,19 @@ data class PostDelta(val old: Post?, val new: Post) {
   val changed = old != new
 }
 
-data class SynchronizedPostDelta(val old: SynchronizedPost?, val new: SynchronizedPost) {
-  private val oldIsLunchPost = old != null && old.classification == Classification.LUNCH_POST
-  private val newIsLunchPost = new.classification == Classification.LUNCH_POST
-  val lunchPostAppeared = !oldIsLunchPost && newIsLunchPost
-  val lunchPostDisappeared = oldIsLunchPost && !newIsLunchPost
-  val lunchPostChanged = oldIsLunchPost && newIsLunchPost && new.post != old?.post
-}
+data class SynchronizedPostCreatedEvent(val new: SynchronizedPost)
+
+data class SynchronizedPostUpdatedEvent(val old: SynchronizedPost, val new: SynchronizedPost)
 
 @Component
 class PostSynchronizer(
   private val repository: SynchronizedPostRepository,
+  private val eventPublisher: ApplicationEventPublisher,
 ) {
 
   private val log = LoggerFactory.getLogger(javaClass)
 
-  fun synchronize(pageKey: PageKey, pageName: PageName, classifiedPosts: Iterable<ClassifiedPost>):
-    Iterable<SynchronizedPostDelta> {
+  fun synchronize(pageKey: PageKey, pageName: PageName, classifiedPosts: Iterable<ClassifiedPost>) {
 
     log.info("Synchronizing classified posts")
 
@@ -53,31 +48,28 @@ class PostSynchronizer(
         Classification.LUNCH_POST -> Repost.Pending
         Classification.REGULAR_POST -> Repost.Skip
       }
-      val id = repository.store(
-        SynchronizedPostStoreData(pageKey, pageName, new.post, new.classification, repost)
-      )
-      return repository.findExisting(id)
+      return repository.store(SynchronizedPostStoreData(pageKey, pageName, new.post, new.classification, repost))
+        .let { repository.findExisting(it) }
+        .also { eventPublisher.publishEvent(SynchronizedPostCreatedEvent(it)) }
     }
 
-    fun process(classifiedPost: ClassifiedPost): SynchronizedPostDelta? {
+    fun process(classifiedPost: ClassifiedPost) {
       val old = repository.findBy(classifiedPost.post.externalId)
       val postDelta = PostDelta(old?.post, classifiedPost.post)
 
-      if (!postDelta.changed) return null
-      val new = if (postDelta.appeared) store(classifiedPost) else update(old!!, classifiedPost)
-
-      return SynchronizedPostDelta(old, new)
+      if (!postDelta.changed) return
+      else if (postDelta.appeared) store(classifiedPost)
+      else update(old!!, classifiedPost)
     }
 
-    return classifiedPosts
+    classifiedPosts
       .sortedBy { it.post.publishedAt }
-      .mapNotNull { process(it) }
-      .onEach { log.info("Post delta: {}", it) }
+      .forEach { process(it) }
   }
 
-  private fun update(old: SynchronizedPost, new: ClassifiedPost): SynchronizedPost {
-    // TODO: Reset Repost here or (better yet) move repost handling outside
-    repository.updateExisting(old.id, old.version, new.post, new.classification)
-    return repository.findExisting(old.id)
+  private fun update(existing: SynchronizedPost, matchWith: ClassifiedPost): SynchronizedPost {
+    repository.updateExisting(existing.id, existing.version, matchWith.post, matchWith.classification)
+    return repository.findExisting(existing.id)
+      .also { eventPublisher.publishEvent(SynchronizedPostUpdatedEvent(existing, it)) }
   }
 }

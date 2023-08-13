@@ -2,6 +2,7 @@ package dev.pankowski.garcon.domain
 
 import com.google.common.annotations.VisibleForTesting
 import org.slf4j.LoggerFactory
+import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
@@ -90,3 +91,21 @@ class Reposter(
     Repost.failedWithExponentialBackoff(attempt, retryConfig.maxAttempts, retryConfig.baseDelay)
 }
 
+@Component
+class RepostingSynchronizationEventHandler(private val reposter: Reposter) {
+
+  private val log = LoggerFactory.getLogger(javaClass)
+
+  @EventListener
+  fun onSynchronizedPostCreated(event: SynchronizedPostCreatedEvent) {
+    log.debug("Received {}", event)
+    if (event.new.isLunchPost) reposter.repost(event.new)
+  }
+
+  @EventListener
+  fun onSynchronizedPostUpdated(event: SynchronizedPostUpdatedEvent) {
+    log.debug("Received {}", event)
+    if (!event.old.isLunchPost && event.new.isLunchPost) reposter.repost(event.new)
+    // TODO: Handle case of lunch post update and possibly a post ceasing to be a lunch post
+  }
+}
