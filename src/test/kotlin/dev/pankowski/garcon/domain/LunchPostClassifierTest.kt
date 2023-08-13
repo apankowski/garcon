@@ -18,11 +18,11 @@ class LunchPostClassifierTest : FreeSpec({
       val post = somePost(content = content)
       val classifier = LunchPostClassifier(postConfig)
 
-      // when
-      val result = classifier.classify(post)
+      // expect
+      classifier.classify(post) shouldBe classification
 
-      // then
-      result shouldBe classification
+      // and expect
+      classifier.classified(post) shouldBe ClassifiedPost(post, classification)
     }
 
   "classifies post without lunch keyword as 'missing keywords'" - {

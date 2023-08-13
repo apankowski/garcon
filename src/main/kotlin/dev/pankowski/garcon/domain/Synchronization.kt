@@ -3,6 +3,26 @@ package dev.pankowski.garcon.domain
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
+@Component
+class PageSynchronizer(
+  private val pageClient: PageClient,
+  private val lunchPostClassifier: LunchPostClassifier,
+  private val postSynchronizer: PostSynchronizer,
+  private val reposter: Reposter,
+) {
+
+  private val log = LoggerFactory.getLogger(javaClass)
+
+  fun synchronize(pageConfig: PageConfig) =
+    Mdc.extendedWith(pageConfig.key) {
+      log.info("Synchronizing posts of {}", pageConfig)
+      val page = pageClient.load(pageConfig)
+      val classifiedPosts = page.posts.map { lunchPostClassifier.classified(it) }
+      postSynchronizer.synchronize(pageConfig.key, page.name, classifiedPosts)
+        .forEach { if (it.lunchPostAppeared) reposter.repost(it.new) }
+    }
+}
+
 data class PostDelta(val old: Post?, val new: Post) {
   val appeared = old == null
   val changed = old != new
@@ -17,18 +37,16 @@ data class SynchronizedPostDelta(val old: SynchronizedPost?, val new: Synchroniz
 }
 
 @Component
-class PageSynchronizer(
+class PostSynchronizer(
   private val repository: SynchronizedPostRepository,
-  private val pageClient: PageClient,
-  private val lunchPostClassifier: LunchPostClassifier,
 ) {
 
   private val log = LoggerFactory.getLogger(javaClass)
 
-  fun synchronize(pageConfig: PageConfig): Iterable<SynchronizedPostDelta> {
-    log.info("Synchronizing posts of {}", pageConfig)
+  fun synchronize(pageKey: PageKey, pageName: PageName, classifiedPosts: Iterable<ClassifiedPost>):
+    Iterable<SynchronizedPostDelta> {
 
-    val (pageName, posts) = pageClient.load(pageConfig)
+    log.info("Synchronizing classified posts")
 
     fun store(new: ClassifiedPost): SynchronizedPost {
       val repost = when (new.classification) {
@@ -36,24 +54,23 @@ class PageSynchronizer(
         Classification.REGULAR_POST -> Repost.Skip
       }
       val id = repository.store(
-        SynchronizedPostStoreData(pageConfig.key, pageName, new.post, new.classification, repost)
+        SynchronizedPostStoreData(pageKey, pageName, new.post, new.classification, repost)
       )
       return repository.findExisting(id)
     }
 
-    fun process(post: Post): SynchronizedPostDelta? {
-      val old = repository.findBy(post.externalId)
-      val postDelta = PostDelta(old?.post, post)
+    fun process(classifiedPost: ClassifiedPost): SynchronizedPostDelta? {
+      val old = repository.findBy(classifiedPost.post.externalId)
+      val postDelta = PostDelta(old?.post, classifiedPost.post)
 
       if (!postDelta.changed) return null
-      val classifiedPost = ClassifiedPost(post, lunchPostClassifier.classify(post))
       val new = if (postDelta.appeared) store(classifiedPost) else update(old!!, classifiedPost)
 
       return SynchronizedPostDelta(old, new)
     }
 
-    return posts
-      .sortedBy { it.publishedAt }
+    return classifiedPosts
+      .sortedBy { it.post.publishedAt }
       .mapNotNull { process(it) }
       .onEach { log.info("Post delta: {}", it) }
   }

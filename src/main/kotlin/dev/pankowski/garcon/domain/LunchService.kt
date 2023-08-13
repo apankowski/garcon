@@ -1,6 +1,5 @@
 package dev.pankowski.garcon.domain
 
-import com.google.common.annotations.VisibleForTesting
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
@@ -16,23 +15,15 @@ class LunchService(
 
   @Synchronized
   fun synchronizeAll() {
-    log.info("Checking for lunch posts")
+    log.info("Synchronizing posts of all pages")
     lunchConfig.pages.forEach { pageConfig ->
       try {
-        synchronize(pageConfig)
+        pageSynchronizer.synchronize(pageConfig)
       } catch (e: Exception) {
         log.error("Error while synchronizing posts of page $pageConfig", e)
       }
     }
   }
-
-  @VisibleForTesting
-  fun synchronize(page: PageConfig) =
-    Mdc.extendedWith(page.key) {
-      pageSynchronizer.synchronize(page).forEach {
-        if (it.lunchPostAppeared) reposter.repost(it.new)
-      }
-    }
 
   fun getLog() =
     repository.getLastSeen(20)
