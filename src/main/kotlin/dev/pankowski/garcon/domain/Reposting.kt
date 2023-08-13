@@ -106,5 +106,6 @@ class RepostingSynchronizationEventHandler(private val reposter: Reposter) {
   fun onSynchronizedPostUpdated(event: SynchronizedPostUpdatedEvent) {
     log.debug("Received {}", event)
     if (!event.old.isLunchPost && event.new.isLunchPost) reposter.repost(event.new)
+    // TODO: Handle case of lunch post update and possibly a post ceasing to be a lunch post
   }
 }

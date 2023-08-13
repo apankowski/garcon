@@ -48,10 +48,9 @@ class PostSynchronizer(
         Classification.LUNCH_POST -> Repost.Pending
         Classification.REGULAR_POST -> Repost.Skip
       }
-      val id = repository.store(SynchronizedPostStoreData(pageKey, pageName, new.post, new.classification, repost))
-      val created = repository.findExisting(id)
-      eventPublisher.publishEvent(SynchronizedPostCreatedEvent(created))
-      return created
+      return repository.store(SynchronizedPostStoreData(pageKey, pageName, new.post, new.classification, repost))
+        .let { repository.findExisting(it) }
+        .also { eventPublisher.publishEvent(SynchronizedPostCreatedEvent(it)) }
     }
 
     fun process(classifiedPost: ClassifiedPost) {
@@ -69,10 +68,8 @@ class PostSynchronizer(
   }
 
   private fun update(existing: SynchronizedPost, matchWith: ClassifiedPost): SynchronizedPost {
-    // TODO: Reset Repost here or (better yet) move repost handling outside
     repository.updateExisting(existing.id, existing.version, matchWith.post, matchWith.classification)
-    val updated = repository.findExisting(existing.id)
-    eventPublisher.publishEvent(SynchronizedPostUpdatedEvent(existing, updated))
-    return updated
+    return repository.findExisting(existing.id)
+      .also { eventPublisher.publishEvent(SynchronizedPostUpdatedEvent(existing, it)) }
   }
 }
