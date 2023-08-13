@@ -1,15 +1,6 @@
 package dev.pankowski.garcon.domain
 
-import dev.pankowski.garcon.infrastructure.persistence.InMemorySynchronizedPostRepository
-import dev.pankowski.garcon.infrastructure.persistence.someSuccessRepost
-import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.datatest.withData
-import io.kotest.matchers.collections.beEmpty
-import io.kotest.matchers.collections.containExactly
-import io.kotest.matchers.nulls.shouldNotBeNull
-import io.kotest.matchers.should
-import io.kotest.matchers.shouldBe
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
@@ -17,99 +8,68 @@ import io.mockk.verify
 
 class PageSynchronizerTest : FreeSpec({
 
-  "fetches posts" {
+  "fetches, classifies and synchronizes posts" {
     // given
     val pageConfig = somePageConfig()
 
-    val repository = InMemorySynchronizedPostRepository()
-    val pageClient = mockk<PageClient>()
-    val postClassifier = mockk<LunchPostClassifier>()
-    val synchronizer = PageSynchronizer(repository, pageClient, postClassifier)
+    val post = somePost()
+    val page = somePage(posts = listOf(post))
+    val classifiedPost = ClassifiedPost(post, Classification.LUNCH_POST)
 
-    every { pageClient.load(any()) } returns somePage(posts = emptyList())
+    val client = mockk<PageClient> { every { load(any()) } returns page }
+    val classifier = mockk<LunchPostClassifier> { every { classified(any()) } returns classifiedPost }
+    val postSynchronizer = mockk<PostSynchronizer> { every { synchronize(any(), any(), any()) } returns emptyList() }
+    val reposter = mockk<Reposter>()
+
+    val pageSynchronizer = PageSynchronizer(client, classifier, postSynchronizer, reposter)
 
     // when
-    val deltas = synchronizer.synchronize(pageConfig).toList()
+    pageSynchronizer.synchronize(pageConfig)
 
     // then
-    deltas should beEmpty()
     verify {
-      pageClient.load(pageConfig)
-      postClassifier wasNot Called
+      client.load(pageConfig)
+      classifier.classified(post)
+      postSynchronizer.synchronize(pageConfig.key, page.name, listOf(classifiedPost))
     }
   }
 
-  "stores new posts" - {
+  "reposts appearing lunch posts" {
+    // given
+    val pageConfig = somePageConfig()
 
-    data class StoreTestCase(val name: String, val classification: Classification, val repost: Repost)
+    val synchronizedPost = someSynchronizedPost(classification = Classification.LUNCH_POST, repost = Repost.Pending)
+    val delta = SynchronizedPostDelta(old = null, new = synchronizedPost).also { assert(it.lunchPostAppeared) }
 
-    withData<StoreTestCase>(
-      { "stores appearing ${it.name}" },
-      StoreTestCase("regular post", Classification.REGULAR_POST, Repost.Skip),
-      StoreTestCase("lunch post", Classification.LUNCH_POST, Repost.Pending),
-    ) { (_, classification, repost) ->
+    val client = mockk<PageClient> { every { load(any()) } returns somePage() }
+    val postSynchronizer = mockk<PostSynchronizer> { every { synchronize(any(), any(), any()) } returns listOf(delta) }
+    val reposter = mockk<Reposter> { every { repost(any()) } returns Unit }
 
-      // given
-      val pageConfig = somePageConfig()
-      val post = somePost()
-      val page = somePage(posts = listOf(post))
+    val pageSynchronizer = PageSynchronizer(client, mockk(), postSynchronizer, reposter)
 
-      val repository = InMemorySynchronizedPostRepository()
-      val pageClient = mockk<PageClient> { every { load(pageConfig) } returns page }
-      val postClassifier = mockk<LunchPostClassifier> { every { classify(post) } returns classification }
-      val synchronizer = PageSynchronizer(repository, pageClient, postClassifier)
+    // when
+    pageSynchronizer.synchronize(pageConfig)
 
-      // when
-      val deltas = synchronizer.synchronize(pageConfig).toList()
-
-      // then
-      assertSoftly(repository.findBy(post.externalId)) {
-        it.shouldNotBeNull()
-        it.pageKey shouldBe pageConfig.key
-        it.pageName shouldBe page.name
-        it.post shouldBe post
-        it.classification shouldBe classification
-        it.repost shouldBe repost
-
-        deltas should containExactly(SynchronizedPostDelta(null, it))
-      }
-    }
+    // then
+    verify { reposter.repost(synchronizedPost) }
   }
 
-  "updates existing posts" - {
+  "doesn't repost other synchronized posts" {
+    // given
+    val pageConfig = somePageConfig()
+    val synchronizedPost = someSynchronizedPost(classification = Classification.REGULAR_POST)
+    val delta = SynchronizedPostDelta(old = null, new = synchronizedPost).also { assert(!it.lunchPostAppeared) }
 
-    data class UpdateTestCase(val name: String, val classification: Classification, val repost: Repost)
+    val client = mockk<PageClient> { every { load(any()) } returns somePage() }
+    val postSynchronizer = mockk<PostSynchronizer> { every { synchronize(any(), any(), any()) } returns listOf(delta) }
+    val reposter = mockk<Reposter>()
 
-    withData<UpdateTestCase>(
-      { "updates existing ${it.name}" },
-      UpdateTestCase("regular post", Classification.REGULAR_POST, Repost.Skip),
-      UpdateTestCase("lunch post", Classification.LUNCH_POST, Repost.Pending),
-    ) { (_, classification, _) ->
+    val pageSynchronizer = PageSynchronizer(client, mockk(), postSynchronizer, reposter)
 
-      // given
-      val pageConfig = somePageConfig()
-      val post = somePost(content = "now post")
-      val old = someSynchronizedPost(post = post.copy(content = "old post"), repost = someSuccessRepost())
-      val page = somePage(posts = listOf(post))
+    // when
+    pageSynchronizer.synchronize(pageConfig)
 
-      val repository = InMemorySynchronizedPostRepository().apply { put(old) }
-      val pageClient = mockk<PageClient> { every { load(pageConfig) } returns page }
-      val postClassifier = mockk<LunchPostClassifier> { every { classify(post) } returns classification }
-      val synchronizer = PageSynchronizer(repository, pageClient, postClassifier)
-
-      // when
-      val deltas = synchronizer.synchronize(pageConfig).toList()
-
-      // then
-      assertSoftly(repository.findBy(post.externalId)) { new ->
-        new.shouldNotBeNull()
-        new.post shouldBe post
-        new.classification shouldBe classification
-        // This won't work at the moment, as updates don't reset repost status
-        //new.repost shouldBe repost
-
-        deltas should containExactly(SynchronizedPostDelta(old, new))
-      }
-    }
+    // then
+    verify { reposter wasNot Called }
   }
 })
