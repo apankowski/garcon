@@ -117,7 +117,7 @@ springBoot {
 }
 
 tasks.bootJar {
-  archiveFileName.set("application.jar")
+  archiveFileName = "application.jar"
 }
 
 // CI
@@ -137,8 +137,8 @@ jacoco {
 
 tasks.jacocoTestReport {
   reports {
-    html.required.set(true)
-    xml.required.set(true)
+    html.required = true
+    xml.required = true
   }
 }
 
@@ -155,7 +155,11 @@ sonarqube {
 // Docker compose
 
 dockerCompose {
-  useComposeFiles.set(listOf("docker-compose-integration-test.yml"))
+  useComposeFiles = listOf("docker-compose-integration-test.yml")
+  // Starting from plugin version 0.17.0, useDockerComposeV2 property defaults to true, so the new docker compose
+  // (instead of deprecated docker-compose) is used. However, docker compose v2 isn't yet packaged in mainstream
+  // linux distros. Let's not force anyone to install v2 manually and wait until distros come with v2 as the default.
+  useDockerComposeV2 = false
 }
 
 // Database
@@ -189,7 +193,7 @@ tasks.flywayMigrate {
 // Jooq
 
 jooq {
-  version.set("3.18.2")
+  version = "3.18.2"
 
   configurations {
     create("main") {
@@ -259,7 +263,7 @@ val generateJooq = tasks.named<JooqGenerate>("generateJooq")
 
 generateJooq {
   inputs.dir("src/main/resources/db/migration")
-  allInputsDeclared.set(true)
+  allInputsDeclared = true
   dependsOn(tasks.flywayMigrate)
 }
 
