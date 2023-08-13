@@ -5,10 +5,11 @@ import dev.pankowski.garcon.infrastructure.persistence.someSuccessRepost
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.datatest.withData
-import io.kotest.matchers.collections.containExactly
 import io.kotest.matchers.nulls.shouldNotBeNull
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
+import io.mockk.mockk
+import io.mockk.verify
+import org.springframework.context.ApplicationEventPublisher
 
 class PostSynchronizerTest : FreeSpec({
 
@@ -29,21 +30,26 @@ class PostSynchronizerTest : FreeSpec({
       val classifiedPost = ClassifiedPost(post, classification)
 
       val repository = InMemorySynchronizedPostRepository()
-      val synchronizer = PostSynchronizer(repository)
+      val eventPublisher = mockk<ApplicationEventPublisher>(relaxUnitFun = true)
+      val synchronizer = PostSynchronizer(repository, eventPublisher)
 
       // when
-      val deltas = synchronizer.synchronize(pageConfig.key, page.name, listOf(classifiedPost)).toList()
+      synchronizer.synchronize(pageConfig.key, page.name, listOf(classifiedPost))
 
       // then
-      assertSoftly(repository.findBy(post.externalId)) {
+      val new = repository.findBy(post.externalId)!!
+      assertSoftly(new) {
         it.shouldNotBeNull()
         it.pageKey shouldBe pageConfig.key
         it.pageName shouldBe page.name
         it.post shouldBe post
         it.classification shouldBe classification
         it.repost shouldBe repost
+      }
 
-        deltas should containExactly(SynchronizedPostDelta(null, it))
+      // and
+      verify {
+        eventPublisher.publishEvent(SynchronizedPostCreatedEvent(new))
       }
     }
   }
@@ -66,20 +72,25 @@ class PostSynchronizerTest : FreeSpec({
       val classifiedPost = ClassifiedPost(post, classification)
 
       val repository = InMemorySynchronizedPostRepository().apply { put(old) }
-      val synchronizer = PostSynchronizer(repository)
+      val eventPublisher = mockk<ApplicationEventPublisher>(relaxUnitFun = true)
+      val synchronizer = PostSynchronizer(repository, eventPublisher)
 
       // when
-      val deltas = synchronizer.synchronize(pageConfig.key, page.name, listOf(classifiedPost)).toList()
+      synchronizer.synchronize(pageConfig.key, page.name, listOf(classifiedPost))
 
       // then
-      assertSoftly(repository.findBy(post.externalId)) { new ->
-        new.shouldNotBeNull()
-        new.post shouldBe post
-        new.classification shouldBe classification
+      val new = repository.findBy(post.externalId)!!
+      assertSoftly(new) {
+        it.shouldNotBeNull()
+        it.post shouldBe post
+        it.classification shouldBe classification
         // This won't work at the moment, as updates don't reset repost status
         //new.repost shouldBe repost
+      }
 
-        deltas should containExactly(SynchronizedPostDelta(old, new))
+      // and
+      verify {
+        eventPublisher.publishEvent(SynchronizedPostUpdatedEvent(old, new))
       }
     }
   }

@@ -14,6 +14,8 @@ data class SynchronizedPost(
   val post: Post,
   val classification: Classification,
   val repost: Repost,
-)
+) {
+  val isLunchPost = classification == Classification.LUNCH_POST
+}
 
 typealias SynchronizedPosts = List<SynchronizedPost>
