@@ -28,7 +28,7 @@ class PageSynchronizerTest : FreeSpec({
     verify {
       client.load(pageConfig)
       classifier.classified(post)
-      postSynchronizer.synchronize(pageConfig.key, page.name, listOf(classifiedPost))
+      postSynchronizer.synchronize(pageConfig.key, page.name, classifiedPost)
     }
   }
 })

@@ -17,14 +17,11 @@ class PageSynchronizer(
     Mdc.extendedWith(pageConfig.key) {
       log.info("Synchronizing posts of {}", pageConfig)
       val page = pageClient.load(pageConfig)
-      val classifiedPosts = page.posts.map { lunchPostClassifier.classified(it) }
-      postSynchronizer.synchronize(pageConfig.key, page.name, classifiedPosts)
+      page.posts
+        .sortedBy { it.publishedAt }
+        .map { lunchPostClassifier.classified(it) }
+        .forEach { postSynchronizer.synchronize(pageConfig.key, page.name, it) }
     }
-}
-
-data class PostDelta(val old: Post?, val new: Post) {
-  val appeared = old == null
-  val changed = old != new
 }
 
 data class SynchronizedPostCreatedEvent(val new: SynchronizedPost)
@@ -39,9 +36,8 @@ class PostSynchronizer(
 
   private val log = LoggerFactory.getLogger(javaClass)
 
-  fun synchronize(pageKey: PageKey, pageName: PageName, classifiedPosts: Iterable<ClassifiedPost>) {
-
-    log.info("Synchronizing classified posts")
+  fun synchronize(pageKey: PageKey, pageName: PageName, classifiedPost: ClassifiedPost) {
+    log.debug("Synchronizing classified post {}", classifiedPost)
 
     fun store(new: ClassifiedPost): SynchronizedPost {
       val repost = when (new.classification) {
@@ -53,18 +49,17 @@ class PostSynchronizer(
         .also { eventPublisher.publishEvent(SynchronizedPostCreatedEvent(it)) }
     }
 
-    fun process(classifiedPost: ClassifiedPost) {
-      val old = repository.findBy(classifiedPost.post.externalId)
-      val postDelta = PostDelta(old?.post, classifiedPost.post)
-
-      if (!postDelta.changed) return
-      else if (postDelta.appeared) store(classifiedPost)
-      else update(old!!, classifiedPost)
+    data class PostDelta(val old: Post?, val new: Post) {
+      val appeared = old == null
+      val changed = old != new
     }
 
-    classifiedPosts
-      .sortedBy { it.post.publishedAt }
-      .forEach { process(it) }
+    val old = repository.findBy(classifiedPost.post.externalId)
+    val delta = PostDelta(old?.post, classifiedPost.post)
+
+    if (!delta.changed) return
+    else if (delta.appeared) store(classifiedPost)
+    else update(old!!, classifiedPost)
   }
 
   private fun update(existing: SynchronizedPost, matchWith: ClassifiedPost): SynchronizedPost {

@@ -27,7 +27,6 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import java.time.Instant
-import java.util.*
 
 @SpringBootTest(
   webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
