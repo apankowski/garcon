@@ -42,6 +42,8 @@ jobs:
 
     - name: Setup Gradle
       uses: gradle/gradle-build-action@243af859f8ca30903d9d7f7936897ca0358ba691 # v2
+      with:
+        dependency-graph: ${{ github.event_name == 'pull_request' && 'generate' || 'generate-and-submit' }}
 
     - name: Build fat JAR
       run: ./gradlew bootJar
@@ -138,11 +140,6 @@ jobs:
           hadolint-output.sarif
           trivy-output.sarif
         if-no-files-found: error
-
-    - name: Submit Gradle dependencies
-      uses: mikepenz/gradle-dependency-submission@v0.9.0
-      with:
-        include-build-environment: true
 
     - name: Cleanup Gradle Cache
       if: always()
