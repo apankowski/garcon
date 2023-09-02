@@ -17,7 +17,7 @@ plugins {
   id("org.flywaydb.flyway") version "9.22.0"
   id("nu.studer.jooq") version "8.2.1"
   jacoco
-  id("org.sonarqube") version "4.3.0.3225"
+  id("org.sonarqube") version "4.3.1.3277"
 }
 
 tasks.wrapper {
@@ -39,8 +39,8 @@ dependencyManagement {
     dependency("org.mozilla:rhino:1.7.14")
     dependency("net.thisptr:jackson-jq:1.0.0-preview.20230409")
     dependency("com.slack.api:slack-api-client:1.30.0")
-    dependency("io.kotest:kotest-runner-junit5:5.6.2")
-    dependency("io.kotest:kotest-framework-datatest:5.6.2")
+    dependency("io.kotest:kotest-runner-junit5:5.7.0")
+    dependency("io.kotest:kotest-framework-datatest:5.7.0")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.3")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:2.0.0")
     dependency("io.mockk:mockk:1.13.7")
