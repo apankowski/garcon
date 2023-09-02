@@ -118,7 +118,7 @@ jobs:
         load: true
 
     - name: Analyze image with Trivy
-      uses: aquasecurity/trivy-action@0.11.2
+      uses: aquasecurity/trivy-action@0.12.0
       id: trivy
       with:
         image-ref: apankowski/garcon:${{ github.sha }}
