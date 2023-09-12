@@ -14,7 +14,7 @@ plugins {
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
   id("com.avast.gradle.docker-compose") version "0.17.5"
-  id("org.flywaydb.flyway") version "9.22.0"
+  id("org.flywaydb.flyway") version "9.22.1"
   id("nu.studer.jooq") version "8.2.1"
   jacoco
   id("org.sonarqube") version "4.3.1.3277"
@@ -38,7 +38,7 @@ dependencyManagement {
     dependency("org.jsoup:jsoup:1.16.1")
     dependency("org.mozilla:rhino:1.7.14")
     dependency("net.thisptr:jackson-jq:1.0.0-preview.20230409")
-    dependency("com.slack.api:slack-api-client:1.31.0")
+    dependency("com.slack.api:slack-api-client:1.32.0")
     dependency("io.kotest:kotest-runner-junit5:5.7.2")
     dependency("io.kotest:kotest-framework-datatest:5.7.2")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.3")
