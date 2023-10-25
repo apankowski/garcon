@@ -3,7 +3,7 @@
 # - openjdk:20-slim is 220.77 MB compressed
 # Whereas:
 # - azul/zulu-openjdk-alpine:20-jre-headless is 66.64 MB compressed
-FROM azul/zulu-openjdk-alpine:20-jre-headless as production
+FROM azul/zulu-openjdk-alpine:21.0.1-jre-headless as production
 
 RUN \
     # Install curl used in the healthcheck
