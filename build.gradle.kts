@@ -6,18 +6,18 @@ import org.jooq.meta.jaxb.Logging
 // Gradle
 
 plugins {
-  kotlin("jvm") version "1.9.10"
-  kotlin("kapt") version "1.9.10"
-  kotlin("plugin.spring") version "1.9.10"
-  id("org.springframework.boot") version "3.1.3"
-  id("io.spring.dependency-management") version "1.1.3"
+  kotlin("jvm") version "1.9.20"
+  kotlin("kapt") version "1.9.20"
+  kotlin("plugin.spring") version "1.9.20"
+  id("org.springframework.boot") version "3.1.5"
+  id("io.spring.dependency-management") version "1.1.4"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "3.2.0"
   id("com.avast.gradle.docker-compose") version "0.17.5"
-  id("org.flywaydb.flyway") version "9.22.1"
+  id("org.flywaydb.flyway") version "9.22.3"
   id("nu.studer.jooq") version "8.2.1"
   jacoco
-  id("org.sonarqube") version "4.3.1.3277"
+  id("org.sonarqube") version "4.4.1.3373"
 }
 
 tasks.wrapper {
@@ -34,18 +34,18 @@ repositories {
 
 dependencyManagement {
   dependencies {
-    dependency("com.google.guava:guava:32.1.2-jre")
-    dependency("org.jsoup:jsoup:1.16.1")
+    dependency("com.google.guava:guava:32.1.3-jre")
+    dependency("org.jsoup:jsoup:1.16.2")
     dependency("org.mozilla:rhino:1.7.14")
     dependency("net.thisptr:jackson-jq:1.0.0-preview.20230409")
-    dependency("com.slack.api:slack-api-client:1.32.1")
-    dependency("io.kotest:kotest-runner-junit5:5.7.2")
-    dependency("io.kotest:kotest-framework-datatest:5.7.2")
+    dependency("com.slack.api:slack-api-client:1.35.1")
+    dependency("io.kotest:kotest-runner-junit5:5.8.0")
+    dependency("io.kotest:kotest-framework-datatest:5.8.0")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.3")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:2.0.1")
-    dependency("io.mockk:mockk:1.13.7")
+    dependency("io.mockk:mockk:1.13.8")
     dependency("com.github.tomakehurst:wiremock-standalone:3.0.1")
-    dependency("com.tngtech.archunit:archunit-junit5:1.1.0")
+    dependency("com.tngtech.archunit:archunit-junit5:1.2.0")
   }
 }
 
@@ -132,7 +132,7 @@ tasks.test {
 }
 
 jacoco {
-  toolVersion = "0.8.10"
+  toolVersion = "0.8.11"
 }
 
 tasks.jacocoTestReport {
