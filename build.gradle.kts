@@ -85,7 +85,7 @@ dependencies {
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.rest-assured:rest-assured")
-  testImplementation("com.github.tomakehurst:wiremock-jre8-standalone")
+  testImplementation("com.github.tomakehurst:wiremock-standalone")
   testImplementation("com.tngtech.archunit:archunit-junit5")
 
   // Other
