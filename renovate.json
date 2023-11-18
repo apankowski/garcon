@@ -22,5 +22,5 @@
       "groupName": "github-actions"
     }
   ],
-  "prConcurrentLimit": 2
+  "prConcurrentLimit": 4
 }
