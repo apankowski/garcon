@@ -53,7 +53,7 @@ jobs:
       run: ./gradlew test
 
     - name: Archive test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always() && (steps.test.conclusion != 'skipped')
       with:
         name: test-results
@@ -67,7 +67,7 @@ jobs:
         junit_files: build/test-results/**/*.xml
 
     - name: Archive code coverage report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always() && (steps.test.conclusion != 'skipped')
       with:
         name: code-coverage-report
@@ -132,7 +132,7 @@ jobs:
         sarif_file: trivy-output.sarif
 
     - name: Archive security scanning report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always() && (steps.hadolint.conclusion != 'skipped' || steps.trivy.conclusion != 'skipped')
       with:
         name: security-scanning-report
