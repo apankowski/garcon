@@ -13,7 +13,7 @@ plugins {
   id("io.spring.dependency-management") version "1.1.4"
   id("com.gorylenko.gradle-git-properties") version "2.4.1"
   id("com.adarshr.test-logger") version "4.0.0"
-  id("com.avast.gradle.docker-compose") version "0.17.5"
+  id("com.avast.gradle.docker-compose") version "0.17.6"
   id("org.flywaydb.flyway") version "9.22.3"
   id("nu.studer.jooq") version "8.2.1"
   jacoco
