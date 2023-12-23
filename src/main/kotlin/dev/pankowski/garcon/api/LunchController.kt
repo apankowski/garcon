@@ -39,8 +39,8 @@ class LunchController(
     SlackMessage(
       """
       |Recognized subcommands are:
-      |• `/lunch` or `/lunch check` - manually triggers checking for lunch post
-      |• `/lunch status` - displays status of lunch feature
+      |• `/lunch` or `/lunch check` - manually triggers checking for lunch posts
+      |• `/lunch log` - displays tail of the synchronization log
       |• `/lunch help` - displays this message
       """.trimMargin(),
       ResponseType.EPHEMERAL
@@ -69,7 +69,7 @@ class LunchController(
   private fun handleLog(): SlackMessage {
 
     fun Instant.toSlackDate(linkUrl: URL? = null) =
-      if (linkUrl == null) "<!date^${epochSecond}^{date_num} {time}|${this}>"
+      if (linkUrl === null) "<!date^${epochSecond}^{date_num} {time}|${this}>"
       else "<!date^${epochSecond}^{date_num} {time}^${linkUrl}|${this}>"
 
     fun classificationInfo(c: Classification) =

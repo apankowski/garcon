@@ -34,8 +34,8 @@ class LunchControllerTest : FreeSpec({
     result.text shouldBe
       """
       |Recognized subcommands are:
-      |• `/lunch` or `/lunch check` - manually triggers checking for lunch post
-      |• `/lunch status` - displays status of lunch feature
+      |• `/lunch` or `/lunch check` - manually triggers checking for lunch posts
+      |• `/lunch log` - displays tail of the synchronization log
       |• `/lunch help` - displays this message
       """.trimMargin()
   }
@@ -61,8 +61,8 @@ class LunchControllerTest : FreeSpec({
       |Unrecognized subcommand: `/lunch some command text`
       |
       |Recognized subcommands are:
-      |• `/lunch` or `/lunch check` - manually triggers checking for lunch post
-      |• `/lunch status` - displays status of lunch feature
+      |• `/lunch` or `/lunch check` - manually triggers checking for lunch posts
+      |• `/lunch log` - displays tail of the synchronization log
       |• `/lunch help` - displays this message
       """.trimMargin()
   }
