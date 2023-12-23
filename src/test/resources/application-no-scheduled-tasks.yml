@@ -1,6 +1,7 @@
 spring:
   flyway:
     clean-disabled: false
+
 lunch:
   sync:
     interval: null

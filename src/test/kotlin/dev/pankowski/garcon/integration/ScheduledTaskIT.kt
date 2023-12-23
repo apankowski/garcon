@@ -1,7 +1,7 @@
 package dev.pankowski.garcon.integration
 
 import dev.pankowski.garcon.domain.LunchService
-import io.kotest.assertions.timing.eventually
+import io.kotest.assertions.nondeterministic.eventually
 import io.kotest.matchers.ints.beGreaterThan
 import io.kotest.matchers.shouldBe
 import io.mockk.every

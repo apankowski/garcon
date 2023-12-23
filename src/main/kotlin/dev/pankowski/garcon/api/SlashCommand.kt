@@ -2,7 +2,7 @@ package dev.pankowski.garcon.api
 
 import java.net.URL
 
-// Inline classes might be a better fit but they are experimental.
+// Use inline value classes?
 data class TriggerId(val id: String)
 
 data class UserId(val id: String)

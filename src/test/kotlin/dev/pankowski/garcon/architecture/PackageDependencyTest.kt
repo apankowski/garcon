@@ -5,11 +5,11 @@ import com.tngtech.archunit.base.DescribedPredicate.not
 import com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage
 import com.tngtech.archunit.core.domain.JavaClass.Predicates.type
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
-import dev.pankowski.garcon.architecture.Packages.Api
-import dev.pankowski.garcon.architecture.Packages.Configuration
-import dev.pankowski.garcon.architecture.Packages.Domain
-import dev.pankowski.garcon.architecture.Packages.Infrastructure
-import dev.pankowski.garcon.architecture.Packages.SpringFramework
+import dev.pankowski.garcon.architecture.Packages.API
+import dev.pankowski.garcon.architecture.Packages.CONFIGURATION
+import dev.pankowski.garcon.architecture.Packages.DOMAIN
+import dev.pankowski.garcon.architecture.Packages.INFRASTRUCTURE
+import dev.pankowski.garcon.architecture.Packages.SPRING_FRAMEWORK
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.event.EventListener
@@ -23,20 +23,20 @@ class PackageDependencyTest : ArchUnitSpec({
   "domain does not depend on other layers" {
     // given
     val rule = noClasses()
-      .that().resideInAPackage(Domain)
-      .should().dependOnClassesThat().resideInAnyPackage(Api, Infrastructure, Configuration)
+      .that().resideInAPackage(DOMAIN)
+      .should().dependOnClassesThat().resideInAnyPackage(API, INFRASTRUCTURE, CONFIGURATION)
 
     // expect
     rule.check(classes)
   }
 
-  "domain does not depend on framework (with two exceptions)" {
+  "domain does not depend on framework (with some exceptions)" {
     // given
     val rule = noClasses()
-      .that().resideInAPackage(Domain)
+      .that().resideInAPackage(DOMAIN)
       .should().dependOnClassesThat(
         and(
-          resideInAPackage(SpringFramework),
+          resideInAPackage(SPRING_FRAMEWORK),
           not(type(Component::class.java)),
           not(type(ConfigurationProperties::class.java)),
           not(type(Transactional::class.java)),
@@ -54,8 +54,8 @@ class PackageDependencyTest : ArchUnitSpec({
   "API does not depend on infrastructure or configuration" {
     // given
     val rule = noClasses()
-      .that().resideInAPackage(Api)
-      .should().dependOnClassesThat().resideInAnyPackage(Infrastructure, Configuration)
+      .that().resideInAPackage(API)
+      .should().dependOnClassesThat().resideInAnyPackage(INFRASTRUCTURE, CONFIGURATION)
 
     // expect
     rule.check(classes)
@@ -64,8 +64,8 @@ class PackageDependencyTest : ArchUnitSpec({
   "infrastructure does not depend on API or configuration" {
     // given
     val rule = noClasses()
-      .that().resideInAPackage(Infrastructure)
-      .should().dependOnClassesThat().resideInAnyPackage(Api, Configuration)
+      .that().resideInAPackage(INFRASTRUCTURE)
+      .should().dependOnClassesThat().resideInAnyPackage(API, CONFIGURATION)
 
     // expect
     rule.check(classes)
