@@ -19,7 +19,7 @@ import kotlin.reflect.jvm.javaMethod
 
 // This method is here so that Spring can introspect its parameters.
 // It can't be inside FreeSpec as Kotlin doesn't yet handle reflection on local functions.
-@Suppress("unused", "unused_parameter")
+@Suppress("UNUSED_PARAMETER")
 fun introspectionTarget(p0: SlashCommand, p1: String, p2: Int, p3: Any, p4: ArrayList<String>) = Unit
 
 class SlashCommandMethodArgumentResolverTest : FreeSpec({
@@ -164,7 +164,7 @@ class SlashCommandMethodArgumentResolverTest : FreeSpec({
       "/command",
       "some text",
       // Silence warning about URL constructor (which is based on it throwing IOException)
-      @Suppress("BlockingMethodInNonBlockingContext") URL("https://www.slack.com/some-response-link"),
+      URL("https://www.slack.com/some-response-link"),
       TriggerId("some trigger id"),
       UserId("some user id"),
       ChannelId("some channel id"),

@@ -69,7 +69,7 @@ class LunchController(
   private fun handleLog(): SlackMessage {
 
     fun Instant.toSlackDate(linkUrl: URL? = null) =
-      if (linkUrl === null) "<!date^${epochSecond}^{date_num} {time}|${this}>"
+      if (linkUrl == null) "<!date^${epochSecond}^{date_num} {time}|${this}>"
       else "<!date^${epochSecond}^{date_num} {time}^${linkUrl}|${this}>"
 
     fun classificationInfo(c: Classification) =

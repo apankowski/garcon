@@ -22,9 +22,9 @@ abstract class ArchUnitSpec(body: ArchUnitSpec.() -> Unit = {}) : FreeSpec() {
 
 object Packages {
 
-  const val Domain = "..garcon.domain.."
-  const val Api = "..garcon.api.."
-  const val Infrastructure = "..garcon.infrastructure.."
-  const val Configuration = "..garcon.configuration.."
-  const val SpringFramework = "..springframework.."
+  const val DOMAIN = "..garcon.domain.."
+  const val API = "..garcon.api.."
+  const val INFRASTRUCTURE = "..garcon.infrastructure.."
+  const val CONFIGURATION = "..garcon.configuration.."
+  const val SPRING_FRAMEWORK = "..springframework.."
 }

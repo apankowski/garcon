@@ -96,6 +96,10 @@ class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
       .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)!!
 }
 
+/**
+ * Interceptor mimicking [Slack's request signing](https://api.slack.com/authentication/verifying-requests-from-slack)
+ * by adding appropriate headers to the outgoing requests issued by Apache HTTP client.
+ */
 private class SlackRequestSigningInterceptor(signingSecret: String) : HttpRequestInterceptor {
 
   private val supportedHttpMethods = setOf(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH)

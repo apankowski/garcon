@@ -20,7 +20,8 @@ spring:
     url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/garcon}
     username: ${JDBC_DATABASE_USERNAME:garcon}
     password: ${JDBC_DATABASE_PASSWORD:garcon}
-    maximum-pool-size: 2
+    hikari:
+      maximum-pool-size: 4
 
 server:
   port: ${PORT:8080}

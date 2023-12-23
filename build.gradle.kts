@@ -41,6 +41,7 @@ dependencyManagement {
     dependency("com.slack.api:slack-api-client:1.36.1")
     dependency("io.kotest:kotest-runner-junit5:5.8.0")
     dependency("io.kotest:kotest-framework-datatest:5.8.0")
+    dependency("io.kotest:kotest-assertions-core:5.8.0")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.3")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:2.0.1")
     dependency("io.mockk:mockk:1.13.8")
@@ -80,6 +81,7 @@ dependencies {
   testImplementation("io.mockk:mockk")
   testImplementation("io.kotest:kotest-runner-junit5")
   testImplementation("io.kotest:kotest-framework-datatest")
+  testImplementation("io.kotest:kotest-assertions-core")
   testImplementation("io.kotest.extensions:kotest-extensions-spring")
   testImplementation("io.kotest.extensions:kotest-extensions-wiremock") {
     // Remove once kotest-extensions-wiremock references renamed "wiremock-standalone"

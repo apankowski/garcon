@@ -26,22 +26,22 @@ import jakarta.servlet.http.HttpServletResponse
 class RequestSignatureVerifyingFilter(private val signatureVerifier: SlackSignatureVerifier) : OncePerRequestFilter() {
 
   companion object {
-    private const val MaxBodyLength = 100_000
-    private val VerifiedHttpMethods = setOf(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH)
+    private const val MAX_BODY_LENGTH = 100_000
+    private val VERIFIED_HTTP_METHODS = setOf(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH)
   }
 
   private val log = getLogger(javaClass)
 
   override fun shouldNotFilter(request: HttpServletRequest) =
-    request.method !in VerifiedHttpMethods.map { it.name() }
+    request.method !in VERIFIED_HTTP_METHODS.map { it.name() }
 
   override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
-    val body = request.inputStream.readNBytes(MaxBodyLength)
+    val body = request.inputStream.readNBytes(MAX_BODY_LENGTH)
     if (!request.inputStream.isFinished) {
-      log.trace("Rejecting request to ${request.requestURI} due to body exceeding $MaxBodyLength bytes")
+      log.trace("Rejecting request to ${request.requestURI} due to body exceeding $MAX_BODY_LENGTH bytes")
       response.sendError(
         HttpStatus.BAD_REQUEST.value(),
-        "Request body exceeds maximum allowed length of $MaxBodyLength"
+        "Request body exceeds maximum allowed length of $MAX_BODY_LENGTH"
       )
       response.flushBuffer()
       return
@@ -96,7 +96,7 @@ class RequestSignatureVerifyingFilter(private val signatureVerifier: SlackSignat
       }
     }
 
-    override fun getCharacterEncoding() = characterEncoding
+    override fun getCharacterEncoding(): String = characterEncoding
     override fun getReader() = reader
     override fun getInputStream() = servletInputStream
 

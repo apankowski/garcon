@@ -75,18 +75,14 @@ Configure permissions and _Slash Commands_ for the app:
 ### Docker image
 
 1. As described in [Building & Running](#building--running-locally) section create the fat JAR:
-
    ```
    ./gradlew bootJar
    ```
-
-1. Build the docker image:
-
+2. Build the docker image:
    ```
    docker build -t garcon .
    ```
-
-1. Push built image to the docker registry of your choosing & deploy to your target environment.
+3. Push built image to the docker registry of your choosing & deploy to your target environment.
 
 ### PostgreSQL database
 
@@ -97,7 +93,7 @@ Create an empty PostgreSQL database for the bot with UTF-8 encoding to support e
 | Name | Description | Required | Default/Example |
 |------|-------------|:--------:|-----------------|
 | `PORT` | HTTP port that will serve requests | ✗ | `8080` |
-| `ACTUATOR_PORT` | HTTP port that will serve Actuator endpoints | ✗ | `8081` |
+| `ACTUATOR_PORT` | HTTP port that will serve [Actuator endpoints](#actuator) | ✗ | `8081` |
 | `JDBC_DATABASE_URL` | JDBC URL to the database | ✗ | `jdbc:postgresql://localhost:5432/garcon` |
 | `JDBC_DATABASE_USERNAME` | Username used to connect to the database | ✗ | `garcon` |
 | `JDBC_DATABASE_PASSWORD` | Password used to connect to the database | ✗ | `garcon` |

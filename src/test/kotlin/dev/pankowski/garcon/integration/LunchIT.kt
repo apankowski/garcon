@@ -3,7 +3,7 @@ package dev.pankowski.garcon.integration
 import dev.pankowski.garcon.api.SlackMessage
 import dev.pankowski.garcon.domain.*
 import dev.pankowski.garcon.infrastructure.persistence.someFailedRepost
-import io.kotest.assertions.timing.eventually
+import io.kotest.assertions.nondeterministic.eventually
 import io.kotest.core.test.TestCase
 import io.mockk.clearAllMocks
 import io.mockk.every
