@@ -225,10 +225,10 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
       repository.findBy(stored.post.externalId) shouldBe stored
     }
 
-    withData<ExternalId>(
+    withData<ExternalPostId>(
       { "returns null for nonexistent $it" },
-      ExternalId("??"),
-      ExternalId("xyz"),
+      FacebookPostId("??"),
+      FacebookPostId("xyz"),
     ) { nonexistentExternalId ->
 
       // given

@@ -1,6 +1,6 @@
 package dev.pankowski.garcon.infrastructure.facebook
 
-import dev.pankowski.garcon.domain.ExternalId
+import dev.pankowski.garcon.domain.FacebookPostId
 import dev.pankowski.garcon.domain.Post
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.beEmpty
@@ -202,19 +202,19 @@ class PostExtractionStrategyV2Test : FreeSpec({
 
     val posts = listOf(
       Post(
-        externalId = ExternalId("some-post-id-1"),
+        externalId = FacebookPostId("some-post-id-1"),
         url = URL("https://facebook.com/some-post1-permalink"),
         publishedAt = Instant.ofEpochSecond(1),
         content = "some content #1"
       ),
       Post(
-        externalId = ExternalId("some-post-id-2"),
+        externalId = FacebookPostId("some-post-id-2"),
         url = URL("https://facebook.com/some-post2-permalink"),
         publishedAt = Instant.ofEpochSecond(2),
         content = "some content #2"
       ),
       Post(
-        externalId = ExternalId("some-post-id-3"),
+        externalId = FacebookPostId("some-post-id-3"),
         url = URL("https://facebook.com/some-post3-permalink"),
         publishedAt = Instant.ofEpochSecond(3),
         content = "some content #3"
@@ -241,7 +241,7 @@ class PostExtractionStrategyV2Test : FreeSpec({
     // then
     result shouldContainExactly listOf(
       Post(
-        ExternalId("1054930068793510"),
+        FacebookPostId("1054930068793510"),
         URL("https://www.facebook.com/permalink.php?story_fbid=pfbid0L45BV7SFeSH8Gc3SQvCLHC2VUwqPc7bYtJB7kh1EN12T2uBYXYFx7BLDqoGLjDNjl&id=100028295814975"),
         Instant.ofEpochSecond(1673897171),
         """
@@ -336,7 +336,7 @@ class PostExtractionStrategyV2Test : FreeSpec({
     // then
     result shouldContainExactly listOf(
       Post(
-        ExternalId("1053189635634220"),
+        FacebookPostId("1053189635634220"),
         URL("https://www.facebook.com/permalink.php?story_fbid=pfbid0NPAVi78AX53SAGKhpdixFZH9GJ7Y54JaqUxr9hR5TNXaYDW29fKcUKHMM5bLPniXl&id=100028295814975"),
         Instant.ofEpochSecond(1673688899),
         """

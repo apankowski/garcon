@@ -17,12 +17,12 @@ fun now() = Instant.now().truncatedTo(MICROS)!!
 
 val PolishLocale = Locale.of("pl", "PL")!!
 
-private val ExternalIdSequence = AtomicInteger(1)
-private fun generatedExternalId() =
-  ExternalIdSequence.getAndIncrement()
+private val FacebookPostIdSequence = AtomicInteger(1)
+private fun generatedFacebookPostId() =
+  FacebookPostIdSequence.getAndIncrement()
     .toString()
     .padStart(4, '0')
-    .let { ExternalId(it) }
+    .let { FacebookPostId(it) }
 
 // Configs
 fun someLunchConfig(
@@ -66,7 +66,7 @@ fun someRepostRetryConfig(
 
 // Domain
 fun somePost(
-  externalId: ExternalId = generatedExternalId(),
+  externalId: ExternalPostId = generatedFacebookPostId(),
   url: URL = URL("https://facebook/post"),
   publishedAt: Instant = now(),
   content: String = "some post content",

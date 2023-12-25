@@ -1,4 +1,4 @@
-package dev.pankowski.garcon.infrastructure
+package dev.pankowski.garcon.infrastructure.slack
 
 import com.slack.api.methods.request.chat.ChatPostMessageRequest
 import dev.pankowski.garcon.domain.*
