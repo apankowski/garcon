@@ -1,6 +1,5 @@
 package dev.pankowski.garcon.api
 
-import dev.pankowski.garcon.domain.LunchSubcommand
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.core.spec.style.scopes.ContainerScope

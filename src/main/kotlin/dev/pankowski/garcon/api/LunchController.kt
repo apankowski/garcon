@@ -24,9 +24,9 @@ class LunchController(
     log.info("Received command {}", command)
     return when (subcommandParser.parse(command)) {
       is LunchSubcommand.Help -> handleHelp()
-      is LunchSubcommand.Unrecognized -> handleUnrecognized(command)
-      is LunchSubcommand.CheckForLunchPost -> handleCheckForLunchPost()
       is LunchSubcommand.Log -> handleLog()
+      is LunchSubcommand.CheckForLunchPost -> handleCheckForLunchPost()
+      is LunchSubcommand.Unrecognized -> handleUnrecognized(command)
     }
   }
 
@@ -45,26 +45,6 @@ class LunchController(
       """.trimMargin(),
       ResponseType.EPHEMERAL
     )
-
-  private fun handleUnrecognized(command: SlashCommand) =
-    SlackMessage(
-      """
-      |Unrecognized subcommand: `/lunch ${command.text}`
-      |
-      |${handleHelp().text}
-      """.trimMargin(),
-      ResponseType.EPHEMERAL
-    )
-
-  private fun handleCheckForLunchPost() =
-    try {
-      // TODO: Post summary of synchronization?
-      taskScheduler.execute(service::synchronizeAll)
-      SlackMessage("Checking...", ResponseType.EPHEMERAL)
-    } catch (e: Exception) {
-      log.error("Failed to schedule checking for lunch posts", e)
-      SlackMessage("Error while scheduling synchronization :frowning:", ResponseType.EPHEMERAL)
-    }
 
   private fun handleLog(): SlackMessage {
 
@@ -117,4 +97,24 @@ class LunchController(
       ResponseType.EPHEMERAL
     )
   }
+
+  private fun handleCheckForLunchPost() =
+    try {
+      // TODO: Post summary of synchronization?
+      taskScheduler.execute(service::synchronizeAll)
+      SlackMessage("Checking...", ResponseType.EPHEMERAL)
+    } catch (e: Exception) {
+      log.error("Failed to schedule checking for lunch posts", e)
+      SlackMessage("Error while scheduling synchronization :frowning:", ResponseType.EPHEMERAL)
+    }
+
+  private fun handleUnrecognized(command: SlashCommand) =
+    SlackMessage(
+      """
+      |Unrecognized subcommand: `/lunch ${command.text}`
+      |
+      |${handleHelp().text}
+      """.trimMargin(),
+      ResponseType.EPHEMERAL
+    )
 }
