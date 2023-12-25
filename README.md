@@ -72,6 +72,12 @@ Configure permissions and _Slash Commands_ for the app:
 3. Go to _OAuth & Permissions_ (under _Features_ submenu) → _Scopes_ section → _Bot Token Scopes_ subsection → _Add an OAuth Scope_ → select `chat:write` scope → confirm.
 4. Go to _OAuth & Permissions_ (under _Features_ submenu) → _OAuth Tokens for Your Workspace_ section → Take note of the _Bot User OAuth Token_ (it starts with `xoxb-`). Set bot's `LUNCH_SLACK_TOKEN` [environment variable](#environment-variables) to this value.
 
+Install the app:
+
+1. Go to [Slack Apps](https://api.slack.com/apps) → click on the name of your app.
+2. Go to _Install App_ (under _Settings_ submenu) → _Install to Workspace_.
+3. In Slack, go to the channel in which lunch notifications are to be received. Type `/app` and select _Add apps to this channel_. Select the Slack application created above.
+
 ### Docker image
 
 1. As described in [Building & Running](#building--running-locally) section create the fat JAR:
@@ -114,6 +120,14 @@ Create an empty PostgreSQL database for the bot with UTF-8 encoding to support e
 | `LUNCH_REPOST_RETRY_INTERVAL` | Interval between consecutive attempts to retry failed reposts. | ✗ | `PT10M` |
 | `LUNCH_REPOST_RETRY_BASE_DELAY` | Base delay in the exponential backoff between consecutive retries of a failed repost. | ✗ | `PT1M` |
 | `LUNCH_REPOST_RETRY_MAX_ATTEMPTS` | Max retry attempts for a failed repost. | ✗ | `10` |
+
+### Slash commands
+
+The following [slash commands](https://api.slack.com/interactivity/slash-commands) are supported:
+
+* `/lunch help` - displays short help message listing supported slash commands
+* `/lunch` or `/lunch check` - manually triggers checking for lunch posts
+* `/lunch log` - displays tail of the synchronization log
 
 ## Actuator
 
