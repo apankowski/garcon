@@ -147,7 +147,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
   private fun toDomainObject(record: SynchronizedPostsRecord): SynchronizedPost {
     fun toFacebookPost(r: SynchronizedPostsRecord) =
       Post(
-        externalId = ExternalId(r.postExternalId),
+        externalId = FacebookPostId(r.postExternalId),
         url = URL(r.postUrl),
         publishedAt = r.postPublishedAt,
         content = r.postContent
@@ -199,7 +199,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
   }
 
   @Transactional(readOnly = true)
-  override fun findBy(externalId: ExternalId): SynchronizedPost? =
+  override fun findBy(externalId: ExternalPostId): SynchronizedPost? =
     context
       .selectFrom(SYNCHRONIZED_POSTS)
       .where(SYNCHRONIZED_POSTS.POST_EXTERNAL_ID.equal(externalId.value))

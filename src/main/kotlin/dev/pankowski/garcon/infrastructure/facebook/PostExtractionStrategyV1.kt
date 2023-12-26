@@ -1,7 +1,7 @@
 package dev.pankowski.garcon.infrastructure.facebook
 
 import com.google.common.annotations.VisibleForTesting
-import dev.pankowski.garcon.domain.ExternalId
+import dev.pankowski.garcon.domain.FacebookPostId
 import dev.pankowski.garcon.domain.Post
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -93,26 +93,26 @@ class PostExtractionStrategyV1 : PostExtractionStrategy {
 @VisibleForTesting
 object FacebookIdExtractor {
 
-  fun extractFacebookId(url: URL): ExternalId? {
+  fun extractFacebookId(url: URL): FacebookPostId? {
     // Regular post
     val postPathRegex = "^/?permalink\\.php".toRegex()
     postPathRegex.find(url.path)?.let {
       return UriComponentsBuilder.fromUri(url.toURI()).build()
         .queryParams["story_fbid"]
         ?.firstOrNull()
-        ?.let(::ExternalId)
+        ?.let(::FacebookPostId)
     }
 
     // Regular post - alternative version
     val altPostPathRegex = "^/?[^/]+/posts/([0-9a-zA-Z_-]+)/?".toRegex()
     altPostPathRegex.find(url.path)?.let {
-      return ExternalId(it.groupValues[1])
+      return FacebookPostId(it.groupValues[1])
     }
 
     // Photo
     val photoPathRegex = "^/?[^/]+/photos/[0-9a-zA-Z._-]+/([0-9a-zA-Z_-]+)/?".toRegex()
     photoPathRegex.find(url.path)?.let {
-      return ExternalId(it.groupValues[1])
+      return FacebookPostId(it.groupValues[1])
     }
 
     // Photo - alternative version
@@ -121,7 +121,7 @@ object FacebookIdExtractor {
       return UriComponentsBuilder.fromUri(url.toURI()).build()
         .queryParams["fbid"]
         ?.firstOrNull()
-        ?.let(::ExternalId)
+        ?.let(::FacebookPostId)
     }
 
     // Video
@@ -130,13 +130,13 @@ object FacebookIdExtractor {
       return UriComponentsBuilder.fromUri(url.toURI()).build()
         .queryParams["v"]
         ?.firstOrNull()
-        ?.let(::ExternalId)
+        ?.let(::FacebookPostId)
     }
 
     // Reel
     val reelPathRegex = "^/?reel/([0-9a-zA-Z_-]+)/?".toRegex()
     reelPathRegex.find(url.path)?.let {
-      return ExternalId(it.groupValues[1])
+      return FacebookPostId(it.groupValues[1])
     }
 
     // Dunno

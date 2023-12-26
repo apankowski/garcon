@@ -1,6 +1,6 @@
 package dev.pankowski.garcon.infrastructure.facebook
 
-import dev.pankowski.garcon.domain.ExternalId
+import dev.pankowski.garcon.domain.FacebookPostId
 import dev.pankowski.garcon.domain.Post
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.beEmpty
@@ -33,7 +33,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
     // then
     result shouldContainExactly listOf(
       Post(
-        ExternalId("0"),
+        FacebookPostId("0"),
         URL("https://www.facebook.com/permalink.php?story_fbid=0"),
         Instant.ofEpochSecond(0),
         "Some content"
@@ -62,7 +62,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
     // then
     result shouldContainExactly listOf(
       Post(
-        ExternalId("2342169022692189"),
+        FacebookPostId("2342169022692189"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2342169022692189/?type=3"),
         Instant.ofEpochSecond(1558799401),
         """
@@ -72,7 +72,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2346741902234901"),
+        FacebookPostId("2346741902234901"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2346741902234901/?type=3"),
         Instant.ofEpochSecond(1559387087),
         """
@@ -81,7 +81,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2346903232218768"),
+        FacebookPostId("2346903232218768"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2346903232218768/?type=3"),
         Instant.ofEpochSecond(1559402930),
         """
@@ -90,7 +90,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2350532298522528"),
+        FacebookPostId("2350532298522528"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2350532298522528/?type=3"),
         Instant.ofEpochSecond(1559822687),
         """
@@ -103,7 +103,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2352062648369493"),
+        FacebookPostId("2352062648369493"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2352062648369493/?type=3"),
         Instant.ofEpochSecond(1559985730),
         """
@@ -117,7 +117,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2357670637808694"),
+        FacebookPostId("2357670637808694"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2357670637808694/?type=3"),
         Instant.ofEpochSecond(1560623524),
         """
@@ -125,7 +125,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2362955620613529"),
+        FacebookPostId("2362955620613529"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2362955620613529/?type=3"),
         Instant.ofEpochSecond(1561205318),
         """
@@ -134,7 +134,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2363823310526760"),
+        FacebookPostId("2363823310526760"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2363823310526760/?type=3"),
         Instant.ofEpochSecond(1561297183),
         """
@@ -143,7 +143,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2364540033788421"),
+        FacebookPostId("2364540033788421"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2364540033788421/?type=3"),
         Instant.ofEpochSecond(1561376258),
         """
@@ -151,7 +151,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2367006246875133"),
+        FacebookPostId("2367006246875133"),
         URL("https://www.facebook.com/permalink.php?story_fbid=2367006246875133&id=1597565460485886"),
         Instant.ofEpochSecond(1561639211),
         """
@@ -159,7 +159,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2369216289987462"),
+        FacebookPostId("2369216289987462"),
         URL("https://www.facebook.com/permalink.php?story_fbid=2369216289987462&id=1597565460485886"),
         Instant.ofEpochSecond(1561900524),
         """
@@ -167,7 +167,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2371503593092065"),
+        FacebookPostId("2371503593092065"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2371503593092065/?type=3"),
         Instant.ofEpochSecond(1562160573),
         """
@@ -179,7 +179,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2375021466073611"),
+        FacebookPostId("2375021466073611"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2375021466073611/?type=3"),
         Instant.ofEpochSecond(1562595849),
         """
@@ -191,7 +191,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2376464095929348"),
+        FacebookPostId("2376464095929348"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2376464095929348/?type=3"),
         Instant.ofEpochSecond(1562771399),
         """
@@ -199,7 +199,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2377153185860439"),
+        FacebookPostId("2377153185860439"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2377153185860439/?type=3"),
         Instant.ofEpochSecond(1562856474),
         """
@@ -207,7 +207,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2377781032464321"),
+        FacebookPostId("2377781032464321"),
         URL("https://www.facebook.com/permalink.php?story_fbid=2377781032464321&id=1597565460485886"),
         Instant.ofEpochSecond(1562936915),
         """
@@ -221,7 +221,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2378495385726219"),
+        FacebookPostId("2378495385726219"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2378495385726219/?type=3"),
         Instant.ofEpochSecond(1563025708),
         """
@@ -229,7 +229,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2385517911690633"),
+        FacebookPostId("2385517911690633"),
         URL("https://www.facebook.com/permalink.php?story_fbid=2385517911690633&id=1597565460485886"),
         Instant.ofEpochSecond(1563869152),
         """
@@ -248,7 +248,7 @@ class PostExtractionStrategyV1Test : FreeSpec({
         """.trimMargin()
       ),
       Post(
-        ExternalId("2385635615012196"),
+        FacebookPostId("2385635615012196"),
         URL("https://www.facebook.com/1597565460485886/photos/a.1678463395729425/2385635615012196/?type=3"),
         Instant.ofEpochSecond(1563883027),
         """

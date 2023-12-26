@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeType.NUMBER
 import com.fasterxml.jackson.databind.node.JsonNodeType.STRING
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.google.common.annotations.VisibleForTesting
-import dev.pankowski.garcon.domain.ExternalId
+import dev.pankowski.garcon.domain.FacebookPostId
 import dev.pankowski.garcon.domain.Post
 import dev.pankowski.garcon.domain.Posts
 import dev.pankowski.garcon.domain.oneLinePreview
@@ -82,7 +82,7 @@ class PostExtractionStrategyV2 : PostExtractionStrategy {
 
   private fun extractPostsFromQueryOutput(output: ArrayNode): Posts {
     return output.mapNotNull map@{ node ->
-      val externalId = node.extractProperty("id", STRING) { ExternalId(it.textValue()) }
+      val externalId = node.extractProperty("id", STRING) { FacebookPostId(it.textValue()) }
       val url = node.extractProperty("url", STRING) { URL(it.textValue()) }
       val publishedAt = node.extractProperty("published_at", NUMBER) { Instant.ofEpochSecond(it.longValue()) }
       val content = node.extractProperty("content", STRING) { it.textValue().sanitizeContent() }

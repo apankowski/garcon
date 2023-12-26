@@ -13,6 +13,8 @@ data class LunchConfig(
   val pages: List<PageConfig> = emptyList(),
 )
 
+data class PageKey(val value: String)
+
 /** Configuration of a single lunch page to synchronize. */
 data class PageConfig(
 

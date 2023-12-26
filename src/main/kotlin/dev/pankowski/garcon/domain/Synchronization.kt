@@ -3,6 +3,57 @@ package dev.pankowski.garcon.domain
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
+import java.time.Instant
+
+// Model
+
+data class SynchronizedPostId(val value: String)
+
+data class SynchronizedPost(
+  val id: SynchronizedPostId,
+  val version: Version,
+  val createdAt: Instant,
+  val updatedAt: Instant,
+  val pageKey: PageKey,
+  val pageName: PageName,
+  val post: Post,
+  val classification: Classification,
+  val repost: Repost,
+) {
+  val isLunchPost = classification == Classification.LUNCH_POST
+}
+
+typealias SynchronizedPosts = List<SynchronizedPost>
+
+data class SynchronizedPostCreatedEvent(val new: SynchronizedPost)
+data class SynchronizedPostUpdatedEvent(val old: SynchronizedPost, val new: SynchronizedPost)
+
+// Infrastructure
+
+class SynchronizedPostNotFound(message: String) : RuntimeException(message)
+class SynchronizedPostModifiedConcurrently(message: String) : RuntimeException(message)
+class SynchronizedPostHasDuplicateExternalId(message: String) : RuntimeException(message)
+
+data class SynchronizedPostStoreData(
+  val pageKey: PageKey,
+  val pageName: PageName,
+  val post: Post,
+  val classification: Classification,
+  val repost: Repost,
+)
+
+interface SynchronizedPostRepository {
+
+  fun store(data: SynchronizedPostStoreData): SynchronizedPostId
+  fun updateExisting(id: SynchronizedPostId, version: Version, repost: Repost)
+  fun updateExisting(id: SynchronizedPostId, version: Version, post: Post, classification: Classification)
+  fun findExisting(id: SynchronizedPostId): SynchronizedPost
+  fun findBy(externalId: ExternalPostId): SynchronizedPost?
+  fun getLastSeen(limit: Int): SynchronizedPosts
+  fun streamRetryable(block: (SynchronizedPost) -> Unit)
+}
+
+// Logic
 
 @Component
 class PageSynchronizer(
@@ -23,10 +74,6 @@ class PageSynchronizer(
         .forEach { postSynchronizer.synchronize(pageConfig.key, page.name, it) }
     }
 }
-
-data class SynchronizedPostCreatedEvent(val new: SynchronizedPost)
-
-data class SynchronizedPostUpdatedEvent(val old: SynchronizedPost, val new: SynchronizedPost)
 
 @Component
 class PostSynchronizer(
