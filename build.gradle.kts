@@ -282,3 +282,10 @@ sonarqube {
     property("sonar.host.url", "https://sonarcloud.io")
   }
 }
+
+// Sonar v5 will no longer trigger compilation tasks. Therefore, we declare the dependencies ourselves.
+// See: https://community.sonarsource.com/t/sonarscanner-for-gradle-you-can-now-decide-when-to-compile/102069
+tasks.sonar {
+  dependsOn(tasks.compileKotlin)
+  dependsOn(tasks.generateJooq)
+}
