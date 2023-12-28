@@ -130,34 +130,6 @@ tasks.bootJar {
 
 val isCiEnv = System.getenv("CI") == "true"
 
-// Tests & code coverage
-
-tasks.test {
-  useJUnitPlatform()
-  finalizedBy(tasks.jacocoTestReport)
-}
-
-jacoco {
-  toolVersion = "0.8.11"
-}
-
-tasks.jacocoTestReport {
-  reports {
-    html.required = true
-    xml.required = true
-  }
-}
-
-// SonarCloud
-
-sonarqube {
-  properties {
-    property("sonar.organization", "apankowski")
-    property("sonar.projectKey", "garcon")
-    property("sonar.host.url", "https://sonarcloud.io")
-  }
-}
-
 // Docker compose
 
 dockerCompose {
@@ -166,17 +138,6 @@ dockerCompose {
   // (instead of deprecated docker-compose) is used. However, docker compose v2 isn't yet packaged in mainstream
   // linux distros. Let's not force anyone to install v2 manually and wait until distros come with v2 as the default.
   useDockerComposeV2 = false
-}
-
-// Database
-
-tasks.register("databaseUp") {
-  dependsOn(tasks.composeUp)
-  dependsOn(tasks.flywayMigrate)
-}
-
-tasks.register("databaseDown") {
-  dependsOn(tasks.composeDown)
 }
 
 // Flyway
@@ -194,6 +155,17 @@ flyway {
 
 tasks.flywayMigrate {
   dependsOn(tasks.composeUp)
+}
+
+// Database
+
+tasks.register("databaseUp") {
+  dependsOn(tasks.composeUp)
+  dependsOn(tasks.flywayMigrate)
+}
+
+tasks.register("databaseDown") {
+  dependsOn(tasks.composeDown)
 }
 
 // Jooq
@@ -281,4 +253,32 @@ tasks.generateJooq {
 
 tasks.compileKotlin {
   mustRunAfter(tasks.generateJooq)
+}
+
+// Tests & code coverage
+
+tasks.test {
+  useJUnitPlatform()
+  finalizedBy(tasks.jacocoTestReport)
+}
+
+jacoco {
+  toolVersion = "0.8.11"
+}
+
+tasks.jacocoTestReport {
+  reports {
+    html.required = true
+    xml.required = true
+  }
+}
+
+// SonarCloud
+
+sonarqube {
+  properties {
+    property("sonar.organization", "apankowski")
+    property("sonar.projectKey", "garcon")
+    property("sonar.host.url", "https://sonarcloud.io")
+  }
 }
