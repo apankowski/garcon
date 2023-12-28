@@ -15,7 +15,7 @@ plugins {
   id("com.adarshr.test-logger") version "4.0.0"
   id("com.avast.gradle.docker-compose") version "0.17.6"
   id("org.flywaydb.flyway") version "9.22.3"
-  id("nu.studer.jooq") version "8.2.1"
+  id("nu.studer.jooq") version "9.0"
   jacoco
   id("org.sonarqube") version "4.4.1.3373"
 }
@@ -198,7 +198,7 @@ tasks.flywayMigrate {
 // Jooq
 
 jooq {
-  version = "3.18.2"
+  version = "3.19.1"
 
   configurations {
     create("main") {
@@ -264,6 +264,10 @@ jooq {
   }
 }
 
+// See https://github.com/etiennestuder/gradle-jooq-plugin#synchronizing-the-jooq-version-between-the-spring-boot-gradle-plugin-and-the-jooq-gradle-plugin
+ext["jooq.version"] = jooq.version.get()
+
+// See https://github.com/etiennestuder/gradle-jooq-plugin#configuring-the-jooq-generation-task-to-participate-in-incremental-builds-and-build-caching
 val generateJooq = tasks.named<JooqGenerate>("generateJooq")
 
 generateJooq {
