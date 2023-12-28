@@ -91,7 +91,7 @@ jobs:
       # - Expiring Daemon due to JVM Metaspace space being exhausted
       # - Could not receive a message from the daemon
       # To debug such issues, add the following parameters below: --info --stacktrace --no-daemon
-      run: ./gradlew sonarqube
+      run: ./gradlew sonar
 
     - name: Analyze Dockerfile with Hadolint
       uses: hadolint/hadolint-action@v3.1.0

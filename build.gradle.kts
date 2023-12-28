@@ -275,7 +275,7 @@ tasks.jacocoTestReport {
 
 // SonarCloud
 
-sonarqube {
+sonar {
   properties {
     property("sonar.organization", "apankowski")
     property("sonar.projectKey", "garcon")
