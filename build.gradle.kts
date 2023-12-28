@@ -267,15 +267,17 @@ jooq {
 // See https://github.com/etiennestuder/gradle-jooq-plugin#synchronizing-the-jooq-version-between-the-spring-boot-gradle-plugin-and-the-jooq-gradle-plugin
 ext["jooq.version"] = jooq.version.get()
 
-// See https://github.com/etiennestuder/gradle-jooq-plugin#configuring-the-jooq-generation-task-to-participate-in-incremental-builds-and-build-caching
-val generateJooq = tasks.named<JooqGenerate>("generateJooq")
+// Accessor for convenience
+val TaskContainer.generateJooq
+  get() = named<JooqGenerate>("generateJooq")
 
-generateJooq {
+// See https://github.com/etiennestuder/gradle-jooq-plugin#configuring-the-jooq-generation-task-to-participate-in-incremental-builds-and-build-caching
+tasks.generateJooq {
   inputs.dir("src/main/resources/db/migration")
   allInputsDeclared = true
   dependsOn(tasks.flywayMigrate)
 }
 
 tasks.compileKotlin {
-  mustRunAfter(generateJooq)
+  mustRunAfter(tasks.generateJooq)
 }
