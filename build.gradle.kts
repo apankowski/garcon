@@ -18,6 +18,7 @@ plugins {
   id("nu.studer.jooq") version "9.0"
   jacoco
   id("org.sonarqube") version "4.4.1.3373"
+  id("com.dorongold.task-tree") version "2.1.1"
 }
 
 tasks.wrapper {
@@ -129,34 +130,6 @@ tasks.bootJar {
 
 val isCiEnv = System.getenv("CI") == "true"
 
-// Tests & code coverage
-
-tasks.test {
-  useJUnitPlatform()
-  finalizedBy(tasks.jacocoTestReport)
-}
-
-jacoco {
-  toolVersion = "0.8.11"
-}
-
-tasks.jacocoTestReport {
-  reports {
-    html.required = true
-    xml.required = true
-  }
-}
-
-// SonarCloud
-
-sonarqube {
-  properties {
-    property("sonar.organization", "apankowski")
-    property("sonar.projectKey", "garcon")
-    property("sonar.host.url", "https://sonarcloud.io")
-  }
-}
-
 // Docker compose
 
 dockerCompose {
@@ -165,17 +138,6 @@ dockerCompose {
   // (instead of deprecated docker-compose) is used. However, docker compose v2 isn't yet packaged in mainstream
   // linux distros. Let's not force anyone to install v2 manually and wait until distros come with v2 as the default.
   useDockerComposeV2 = false
-}
-
-// Database
-
-tasks.register("databaseUp") {
-  dependsOn(tasks.composeUp)
-  dependsOn(tasks.flywayMigrate)
-}
-
-tasks.register("databaseDown") {
-  dependsOn(tasks.composeDown)
 }
 
 // Flyway
@@ -193,6 +155,17 @@ flyway {
 
 tasks.flywayMigrate {
   dependsOn(tasks.composeUp)
+}
+
+// Database
+
+tasks.register("databaseUp") {
+  dependsOn(tasks.composeUp)
+  dependsOn(tasks.flywayMigrate)
+}
+
+tasks.register("databaseDown") {
+  dependsOn(tasks.composeDown)
 }
 
 // Jooq
@@ -267,15 +240,52 @@ jooq {
 // See https://github.com/etiennestuder/gradle-jooq-plugin#synchronizing-the-jooq-version-between-the-spring-boot-gradle-plugin-and-the-jooq-gradle-plugin
 ext["jooq.version"] = jooq.version.get()
 
-// See https://github.com/etiennestuder/gradle-jooq-plugin#configuring-the-jooq-generation-task-to-participate-in-incremental-builds-and-build-caching
-val generateJooq = tasks.named<JooqGenerate>("generateJooq")
+// Accessor for convenience
+val TaskContainer.generateJooq
+  get() = named<JooqGenerate>("generateJooq")
 
-generateJooq {
+// See https://github.com/etiennestuder/gradle-jooq-plugin#configuring-the-jooq-generation-task-to-participate-in-incremental-builds-and-build-caching
+tasks.generateJooq {
   inputs.dir("src/main/resources/db/migration")
   allInputsDeclared = true
   dependsOn(tasks.flywayMigrate)
 }
 
 tasks.compileKotlin {
-  mustRunAfter(generateJooq)
+  mustRunAfter(tasks.generateJooq)
+}
+
+// Tests & code coverage
+
+tasks.test {
+  useJUnitPlatform()
+  finalizedBy(tasks.jacocoTestReport)
+}
+
+jacoco {
+  toolVersion = "0.8.11"
+}
+
+tasks.jacocoTestReport {
+  reports {
+    html.required = true
+    xml.required = true
+  }
+}
+
+// SonarCloud
+
+sonar {
+  properties {
+    property("sonar.organization", "apankowski")
+    property("sonar.projectKey", "garcon")
+    property("sonar.host.url", "https://sonarcloud.io")
+  }
+}
+
+// Sonar v5 will no longer trigger compilation tasks. Therefore, we declare the dependencies ourselves.
+// See: https://community.sonarsource.com/t/sonarscanner-for-gradle-you-can-now-decide-when-to-compile/102069
+tasks.sonar {
+  dependsOn(tasks.compileKotlin)
+  dependsOn(tasks.generateJooq)
 }
