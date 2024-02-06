@@ -38,7 +38,7 @@ dependencyManagement {
     dependency("com.google.guava:guava:33.0.0-jre")
     dependency("org.jsoup:jsoup:1.17.2")
     dependency("org.mozilla:rhino:1.7.14")
-    dependency("net.thisptr:jackson-jq:1.0.0-preview.20230409")
+    dependency("net.thisptr:jackson-jq:1.0.0-preview.20240207")
     dependency("com.slack.api:slack-api-client:1.38.0")
     dependency("io.kotest:kotest-runner-junit5:5.8.0")
     dependency("io.kotest:kotest-framework-datatest:5.8.0")
