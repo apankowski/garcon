@@ -44,7 +44,7 @@ dependencyManagement {
     dependency("io.kotest:kotest-framework-datatest:5.8.0")
     dependency("io.kotest:kotest-assertions-core:5.8.0")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.3")
-    dependency("io.kotest.extensions:kotest-extensions-wiremock:2.0.1")
+    dependency("io.kotest.extensions:kotest-extensions-wiremock:3.0.1")
     dependency("io.mockk:mockk:1.13.9")
     dependency("org.wiremock:wiremock-standalone:3.4.0")
     dependency("com.tngtech.archunit:archunit-junit5:1.2.1")
