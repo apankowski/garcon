@@ -44,7 +44,7 @@ dependencyManagement {
     dependency("io.kotest:kotest-framework-datatest:5.8.0")
     dependency("io.kotest:kotest-assertions-core:5.8.0")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.1.3")
-    dependency("io.kotest.extensions:kotest-extensions-wiremock:2.0.1")
+    dependency("io.kotest.extensions:kotest-extensions-wiremock:3.0.1")
     dependency("io.mockk:mockk:1.13.9")
     dependency("org.wiremock:wiremock-standalone:3.4.0")
     dependency("com.tngtech.archunit:archunit-junit5:1.2.1")
@@ -84,10 +84,7 @@ dependencies {
   testImplementation("io.kotest:kotest-framework-datatest")
   testImplementation("io.kotest:kotest-assertions-core")
   testImplementation("io.kotest.extensions:kotest-extensions-spring")
-  testImplementation("io.kotest.extensions:kotest-extensions-wiremock") {
-    // Remove once kotest-extensions-wiremock migrates to the renamed org.wiremock:wiremock-standalone
-    exclude("com.github.tomakehurst", "wiremock-jre8-standalone")
-  }
+  testImplementation("io.kotest.extensions:kotest-extensions-wiremock")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.rest-assured:rest-assured")
