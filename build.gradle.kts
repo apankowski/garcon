@@ -84,10 +84,7 @@ dependencies {
   testImplementation("io.kotest:kotest-framework-datatest")
   testImplementation("io.kotest:kotest-assertions-core")
   testImplementation("io.kotest.extensions:kotest-extensions-spring")
-  testImplementation("io.kotest.extensions:kotest-extensions-wiremock") {
-    // Remove once kotest-extensions-wiremock migrates to the renamed org.wiremock:wiremock-standalone
-    exclude("com.github.tomakehurst", "wiremock-jre8-standalone")
-  }
+  testImplementation("io.kotest.extensions:kotest-extensions-wiremock")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.rest-assured:rest-assured")
