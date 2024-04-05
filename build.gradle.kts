@@ -102,15 +102,25 @@ dependencies {
 // Java compiler
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_19
-  targetCompatibility = JavaVersion.VERSION_19
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(19)
+  }
 }
+
+// Kotlin compiler
 
 tasks.withType<KotlinCompile> {
   kotlinOptions {
+    jvmTarget = java.toolchain.languageVersion.get().toString()
     freeCompilerArgs = listOf("-Xjsr305=strict") // Enable strict null-safety for Kotlin project
-    jvmTarget = "19"
   }
+}
+
+// Kapt
+
+kapt {
+  // Disable scanning for annotation processors of compile classpath, making kapt faster.
+  includeCompileClasspath = false
 }
 
 // Spring
@@ -280,8 +290,7 @@ sonar {
   }
 }
 
-// Sonar v5 will no longer trigger compilation tasks. Therefore, we declare the dependencies ourselves.
-// See: https://community.sonarsource.com/t/sonarscanner-for-gradle-you-can-now-decide-when-to-compile/102069
+// Sonar v5 doesn't trigger compilation tasks. Therefore, we declare the dependencies ourselves.
 tasks.sonar {
   dependsOn(tasks.compileKotlin)
   dependsOn(tasks.generateJooq)
