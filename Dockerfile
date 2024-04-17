@@ -1,7 +1,7 @@
 # OpenJDK image is large: openjdk:21-slim is 226.44 MB MB compressed
 # Whereas: azul/zulu-openjdk-alpine:21.0.1-jre-headless is 68.75 MB compressed
 # Another contender: eclipse-temurin:21-jre-alpine is 66.43 MB compressed
-FROM azul/zulu-openjdk-alpine:21.0.2-jre-headless as production
+FROM azul/zulu-openjdk-alpine:21.0.3-jre-headless as production
 
 RUN \
     # Install curl used in the healthcheck
