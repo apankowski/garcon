@@ -14,7 +14,7 @@ plugins {
   id("com.gorylenko.gradle-git-properties") version "2.4.2"
   id("com.adarshr.test-logger") version "4.0.0"
   id("com.avast.gradle.docker-compose") version "0.17.6"
-  id("org.flywaydb.flyway") version "9.22.3"
+  id("org.flywaydb.flyway") version "10.17.1"
   id("nu.studer.jooq") version "9.0"
   jacoco
   id("org.sonarqube") version "5.0.0.4638"
