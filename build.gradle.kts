@@ -18,7 +18,7 @@ plugins {
   id("nu.studer.jooq") version "9.0"
   jacoco
   id("org.sonarqube") version "5.0.0.4638"
-  id("com.dorongold.task-tree") version "3.0.0"
+  id("com.dorongold.task-tree") version "4.0.0"
 }
 
 tasks.wrapper {
