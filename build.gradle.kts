@@ -6,18 +6,18 @@ import org.jooq.meta.jaxb.Logging
 // Gradle
 
 plugins {
-  kotlin("jvm") version "1.9.24"
-  kotlin("kapt") version "1.9.24"
-  kotlin("plugin.spring") version "1.9.24"
-  id("org.springframework.boot") version "3.2.5"
-  id("io.spring.dependency-management") version "1.1.5"
+  kotlin("jvm") version "1.9.25"
+  kotlin("kapt") version "1.9.25"
+  kotlin("plugin.spring") version "1.9.25"
+  id("org.springframework.boot") version "3.3.2"
+  id("io.spring.dependency-management") version "1.1.6"
   id("com.gorylenko.gradle-git-properties") version "2.4.2"
   id("com.adarshr.test-logger") version "4.0.0"
-  id("com.avast.gradle.docker-compose") version "0.17.6"
+  id("com.avast.gradle.docker-compose") version "0.17.7"
   id("org.flywaydb.flyway") version "9.22.3"
   id("nu.studer.jooq") version "9.0"
   jacoco
-  id("org.sonarqube") version "5.0.0.4638"
+  id("org.sonarqube") version "5.1.0.4882"
   id("com.dorongold.task-tree") version "4.0.0"
 }
 
@@ -35,18 +35,18 @@ repositories {
 
 dependencyManagement {
   dependencies {
-    dependency("com.google.guava:guava:33.2.0-jre")
-    dependency("org.jsoup:jsoup:1.17.2")
+    dependency("com.google.guava:guava:33.2.1-jre")
+    dependency("org.jsoup:jsoup:1.18.1")
     dependency("org.mozilla:rhino:1.7.15")
     dependency("net.thisptr:jackson-jq:1.0.0-preview.20240207")
-    dependency("com.slack.api:slack-api-client:1.39.2")
-    dependency("io.kotest:kotest-runner-junit5:5.9.0")
-    dependency("io.kotest:kotest-framework-datatest:5.9.0")
-    dependency("io.kotest:kotest-assertions-core:5.9.0")
-    dependency("io.kotest.extensions:kotest-extensions-spring:1.1.3")
-    dependency("io.kotest.extensions:kotest-extensions-wiremock:3.0.1")
-    dependency("io.mockk:mockk:1.13.11")
-    dependency("org.wiremock:wiremock-standalone:3.5.4")
+    dependency("com.slack.api:slack-api-client:1.40.3")
+    dependency("io.kotest:kotest-runner-junit5:5.9.1")
+    dependency("io.kotest:kotest-framework-datatest:5.9.1")
+    dependency("io.kotest:kotest-assertions-core:5.9.1")
+    dependency("io.kotest.extensions:kotest-extensions-spring:1.3.0")
+    dependency("io.kotest.extensions:kotest-extensions-wiremock:3.1.0")
+    dependency("io.mockk:mockk:1.13.12")
+    dependency("org.wiremock:wiremock-standalone:3.9.1")
     dependency("com.tngtech.archunit:archunit-junit5:1.3.0")
   }
 }
