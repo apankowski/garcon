@@ -10,6 +10,7 @@ import org.jsoup.safety.Safelist
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
+import java.net.URI
 import java.net.URL
 import java.time.Instant
 
@@ -69,7 +70,7 @@ class PostExtractionStrategyV1 : PostExtractionStrategy {
   private fun getUrl(e: Element) =
     e.absUrl("href")
       .takeUnless(String::isEmpty)
-      ?.let(::URL)
+      ?.let { URI(it).toURL() }
 
   private fun extractContent(e: Element): String {
     // Remove the ellipsis & "show more" link from post's content.

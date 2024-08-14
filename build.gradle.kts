@@ -1,14 +1,14 @@
 import nu.studer.gradle.jooq.JooqGenerate
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jooq.meta.jaxb.ForcedType
 import org.jooq.meta.jaxb.Logging
 
 // Gradle
 
 plugins {
-  kotlin("jvm") version "1.9.25"
-  kotlin("kapt") version "1.9.25"
-  kotlin("plugin.spring") version "1.9.25"
+  kotlin("jvm") version "2.0.10"
+  kotlin("kapt") version "2.0.10"
+  kotlin("plugin.spring") version "2.0.10"
   id("org.springframework.boot") version "3.3.2"
   id("io.spring.dependency-management") version "1.1.6"
   id("com.gorylenko.gradle-git-properties") version "2.4.2"
@@ -104,16 +104,19 @@ dependencies {
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(19)
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
 
 // Kotlin compiler
 
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    jvmTarget = java.toolchain.languageVersion.get().toString()
-    freeCompilerArgs = listOf("-Xjsr305=strict") // Enable strict null-safety for Kotlin project
+kotlin {
+  compilerOptions {
+    jvmTarget = JvmTarget.JVM_21
+    freeCompilerArgs = listOf(
+      "-Xjsr305=strict", // Enable strict null checking
+      "-Xemit-jvm-type-annotations", // Enable type annotations
+    )
   }
 }
 
