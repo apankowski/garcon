@@ -54,9 +54,8 @@ class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
     body()
   }
 
-  override fun extensions(): List<Extension> {
-    return listOf(SpringExtension)
-  }
+  override fun extensions(): List<Extension> =
+    listOf(SpringExtension)
 
   override suspend fun beforeSpec(spec: Spec) {
     RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
