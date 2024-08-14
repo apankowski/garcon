@@ -7,7 +7,7 @@ import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
-import java.net.URL
+import java.net.URI
 
 // Note: Thrown exceptions will be subject to Spring's exception to HTTP error mapping - by default
 // done in DefaultHandlerExceptionResolver. By selecting types of thrown exceptions implementation
@@ -26,7 +26,7 @@ class SlashCommandMethodArgumentResolver : HandlerMethodArgumentResolver {
 
     val command = request.parameter("command", "string", identity(), ::required)!!
     val text = request.parameter("text", "string", identity(), ::nullIfEmpty) ?: ""
-    val responseUrl = request.parameter("response_url", "URL", ::URL, ::nullIfEmpty)
+    val responseUrl = request.parameter("response_url", "URL", { URI(it).toURL() }, ::nullIfEmpty)
     val triggerId = request.parameter("trigger_id", "trigger ID", ::TriggerId, ::nullIfEmpty)
     val userId = request.parameter("user_id", "user ID", ::UserId, ::required)!!
     val channelId = request.parameter("channel_id", "channel ID", ::ChannelId, ::required)!!

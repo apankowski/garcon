@@ -11,7 +11,7 @@ import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
-import java.net.URL
+import java.net.URI
 import java.time.Instant
 import java.util.*
 
@@ -148,7 +148,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
     fun toFacebookPost(r: SynchronizedPostsRecord) =
       Post(
         externalId = FacebookPostId(r.postExternalId),
-        url = URL(r.postUrl),
+        url = URI(r.postUrl).toURL(),
         publishedAt = r.postPublishedAt,
         content = r.postContent
       )
