@@ -2,7 +2,6 @@ package dev.pankowski.garcon.infrastructure.facebook
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeType
 import com.fasterxml.jackson.databind.node.JsonNodeType.NUMBER
 import com.fasterxml.jackson.databind.node.JsonNodeType.STRING
@@ -45,15 +44,17 @@ class PostExtractionStrategyV2 : PostExtractionStrategy {
     // The alternative would be to use single-line string which would make the query unreadable 🙄
     postsQuery = JsonQuery.compile(
       """
-      [.. | objects | select(.__typename == "Story")] |
+      .. | objects | select(.__typename == "Story") |
+          .post_id as ${'$'}post_id |
           (.. | objects | select(has("content")) | .content) as ${'$'}content |
-              (${'$'}content | .. | objects | select(has("creation_time"))) as ${'$'}metadata |
-                  map({
-                      "id": .post_id,
-                      "published_at": ${'$'}metadata.creation_time,
-                      "url": ${'$'}metadata.url,
-                      "content": ${'$'}content | .. | objects | select(.__typename == "TextWithEntities") | .text
-                  })
+          ([.. | objects | select(has("creation_time"))][0]) as ${'$'}metadata |
+          (${'$'}content | .. | objects | select(.__typename == "TextWithEntities") | .text) as ${'$'}text |
+              {
+                  id: ${'$'}post_id,
+                  published_at: ${'$'}metadata.creation_time,
+                  url: ${'$'}metadata.url,
+                  content: ${'$'}text
+              }
       """.trimIndent(),
       Version.LATEST,
     )
@@ -71,30 +72,31 @@ class PostExtractionStrategyV2 : PostExtractionStrategy {
       }
 
   private fun extractPostsFromObjectLiteral(objectLiteral: ObjectNode): Posts {
-    var result: Posts = emptyList()
+    val postData = mutableListOf<ObjectNode>()
     postsQuery.apply(rootScope, objectLiteral) { output ->
-      if (output is ArrayNode) result = extractPostsFromQueryOutput(output)
+      if (output is ObjectNode) postData += output
     }
-    if (result.isNotEmpty())
-      log.debug("Extracted posts {} from payload {}", result, objectLiteral.toString())
-    return result
+
+    val posts = postData.mapNotNull { extractPostFromQueryOutput(it) }
+    if (posts.isNotEmpty())
+      log.debug("Extracted posts {} from payload {}", posts, objectLiteral.toString())
+
+    return posts
   }
 
-  private fun extractPostsFromQueryOutput(output: ArrayNode): Posts {
-    return output.mapNotNull map@{ node ->
-      val externalId = node.extractProperty("id", STRING) { FacebookPostId(it.textValue()) }
-      val url = node.extractProperty("url", STRING) { URI(it.textValue()).toURL() }
-      val publishedAt = node.extractProperty("published_at", NUMBER) { Instant.ofEpochSecond(it.longValue()) }
-      val content = node.extractProperty("content", STRING) { it.textValue().sanitizeContent() }
+  private fun extractPostFromQueryOutput(output: ObjectNode): Post? {
+    val externalId = output.extractProperty("id", STRING) { FacebookPostId(it.textValue()) }
+    val url = output.extractProperty("url", STRING) { URI(it.textValue()).toURL() }
+    val publishedAt = output.extractProperty("published_at", NUMBER) { Instant.ofEpochSecond(it.longValue()) }
+    val content = output.extractProperty("content", STRING) { it.textValue().sanitizeContent() }
 
-      if (externalId == null || url == null || publishedAt == null || content == null) null
-      else Post(
-        externalId = externalId,
-        url = url,
-        publishedAt = publishedAt,
-        content = content,
-      )
-    }
+    return if (externalId == null || url == null || publishedAt == null || content == null) null
+    else Post(
+      externalId = externalId,
+      url = url,
+      publishedAt = publishedAt,
+      content = content,
+    )
   }
 
   private fun <T> JsonNode.extractProperty(name: String, expectedType: JsonNodeType, mapper: (JsonNode) -> T): T? {
