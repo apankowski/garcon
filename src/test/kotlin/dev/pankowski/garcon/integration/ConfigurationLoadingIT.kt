@@ -18,7 +18,7 @@ class ConfigurationLoadingIT(
     // expect
     config shouldBe LunchConfig(
       pages = listOf(
-        PageConfig(PageKey("PŻPS"), URL("http://localhost:9876/lunch/facebook/pzps/posts")),
+        PageConfig(PageKey("PŻPS"), toURL("http://localhost:9876/lunch/facebook/pzps/posts")),
       ),
     )
   }

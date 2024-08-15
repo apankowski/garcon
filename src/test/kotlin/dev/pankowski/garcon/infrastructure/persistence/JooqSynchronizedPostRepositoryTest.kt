@@ -123,12 +123,12 @@ class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : 
 
     "updates synchronized post with post and classification" {
       // given
-      val oldPost = somePost(url = URL("https://old/url"), content = "old content")
+      val oldPost = somePost(url = toURL("https://old/url"), content = "old content")
       val oldClassification = Classification.REGULAR_POST
       val stored = repository.storeAndRetrieve(someStoreData(post = oldPost, classification = oldClassification))
 
       // and
-      val newPost = somePost(url = URL("https://new/url"), content = "new content")
+      val newPost = somePost(url = toURL("https://new/url"), content = "new content")
       val newClassification = Classification.LUNCH_POST
 
       // when

@@ -3,6 +3,7 @@ package dev.pankowski.garcon.infrastructure.facebook
 import com.google.common.annotations.VisibleForTesting
 import dev.pankowski.garcon.domain.FacebookPostId
 import dev.pankowski.garcon.domain.Post
+import dev.pankowski.garcon.domain.toURL
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -10,7 +11,6 @@ import org.jsoup.safety.Safelist
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
-import java.net.URI
 import java.net.URL
 import java.time.Instant
 
@@ -65,12 +65,12 @@ class PostExtractionStrategyV1 : PostExtractionStrategy {
   private fun getTimestampData(e: Element) =
     e.attr("data-utime")
       .toLongOrNull()
-      ?.let(Instant::ofEpochSecond)
+      ?.let { Instant.ofEpochSecond(it) }
 
   private fun getUrl(e: Element) =
     e.absUrl("href")
-      .takeUnless(String::isEmpty)
-      ?.let { URI(it).toURL() }
+      .takeUnless { it.isEmpty() }
+      ?.let { toURL(it) }
 
   private fun extractContent(e: Element): String {
     // Remove the ellipsis & "show more" link from post's content.

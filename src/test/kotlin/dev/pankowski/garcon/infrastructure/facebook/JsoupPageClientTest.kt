@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED
 import dev.pankowski.garcon.domain.PageName
 import dev.pankowski.garcon.domain.someClientConfig
 import dev.pankowski.garcon.domain.somePageConfig
+import dev.pankowski.garcon.domain.toURL
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.assertions.throwables.shouldThrowExactly
@@ -21,7 +22,6 @@ import io.kotest.matchers.string.shouldNotBeEmpty
 import org.jsoup.HttpStatusException
 import org.springframework.http.MediaType
 import java.net.SocketTimeoutException
-import java.net.URL
 import java.time.Duration
 
 class JsoupPageClientTest : FreeSpec({
@@ -42,7 +42,7 @@ class JsoupPageClientTest : FreeSpec({
     // given
     val clientConfig = someClientConfig(userAgent = "Some User Agent")
     val client = JsoupPageClient(clientConfig, listOf())
-    val pageConfig = somePageConfig(url = URL(server.url("/posts")))
+    val pageConfig = somePageConfig(url = toURL(server.url("/posts")))
 
     // and
     server.givenThat(
@@ -74,7 +74,7 @@ class JsoupPageClientTest : FreeSpec({
     // given
     val clientConfig = someClientConfig(timeout = Duration.ofMillis(100))
     val client = JsoupPageClient(clientConfig, listOf())
-    val pageConfig = somePageConfig(url = URL(server.url("/posts")))
+    val pageConfig = somePageConfig(url = toURL(server.url("/posts")))
 
     // and
     server.givenThat(
@@ -90,7 +90,7 @@ class JsoupPageClientTest : FreeSpec({
   "retries given page in case of failure" {
     // given
     val client = JsoupPageClient(someClientConfig(retries = 2), listOf())
-    val pageConfig = somePageConfig(url = URL(server.url("/posts")))
+    val pageConfig = somePageConfig(url = toURL(server.url("/posts")))
 
     // and
     server.resetAll()
@@ -129,7 +129,7 @@ class JsoupPageClientTest : FreeSpec({
   "fails when all attempts to retrieve given page fail" {
     // given
     val client = JsoupPageClient(someClientConfig(retries = 2), listOf())
-    val pageConfig = somePageConfig(url = URL(server.url("/posts")))
+    val pageConfig = somePageConfig(url = toURL(server.url("/posts")))
 
     // and
     server.resetAll()
@@ -200,7 +200,7 @@ class JsoupPageClientTest : FreeSpec({
       // given
       val clientConfig = someClientConfig()
       val client = JsoupPageClient(clientConfig, listOf())
-      val pageConfig = somePageConfig(url = URL(server.url("/posts")))
+      val pageConfig = somePageConfig(url = toURL(server.url("/posts")))
 
       // and
       server.givenThat(
@@ -219,7 +219,7 @@ class JsoupPageClientTest : FreeSpec({
     // given
     val clientConfig = someClientConfig(userAgent = "Some User Agent")
     val client = JsoupPageClient(clientConfig, listOf())
-    val pageConfig = somePageConfig(url = URL(server.url("/posts")))
+    val pageConfig = somePageConfig(url = toURL(server.url("/posts")))
 
     // and
     server.givenThat(

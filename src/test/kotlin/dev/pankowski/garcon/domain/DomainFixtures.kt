@@ -31,7 +31,7 @@ fun someLunchConfig(
 
 fun somePageConfig(
   pageKey: PageKey = PageKey("PageKey"),
-  url: URL = URL("http://localhost:4321/posts"),
+  url: URL = toURL("http://localhost:4321/posts"),
 ) = PageConfig(pageKey, url)
 
 fun someSyncConfig(
@@ -67,7 +67,7 @@ fun someRepostRetryConfig(
 // Domain
 fun somePost(
   externalId: ExternalPostId = generatedFacebookPostId(),
-  url: URL = URL("https://facebook/post"),
+  url: URL = toURL("https://facebook/post"),
   publishedAt: Instant = now(),
   content: String = "some post content",
 ) = Post(externalId, url, publishedAt, content)

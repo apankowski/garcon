@@ -2,12 +2,12 @@ package dev.pankowski.garcon.infrastructure.facebook
 
 import dev.pankowski.garcon.domain.FacebookPostId
 import dev.pankowski.garcon.domain.Post
+import dev.pankowski.garcon.domain.toURL
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.beEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.should
 import org.jsoup.Jsoup
-import java.net.URL
 import java.time.Instant
 
 class PostExtractionStrategyV2Test : FreeSpec({
@@ -203,19 +203,19 @@ class PostExtractionStrategyV2Test : FreeSpec({
     val posts = listOf(
       Post(
         externalId = FacebookPostId("some-post-id-1"),
-        url = URL("https://facebook.com/some-post1-permalink"),
+        url = toURL("https://facebook.com/some-post1-permalink"),
         publishedAt = Instant.ofEpochSecond(1),
         content = "some content #1"
       ),
       Post(
         externalId = FacebookPostId("some-post-id-2"),
-        url = URL("https://facebook.com/some-post2-permalink"),
+        url = toURL("https://facebook.com/some-post2-permalink"),
         publishedAt = Instant.ofEpochSecond(2),
         content = "some content #2"
       ),
       Post(
         externalId = FacebookPostId("some-post-id-3"),
-        url = URL("https://facebook.com/some-post3-permalink"),
+        url = toURL("https://facebook.com/some-post3-permalink"),
         publishedAt = Instant.ofEpochSecond(3),
         content = "some content #3"
       ),
@@ -242,7 +242,7 @@ class PostExtractionStrategyV2Test : FreeSpec({
     result shouldContainExactly listOf(
       Post(
         FacebookPostId("1054930068793510"),
-        URL("https://www.facebook.com/permalink.php?story_fbid=pfbid0L45BV7SFeSH8Gc3SQvCLHC2VUwqPc7bYtJB7kh1EN12T2uBYXYFx7BLDqoGLjDNjl&id=100028295814975"),
+        toURL("https://www.facebook.com/permalink.php?story_fbid=pfbid0L45BV7SFeSH8Gc3SQvCLHC2VUwqPc7bYtJB7kh1EN12T2uBYXYFx7BLDqoGLjDNjl&id=100028295814975"),
         Instant.ofEpochSecond(1673897171),
         """
         |MENU   17  STYCZNIA
@@ -337,7 +337,7 @@ class PostExtractionStrategyV2Test : FreeSpec({
     result shouldContainExactly listOf(
       Post(
         FacebookPostId("1053189635634220"),
-        URL("https://www.facebook.com/permalink.php?story_fbid=pfbid0NPAVi78AX53SAGKhpdixFZH9GJ7Y54JaqUxr9hR5TNXaYDW29fKcUKHMM5bLPniXl&id=100028295814975"),
+        toURL("https://www.facebook.com/permalink.php?story_fbid=pfbid0NPAVi78AX53SAGKhpdixFZH9GJ7Y54JaqUxr9hR5TNXaYDW29fKcUKHMM5bLPniXl&id=100028295814975"),
         Instant.ofEpochSecond(1673688899),
         """
         |Nasza nowość sałatka z warzyw korzennych
@@ -358,7 +358,7 @@ class PostExtractionStrategyV2Test : FreeSpec({
     result shouldContainExactly listOf(
       Post(
         FacebookPostId("1416281615991685"),
-        URL("https://www.facebook.com/permalink.php?story_fbid=pfbid0dcnDxDnFgyioPGkFVUBAmULwCScvaTSzro4YSANJo7NiV9GwMRJqDisVM3hc8c19l&id=100028295814975"),
+        toURL("https://www.facebook.com/permalink.php?story_fbid=pfbid0dcnDxDnFgyioPGkFVUBAmULwCScvaTSzro4YSANJo7NiV9GwMRJqDisVM3hc8c19l&id=100028295814975"),
         Instant.ofEpochSecond(1723573975),
         """
         |MENU 14 SIERPNIA
