@@ -7,10 +7,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeType.NUMBER
 import com.fasterxml.jackson.databind.node.JsonNodeType.STRING
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.google.common.annotations.VisibleForTesting
-import dev.pankowski.garcon.domain.FacebookPostId
-import dev.pankowski.garcon.domain.Post
-import dev.pankowski.garcon.domain.Posts
-import dev.pankowski.garcon.domain.oneLinePreview
+import dev.pankowski.garcon.domain.*
 import net.thisptr.jackson.jq.BuiltinFunctionLoader
 import net.thisptr.jackson.jq.JsonQuery
 import net.thisptr.jackson.jq.Scope
@@ -21,7 +18,6 @@ import org.mozilla.javascript.ast.AstNode
 import org.mozilla.javascript.ast.ObjectLiteral
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import java.net.URI
 import java.time.Instant
 
 /**
@@ -34,7 +30,7 @@ class PostExtractionStrategyV2 : PostExtractionStrategy {
 
   private val log = LoggerFactory.getLogger(javaClass)
   private val rootScope = Scope.newEmptyScope()
-  private val postsQuery: JsonQuery
+  private final val postsQuery: JsonQuery
 
   init {
     BuiltinFunctionLoader.getInstance().loadFunctions(Version.LATEST, rootScope)
@@ -86,7 +82,7 @@ class PostExtractionStrategyV2 : PostExtractionStrategy {
 
   private fun extractPostFromQueryOutput(output: ObjectNode): Post? {
     val externalId = output.extractProperty("id", STRING) { FacebookPostId(it.textValue()) }
-    val url = output.extractProperty("url", STRING) { URI(it.textValue()).toURL() }
+    val url = output.extractProperty("url", STRING) { toURL(it.textValue()) }
     val publishedAt = output.extractProperty("published_at", NUMBER) { Instant.ofEpochSecond(it.longValue()) }
     val content = output.extractProperty("content", STRING) { it.textValue().sanitizeContent() }
 

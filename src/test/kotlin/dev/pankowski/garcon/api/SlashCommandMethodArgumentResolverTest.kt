@@ -1,5 +1,6 @@
 package dev.pankowski.garcon.api
 
+import dev.pankowski.garcon.domain.toURL
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.withClue
@@ -13,7 +14,6 @@ import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.ServletRequestBindingException
 import org.springframework.web.context.request.ServletWebRequest
-import java.net.URL
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.javaMethod
 
@@ -164,7 +164,7 @@ class SlashCommandMethodArgumentResolverTest : FreeSpec({
       "/command",
       "some text",
       // Silence warning about URL constructor (which is based on it throwing IOException)
-      URL("https://www.slack.com/some-response-link"),
+      toURL("https://www.slack.com/some-response-link"),
       TriggerId("some trigger id"),
       UserId("some user id"),
       ChannelId("some channel id"),

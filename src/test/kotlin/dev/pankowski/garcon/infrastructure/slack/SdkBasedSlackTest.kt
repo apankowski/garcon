@@ -1,10 +1,7 @@
 package dev.pankowski.garcon.infrastructure.slack
 
 import com.slack.api.methods.request.chat.ChatPostMessageRequest
-import dev.pankowski.garcon.domain.PageName
-import dev.pankowski.garcon.domain.SlackMessageId
-import dev.pankowski.garcon.domain.somePost
-import dev.pankowski.garcon.domain.someSlackConfig
+import dev.pankowski.garcon.domain.*
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
@@ -12,7 +9,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import java.net.URL
 import com.slack.api.methods.MethodsClient as SlackMethodsApi
 
 class SdkBasedSlackTest : FreeSpec({
@@ -21,7 +17,7 @@ class SdkBasedSlackTest : FreeSpec({
     // given
     val pageName = PageName("Some page name")
     val post = somePost(
-      url = URL("https://www.facebook.com/post"),
+      url = toURL("https://www.facebook.com/post"),
       content = "Some post content",
     )
 

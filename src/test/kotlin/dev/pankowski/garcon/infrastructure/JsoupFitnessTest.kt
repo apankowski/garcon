@@ -2,6 +2,7 @@ package dev.pankowski.garcon.infrastructure
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import dev.pankowski.garcon.domain.toURL
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.extensions.wiremock.ListenerMode
 import io.kotest.extensions.wiremock.WireMockListener
@@ -9,7 +10,6 @@ import io.kotest.matchers.shouldBe
 import org.jsoup.helper.HttpConnection
 import org.springframework.http.MediaType
 import org.springframework.web.util.UriUtils
-import java.net.URL
 import kotlin.text.Charsets.UTF_8
 
 class JsoupFitnessTest : FreeSpec({
@@ -25,8 +25,8 @@ class JsoupFitnessTest : FreeSpec({
   // earlier in the future.
   "handles URL-encoded redirects" {
     // given
-    val redirectingUrl = URL(server.url("/redirect"))
-    val targetUrl = URL(server.url(UriUtils.encodePath("/target ąćę ?=&", UTF_8)))
+    val redirectingUrl = toURL(server.url("/redirect"))
+    val targetUrl = toURL(server.url(UriUtils.encodePath("/target ąćę ?=&", UTF_8)))
 
     // and
     server.givenThat(get(redirectingUrl.path).willReturn(permanentRedirect(targetUrl.toString())))

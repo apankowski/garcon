@@ -159,7 +159,7 @@ class LunchControllerTest : FreeSpec({
       someSynchronizedPost(
         pageName = PageName("Page name 1"),
         post = somePost(
-          url = URL("https://facebook/1"),
+          url = toURL("https://facebook/1"),
           publishedAt = somePointInTime.plus(2, DAYS),
           content = "Some post content 1"
         ),
@@ -169,7 +169,7 @@ class LunchControllerTest : FreeSpec({
       someSynchronizedPost(
         pageName = PageName("Page name 2"),
         post = somePost(
-          url = URL("https://facebook/2"),
+          url = toURL("https://facebook/2"),
           publishedAt = somePointInTime.plus(7, DAYS),
           content = "Some post content 2"
         ),
@@ -179,7 +179,7 @@ class LunchControllerTest : FreeSpec({
       someSynchronizedPost(
         pageName = PageName("Page name 3"),
         post = somePost(
-          url = URL("https://facebook/3"),
+          url = toURL("https://facebook/3"),
           publishedAt = somePointInTime.plus(12, DAYS),
           content = "Some post content 3"
         ),
@@ -193,7 +193,7 @@ class LunchControllerTest : FreeSpec({
       someSynchronizedPost(
         pageName = PageName("Page name 4"),
         post = somePost(
-          url = URL("https://facebook/4"),
+          url = toURL("https://facebook/4"),
           publishedAt = somePointInTime.plus(17, DAYS),
           content = "Some post content 4"
         ),
