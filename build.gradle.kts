@@ -5,6 +5,15 @@ import org.jooq.meta.jaxb.Logging
 
 // Gradle
 
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath("org.flywaydb:flyway-database-postgresql:10.10.0")
+  }
+}
+
 plugins {
   kotlin("jvm") version "2.0.10"
   kotlin("kapt") version "2.0.10"
@@ -14,7 +23,7 @@ plugins {
   id("com.gorylenko.gradle-git-properties") version "2.4.2"
   id("com.adarshr.test-logger") version "4.0.0"
   id("com.avast.gradle.docker-compose") version "0.17.7"
-  id("org.flywaydb.flyway") version "9.22.3"
+  id("org.flywaydb.flyway") version "10.10.0"
   id("nu.studer.jooq") version "9.0"
   jacoco
   id("org.sonarqube") version "5.1.0.4882"
@@ -69,7 +78,6 @@ dependencies {
 
   // Persistence
   implementation("org.springframework.boot:spring-boot-starter-jooq")
-  implementation("org.flywaydb:flyway-core")
   implementation("org.flywaydb:flyway-database-postgresql")
   runtimeOnly("org.postgresql:postgresql")
 
