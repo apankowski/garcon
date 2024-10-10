@@ -15,14 +15,14 @@ buildscript {
 }
 
 plugins {
-  kotlin("jvm") version "2.0.20"
-  kotlin("kapt") version "2.0.20"
-  kotlin("plugin.spring") version "2.0.20"
+  kotlin("jvm") version "2.0.21"
+  kotlin("kapt") version "2.0.21"
+  kotlin("plugin.spring") version "2.0.21"
   id("org.springframework.boot") version "3.3.4"
   id("io.spring.dependency-management") version "1.1.6"
   id("com.gorylenko.gradle-git-properties") version "2.4.2"
   id("com.adarshr.test-logger") version "4.0.0"
-  id("com.avast.gradle.docker-compose") version "0.17.8"
+  id("com.avast.gradle.docker-compose") version "0.17.9"
   id("org.flywaydb.flyway") version "10.19.0"
   id("nu.studer.jooq") version "9.0"
   jacoco
@@ -54,7 +54,7 @@ dependencyManagement {
     dependency("io.kotest:kotest-assertions-core:5.9.1")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.3.0")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:3.1.0")
-    dependency("io.mockk:mockk:1.13.12")
+    dependency("io.mockk:mockk:1.13.13")
     dependency("org.wiremock:wiremock-standalone:3.9.1")
     dependency("com.tngtech.archunit:archunit-junit5:1.3.0")
   }
