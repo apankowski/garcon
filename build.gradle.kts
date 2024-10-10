@@ -145,21 +145,10 @@ tasks.bootJar {
   archiveFileName = "application.jar"
 }
 
-// CI
-
-val isCiEnv = System.getenv("CI") == "true"
-
 // Docker compose
 
 dockerCompose {
   useComposeFiles = listOf("docker-compose-integration-test.yml")
-
-  // Starting from plugin version 0.17.0, useDockerComposeV2 property defaults to true, so the new docker
-  // compose (instead of deprecated docker-compose) is used. However, docker compose v2 isn't yet packaged in
-  // mainstream linux distros. Let's not force anyone to install v2 manually and wait until distros come with
-  // v2 as the default.
-  // However, we should use the new command in GitHub Actions where the old syntax is no longer supported.
-  useDockerComposeV2 = System.getenv("GITHUB_ACTIONS") == "true"
 }
 
 // Flyway
