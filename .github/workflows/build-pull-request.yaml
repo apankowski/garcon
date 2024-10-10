@@ -117,6 +117,14 @@ jobs:
     - name: Analyze image with Trivy
       uses: aquasecurity/trivy-action@0.26.0
       id: trivy
+      env:
+        # Trivy is failing too often with TOOMANYREQUESTS while trying to download vulnerability database.
+        # Options below try to use the AWS-based sources of the databases which have much higher pull limits. See:
+        # https://github.com/aquasecurity/trivy/discussions/7591
+        # https://github.com/aquasecurity/trivy/discussions/7668
+        # https://github.com/aquasecurity/trivy-action#environment-variables
+        TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db,public.ecr.aws/aquasecurity/trivy-db
+        TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db,public.ecr.aws/aquasecurity/trivy-java-db
       with:
         image-ref: apankowski/garcon:${{ github.sha }}
         format: sarif
