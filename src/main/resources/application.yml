@@ -42,12 +42,6 @@ management:
   endpoint:
     health:
       show-details: always
-      probes:
-        enabled: true
-  prometheus:
-    metrics:
-      export:
-        enabled: true
 
 lunch:
   sync:
