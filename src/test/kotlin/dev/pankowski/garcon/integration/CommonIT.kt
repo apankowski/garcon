@@ -30,7 +30,17 @@ import java.time.Instant
 
 @SpringBootTest(
   webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-  properties = ["spring.main.allow-bean-definition-overriding = true"],
+  properties = [
+    "spring.main.allow-bean-definition-overriding = true",
+    // Normally, Spring Boot detects the cloud environment it is in, enabling its specific features. Since we have
+    // integration tests verifying kubernetes-specific features, let's override the cloud platform auto-detection.
+    "spring.main.cloud-platform = kubernetes",
+    // By default, Spring Boot disables metric exporters. This is because most of them are push based and thus require
+    // a running metrics server. Since it is typically unavailable during the tests, it breaks application startup.
+    // We're enabling the exporters since we're using pull based Prometheus and have integration tests around it.
+    // See `ObservabilityContextCustomizerFactory` for the code responsible for this feature.
+    "spring.test.observability.auto-configure = true",
+  ],
 )
 @ActiveProfiles("no-scheduled-tasks")
 class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
