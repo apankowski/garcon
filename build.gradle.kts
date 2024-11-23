@@ -26,7 +26,7 @@ plugins {
   id("org.flywaydb.flyway") version "11.0.0"
   id("nu.studer.jooq") version "9.0"
   jacoco
-  id("org.sonarqube") version "5.1.0.4882"
+  id("org.sonarqube") version "6.0.0.5145"
   id("com.dorongold.task-tree") version "4.0.0"
 }
 
