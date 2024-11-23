@@ -16,7 +16,6 @@ buildscript {
 
 plugins {
   kotlin("jvm") version "2.0.21"
-  kotlin("kapt") version "2.0.21"
   kotlin("plugin.spring") version "2.0.21"
   id("org.springframework.boot") version "3.3.6"
   id("io.spring.dependency-management") version "1.1.6"
@@ -101,7 +100,6 @@ dependencies {
   testImplementation("com.tngtech.archunit:archunit-junit5")
 
   // Other
-  kapt("org.springframework.boot:spring-boot-configuration-processor")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   // Monitoring
@@ -126,13 +124,6 @@ kotlin {
       "-Xemit-jvm-type-annotations", // Enable type annotations
     )
   }
-}
-
-// Kapt
-
-kapt {
-  // Disable scanning for annotation processors of compile classpath, making kapt faster.
-  includeCompileClasspath = false
 }
 
 // Spring
