@@ -18,7 +18,7 @@ plugins {
   kotlin("jvm") version "2.0.21"
   kotlin("kapt") version "2.0.21"
   kotlin("plugin.spring") version "2.0.21"
-  id("org.springframework.boot") version "3.3.6"
+  id("org.springframework.boot") version "3.4.0"
   id("io.spring.dependency-management") version "1.1.6"
   id("com.gorylenko.gradle-git-properties") version "2.4.2"
   id("com.adarshr.test-logger") version "4.0.0"
@@ -48,7 +48,7 @@ dependencyManagement {
     dependency("org.jsoup:jsoup:1.18.1")
     dependency("org.mozilla:rhino:1.7.15")
     dependency("net.thisptr:jackson-jq:1.1.0")
-    dependency("com.slack.api:slack-api-client:1.44.1")
+    dependency("com.slack.api:slack-api-client:1.44.2")
     dependency("io.kotest:kotest-runner-junit5:5.9.1")
     dependency("io.kotest:kotest-framework-datatest:5.9.1")
     dependency("io.kotest:kotest-assertions-core:5.9.1")
