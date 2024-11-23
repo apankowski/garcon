@@ -99,11 +99,11 @@ dependencies {
   testImplementation("org.wiremock:wiremock-standalone")
   testImplementation("com.tngtech.archunit:archunit-junit5")
 
-  // Other
-  developmentOnly("org.springframework.boot:spring-boot-devtools")
-
   // Monitoring
   implementation("io.micrometer:micrometer-registry-prometheus")
+
+  // Other
+  developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 // Java compiler
@@ -134,12 +134,6 @@ springBoot {
 
 tasks.bootJar {
   archiveFileName = "application.jar"
-}
-
-// Docker compose
-
-dockerCompose {
-  useComposeFiles = listOf("docker-compose-integration-test.yml")
 }
 
 // Flyway
@@ -246,11 +240,14 @@ ext["jooq.version"] = jooq.version.get()
 val TaskContainer.generateJooq
   get() = named<JooqGenerate>("generateJooq")
 
-// See https://github.com/etiennestuder/gradle-jooq-plugin#configuring-the-jooq-generation-task-to-participate-in-incremental-builds-and-build-caching
+// See https://github.com/etiennestuder/gradle-jooq-plugin/blob/main/example/configure_jooq_with_flyway/build.gradle
 tasks.generateJooq {
-  inputs.dir("src/main/resources/db/migration")
-  allInputsDeclared = true
   dependsOn(tasks.flywayMigrate)
+
+  inputs.files(fileTree("src/main/resources/db/migration"))
+    .withPropertyName("migrations")
+    .withPathSensitivity(PathSensitivity.RELATIVE)
+  allInputsDeclared = true
 }
 
 tasks.compileKotlin {
