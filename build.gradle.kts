@@ -54,7 +54,7 @@ dependencyManagement {
     dependency("io.kotest.extensions:kotest-extensions-spring:1.3.0")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:3.1.0")
     dependency("io.mockk:mockk:1.13.13")
-    dependency("org.wiremock:wiremock-standalone:3.9.2")
+    dependency("org.wiremock:wiremock-standalone:3.10.0")
     dependency("com.tngtech.archunit:archunit-junit5:1.3.0")
   }
 }
