@@ -21,7 +21,7 @@ plugins {
   id("io.spring.dependency-management") version "1.1.6"
   id("com.gorylenko.gradle-git-properties") version "2.4.2"
   id("com.adarshr.test-logger") version "4.0.0"
-  id("com.avast.gradle.docker-compose") version "0.17.11"
+  id("com.avast.gradle.docker-compose") version "0.17.12"
   id("org.flywaydb.flyway") version "11.1.0"
   id("nu.studer.jooq") version "9.0"
   jacoco
