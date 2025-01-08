@@ -10,7 +10,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.1.0")
+    classpath("org.flywaydb:flyway-database-postgresql:11.1.1")
   }
 }
 
@@ -22,7 +22,7 @@ plugins {
   id("com.gorylenko.gradle-git-properties") version "2.4.2"
   id("com.adarshr.test-logger") version "4.0.0"
   id("com.avast.gradle.docker-compose") version "0.17.12"
-  id("org.flywaydb.flyway") version "11.1.0"
+  id("org.flywaydb.flyway") version "11.1.1"
   id("nu.studer.jooq") version "9.0"
   jacoco
   id("org.sonarqube") version "6.0.1.5171"
@@ -45,7 +45,7 @@ dependencyManagement {
   dependencies {
     dependency("com.google.guava:guava:33.4.0-jre")
     dependency("org.jsoup:jsoup:1.18.3")
-    dependency("org.mozilla:rhino:1.7.15")
+    dependency("org.mozilla:rhino:1.8.0")
     dependency("net.thisptr:jackson-jq:1.2.0")
     dependency("com.slack.api:slack-api-client:1.44.2")
     dependency("io.kotest:kotest-runner-junit5:5.9.1")
