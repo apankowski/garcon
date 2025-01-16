@@ -10,7 +10,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.1.1")
+    classpath("org.flywaydb:flyway-database-postgresql:11.2.0")
   }
 }
 
@@ -22,7 +22,7 @@ plugins {
   id("com.gorylenko.gradle-git-properties") version "2.4.2"
   id("com.adarshr.test-logger") version "4.0.0"
   id("com.avast.gradle.docker-compose") version "0.17.12"
-  id("org.flywaydb.flyway") version "11.1.1"
+  id("org.flywaydb.flyway") version "11.2.0"
   id("nu.studer.jooq") version "9.0"
   jacoco
   id("org.sonarqube") version "6.0.1.5171"
