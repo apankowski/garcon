@@ -8,10 +8,12 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * Idiom to be used instead of `Instant.now()`.
+ * Idiom to be used instead of `LocalDateTime.now()` in persistence tests.
  *
- * Postgres supports timestamps with 6-digit second precision.
- * The goal is to make JVM-generated Instants compatible with Postgres, so we can compare them by equality.
+ * Java generates date-times with 9-digit second precision, but Postgres supports timestamps with 6-digit
+ * second precision and truncates further digits. To simplify writing persistence tests, this idiom does
+ * the truncation on Java side, so that values returned by it, persisted to and subsequently read from the
+ * database can be compared by simple equality.
  */
 fun now() = Instant.now().truncatedTo(MICROS)!!
 

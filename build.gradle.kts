@@ -51,6 +51,7 @@ dependencyManagement {
     dependency("io.kotest:kotest-runner-junit5:5.9.1")
     dependency("io.kotest:kotest-framework-datatest:5.9.1")
     dependency("io.kotest:kotest-assertions-core:5.9.1")
+    dependency("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.3.0")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:3.1.0")
     dependency("io.mockk:mockk:1.13.16")
@@ -91,19 +92,22 @@ dependencies {
   testImplementation("io.kotest:kotest-runner-junit5")
   testImplementation("io.kotest:kotest-framework-datatest")
   testImplementation("io.kotest:kotest-assertions-core")
+  testImplementation("io.kotest.extensions:kotest-extensions-testcontainers")
   testImplementation("io.kotest.extensions:kotest-extensions-spring")
   testImplementation("io.kotest.extensions:kotest-extensions-wiremock")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("org.testcontainers:testcontainers")
+  testImplementation("org.testcontainers:postgresql")
   testImplementation("io.rest-assured:rest-assured")
   testImplementation("org.wiremock:wiremock-standalone")
   testImplementation("com.tngtech.archunit:archunit-junit5")
 
-  // Other
-  developmentOnly("org.springframework.boot:spring-boot-devtools")
-
   // Monitoring
   implementation("io.micrometer:micrometer-registry-prometheus")
+
+  // Other
+  developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 // Java compiler
@@ -134,12 +138,6 @@ springBoot {
 
 tasks.bootJar {
   archiveFileName = "application.jar"
-}
-
-// Docker compose
-
-dockerCompose {
-  useComposeFiles = listOf("docker-compose-integration-test.yml")
 }
 
 // Flyway
@@ -246,11 +244,14 @@ ext["jooq.version"] = jooq.version.get()
 val TaskContainer.generateJooq
   get() = named<JooqGenerate>("generateJooq")
 
-// See https://github.com/etiennestuder/gradle-jooq-plugin#configuring-the-jooq-generation-task-to-participate-in-incremental-builds-and-build-caching
+// See https://github.com/etiennestuder/gradle-jooq-plugin/blob/main/example/configure_jooq_with_flyway/build.gradle
 tasks.generateJooq {
-  inputs.dir("src/main/resources/db/migration")
-  allInputsDeclared = true
   dependsOn(tasks.flywayMigrate)
+
+  inputs.files(fileTree("src/main/resources/db/migration"))
+    .withPropertyName("migrations")
+    .withPathSensitivity(PathSensitivity.RELATIVE)
+  allInputsDeclared = true
 }
 
 tasks.compileKotlin {
