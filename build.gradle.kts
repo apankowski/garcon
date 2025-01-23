@@ -17,7 +17,7 @@ buildscript {
 plugins {
   kotlin("jvm") version "2.1.0"
   kotlin("plugin.spring") version "2.1.0"
-  id("org.springframework.boot") version "3.4.1"
+  id("org.springframework.boot") version "3.4.2"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.gorylenko.gradle-git-properties") version "2.4.2"
   id("com.adarshr.test-logger") version "4.0.0"
@@ -173,7 +173,7 @@ tasks.register("databaseDown") {
 // Jooq
 
 jooq {
-  version = "3.19.1"
+  version = "3.19.18"
 
   configurations {
     create("main") {
