@@ -27,8 +27,6 @@ plugins {
   jacoco
   id("org.sonarqube") version "6.0.1.5171"
   id("com.dorongold.task-tree") version "4.0.0"
-  // Consider: https://github.com/monosoul/jooq-gradle-plugin
-  // Consider: https://github.com/revolut-engineering/jooq-plugin
 }
 
 tasks.wrapper {
@@ -53,6 +51,7 @@ dependencyManagement {
     dependency("io.kotest:kotest-runner-junit5:5.9.1")
     dependency("io.kotest:kotest-framework-datatest:5.9.1")
     dependency("io.kotest:kotest-assertions-core:5.9.1")
+    dependency("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.3.0")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:3.1.0")
     dependency("io.mockk:mockk:1.13.16")
@@ -93,10 +92,13 @@ dependencies {
   testImplementation("io.kotest:kotest-runner-junit5")
   testImplementation("io.kotest:kotest-framework-datatest")
   testImplementation("io.kotest:kotest-assertions-core")
+  testImplementation("io.kotest.extensions:kotest-extensions-testcontainers")
   testImplementation("io.kotest.extensions:kotest-extensions-spring")
   testImplementation("io.kotest.extensions:kotest-extensions-wiremock")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("org.testcontainers:testcontainers")
+  testImplementation("org.testcontainers:postgresql")
   testImplementation("io.rest-assured:rest-assured")
   testImplementation("org.wiremock:wiremock-standalone")
   testImplementation("com.tngtech.archunit:archunit-junit5")

@@ -1,35 +1,35 @@
 package dev.pankowski.garcon.infrastructure.persistence
 
-import dev.pankowski.garcon.domain.*
+import dev.pankowski.garcon.domain.Classification
+import dev.pankowski.garcon.domain.ExternalPostId
+import dev.pankowski.garcon.domain.FacebookPostId
+import dev.pankowski.garcon.domain.PageName
+import dev.pankowski.garcon.domain.Repost
+import dev.pankowski.garcon.domain.SynchronizedPost
+import dev.pankowski.garcon.domain.SynchronizedPostHasDuplicateExternalId
+import dev.pankowski.garcon.domain.SynchronizedPostId
+import dev.pankowski.garcon.domain.SynchronizedPostModifiedConcurrently
+import dev.pankowski.garcon.domain.SynchronizedPostNotFound
+import dev.pankowski.garcon.domain.SynchronizedPostRepository
+import dev.pankowski.garcon.domain.SynchronizedPostStoreData
+import dev.pankowski.garcon.domain.Version
+import dev.pankowski.garcon.domain.now
+import dev.pankowski.garcon.domain.somePost
+import dev.pankowski.garcon.domain.toURL
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.FreeSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.collections.beEmpty
 import io.kotest.matchers.date.between
 import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import org.flywaydb.core.Flyway
-import org.jooq.DSLContext
-import org.springframework.boot.test.autoconfigure.jooq.JooqTest
-import org.springframework.test.context.ActiveProfiles
-import java.net.URL
 import java.time.Duration
 import java.time.temporal.ChronoUnit.DAYS
 import java.time.temporal.ChronoUnit.HOURS
 import java.util.UUID.randomUUID
 
-@JooqTest
-@ActiveProfiles("no-scheduled-tasks")
-class JooqSynchronizedPostRepositoryTest(context: DSLContext, flyway: Flyway) : FreeSpec({
-
-  beforeTest {
-    flyway.clean()
-    flyway.migrate()
-  }
-
-  val repository = JooqSynchronizedPostRepository(context)
+class JooqSynchronizedPostRepositoryTest(repository: JooqSynchronizedPostRepository) : PersistenceSpec({
 
   fun SynchronizedPostRepository.storeAndRetrieve(data: SynchronizedPostStoreData) =
     findExisting(store(data))

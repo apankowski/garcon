@@ -2,8 +2,11 @@ package dev.pankowski.garcon.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.hash.Hashing
+import dev.pankowski.garcon.TestDatabaseConfiguration
+import dev.pankowski.garcon.TestDatabaseExtension
 import dev.pankowski.garcon.domain.SlackConfig
-import io.kotest.core.extensions.Extension
+import dev.pankowski.garcon.infrastructure.persistence.generated.DefaultCatalog.DEFAULT_CATALOG
+import io.kotest.core.extensions.install
 import io.kotest.core.spec.Spec
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.core.test.TestCase
@@ -18,11 +21,12 @@ import org.apache.http.HttpRequestInterceptor
 import org.apache.http.client.methods.HttpRequestWrapper
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.protocol.HttpContext
-import org.flywaydb.core.Flyway
+import org.jooq.DSLContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalManagementPort
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.context.annotation.Import
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
@@ -42,8 +46,9 @@ import java.time.Instant
     "spring.test.observability.auto-configure = true",
   ],
 )
-@ActiveProfiles("no-scheduled-tasks")
-class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
+@ActiveProfiles("test")
+@Import(TestDatabaseConfiguration::class)
+abstract class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
 
   @LocalServerPort
   private var serverPort: Int = 0
@@ -52,7 +57,7 @@ class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
   private var managementPort: Int = 0
 
   @Autowired
-  private lateinit var flyway: Flyway
+  private lateinit var context: DSLContext
 
   @Autowired
   private lateinit var slackConfig: SlackConfig
@@ -61,11 +66,10 @@ class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
   private lateinit var objectMapper: ObjectMapper
 
   init {
+    install(TestDatabaseExtension)
+    register(SpringExtension)
     body()
   }
-
-  override fun extensions(): List<Extension> =
-    listOf(SpringExtension)
 
   override suspend fun beforeSpec(spec: Spec) {
     RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
@@ -75,10 +79,9 @@ class CommonIT(body: CommonIT.() -> Unit = {}) : FreeSpec() {
     )
   }
 
-  override suspend fun beforeTest(testCase: TestCase) {
-    flyway.clean()
-    flyway.migrate()
-  }
+  override suspend fun beforeEach(testCase: TestCase) =
+    // Clear all tables of test database, making each test start fresh
+    DEFAULT_CATALOG.PUBLIC.tables.forEach { context.truncate(it).cascade().execute() }
 
   fun request() =
     RestAssured
