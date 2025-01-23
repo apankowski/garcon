@@ -173,7 +173,7 @@ tasks.register("databaseDown") {
 // Jooq
 
 jooq {
-  version = "3.19.1"
+  version = "3.19.18"
 
   configurations {
     create("main") {
