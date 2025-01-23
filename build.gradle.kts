@@ -27,6 +27,8 @@ plugins {
   jacoco
   id("org.sonarqube") version "6.0.1.5171"
   id("com.dorongold.task-tree") version "4.0.0"
+  // Consider: https://github.com/monosoul/jooq-gradle-plugin
+  // Consider: https://github.com/revolut-engineering/jooq-plugin
 }
 
 tasks.wrapper {
