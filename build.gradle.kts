@@ -47,7 +47,7 @@ dependencyManagement {
     dependency("org.jsoup:jsoup:1.18.3")
     dependency("org.mozilla:rhino:1.8.0")
     dependency("net.thisptr:jackson-jq:1.2.0")
-    dependency("com.slack.api:slack-api-client:1.45.1")
+    dependency("com.slack.api:slack-api-client:1.45.2")
     dependency("io.kotest:kotest-runner-junit5:5.9.1")
     dependency("io.kotest:kotest-framework-datatest:5.9.1")
     dependency("io.kotest:kotest-assertions-core:5.9.1")
