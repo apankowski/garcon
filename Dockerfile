@@ -2,7 +2,7 @@
 # It could be taken a step further by getting rid of JarLauncher, but let's not get ahead of ourselves
 
 # eclipse-temurin:*-jre-alpine base images are only 65 MB compressed
-FROM eclipse-temurin:21.0.5_11-jre-alpine AS builder
+FROM eclipse-temurin:21.0.6_7-jre-alpine AS builder
 
 WORKDIR /workspace
 
@@ -10,7 +10,7 @@ WORKDIR /workspace
 COPY ./build/libs/application.jar application.jar
 RUN java -Djarmode=layertools -jar application.jar extract --destination extracted
 
-FROM eclipse-temurin:21.0.5_11-jre-alpine AS production
+FROM eclipse-temurin:21.0.6_7-jre-alpine AS production
 
 RUN \
     # Install curl used in the healthcheck
