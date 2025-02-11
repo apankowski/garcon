@@ -20,8 +20,10 @@ class TestDatabaseConfiguration {
 
   @Bean
   fun testDatabaseCoordinates() = DynamicPropertyRegistrar {
-    it.add("jdbc.datasource.url") { TestDatabase.jdbcUrl }
-    it.add("jdbc.datasource.username") { TestDatabase.username }
-    it.add("jdbc.datasource.password") { TestDatabase.password }
+    // We have to start the container to be able to resolve its JDBC URL
+    TestDatabase.start()
+    it.add("spring.datasource.url") { TestDatabase.jdbcUrl }
+    it.add("spring.datasource.username") { TestDatabase.username }
+    it.add("spring.datasource.password") { TestDatabase.password }
   }
 }
