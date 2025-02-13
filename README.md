@@ -165,7 +165,6 @@ To switch to structured logging, set `LOGGING_STRUCTURED_FORMAT_CONSOLE` environ
 
 ### Possible further work
 
-* Use Kotlin Jooq generator
 * Slack configuration testing subcommand sending a test message
 * Update/delete reposts based on upstream
 * Custom business & technical metrics

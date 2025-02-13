@@ -2,7 +2,7 @@ package dev.pankowski.garcon.infrastructure.persistence
 
 import dev.pankowski.garcon.TestDatabaseConfiguration
 import dev.pankowski.garcon.TestDatabaseExtension
-import dev.pankowski.garcon.infrastructure.persistence.generated.DefaultCatalog.DEFAULT_CATALOG
+import dev.pankowski.garcon.infrastructure.persistence.generated.DefaultCatalog.Companion.DEFAULT_CATALOG
 import io.kotest.core.extensions.install
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.core.test.TestCase
