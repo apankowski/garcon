@@ -165,7 +165,7 @@ To switch to structured logging, set `LOGGING_STRUCTURED_FORMAT_CONSOLE` environ
 
 ### Possible further work
 
-* Utilize [Jooq Gradle Plugin](https://github.com/monosoul/jooq-gradle-plugin) or [Jooq Plugin](https://github.com/revolut-engineering/jooq-plugin) instead of generic docker compose plugin
+* Use Kotlin Jooq generator
 * Slack configuration testing subcommand sending a test message
 * Update/delete reposts based on upstream
 * Custom business & technical metrics

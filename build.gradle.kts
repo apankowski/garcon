@@ -1,7 +1,5 @@
-import nu.studer.gradle.jooq.JooqGenerate
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jooq.meta.jaxb.ForcedType
-import org.jooq.meta.jaxb.Logging
 
 // Gradle
 
@@ -21,9 +19,7 @@ plugins {
   id("io.spring.dependency-management") version "1.1.7"
   id("com.gorylenko.gradle-git-properties") version "2.4.2"
   id("com.adarshr.test-logger") version "4.0.0"
-  id("com.avast.gradle.docker-compose") version "0.17.12"
-  id("org.flywaydb.flyway") version "11.3.1"
-  id("nu.studer.jooq") version "9.0"
+  id("dev.monosoul.jooq-docker") version "6.1.18"
   jacoco
   id("org.sonarqube") version "6.0.1.5171"
   id("com.dorongold.task-tree") version "4.0.0"
@@ -82,7 +78,7 @@ dependencies {
   runtimeOnly("org.postgresql:postgresql")
 
   // Jooq generator
-  jooqGenerator("org.postgresql:postgresql")
+  jooqCodegen("org.postgresql:postgresql")
 
   // Slack
   implementation("com.slack.api:slack-api-client")
@@ -140,122 +136,53 @@ tasks.bootJar {
   archiveFileName = "application.jar"
 }
 
-// Flyway
-
-val dbUrl = "jdbc:postgresql://localhost:5432/garcon"
-val dbUser = "garcon"
-val dbPassword = "garcon"
-
-flyway {
-  url = dbUrl
-  user = dbUser
-  password = dbPassword
-  schemas = arrayOf("public")
-}
-
-tasks.flywayMigrate {
-  dependsOn(tasks.composeUp)
-}
-
-// Database
-
-tasks.register("databaseUp") {
-  dependsOn(tasks.composeUp)
-  dependsOn(tasks.flywayMigrate)
-}
-
-tasks.register("databaseDown") {
-  dependsOn(tasks.composeDown)
-}
-
 // Jooq
 
-jooq {
-  version = "3.19.18"
-
-  configurations {
-    create("main") {
-
-      jooqConfiguration.apply {
-        logging = Logging.WARN
-        jdbc.apply {
-          driver = "org.postgresql.Driver"
-          url = dbUrl
-          user = dbUser
-          password = dbPassword
-        }
-        generator.apply {
-          name = "org.jooq.codegen.DefaultGenerator"
-          database.apply {
-            name = "org.jooq.meta.postgres.PostgresDatabase"
-            inputSchema = "public"
-            // `flyway_schema_history` is a Flyway table.
-            excludes = "flyway_schema_history"
-            forcedTypes.addAll(listOf(
-              ForcedType().apply {
-                includeTypes = "timestamp\\ with\\ time\\ zone"
-                name = "INSTANT"
-              },
-              ForcedType().apply {
-                includeTypes = "integer"
-                includeExpression = "version"
-                userType = "dev.pankowski.garcon.domain.Version"
-                converter = "dev.pankowski.garcon.infrastructure.persistence.VersionConverter"
-              },
-              ForcedType().apply {
-                includeExpression = "classification"
-                userType = "dev.pankowski.garcon.domain.Classification"
-                isEnumConverter = true
-              },
-              ForcedType().apply {
-                includeExpression = "repost_status"
-                userType = "dev.pankowski.garcon.domain.RepostStatus"
-                isEnumConverter = true
-              },
-              // Jooq applies the first matching conversion it encounters.
-              // For columns holding enum values both below and enum converters match.
-              // We want enum converters to win, so conversion below must be specified after them.
-              // We need this because PostgreSQL `text` type doesn't have length restrictions,
-              // so Jooq treats this as CLOB (mapped to String on Java side), but I don't want the JDBC
-              // CLOB infrastructure to be involved for these fields.
-              ForcedType().apply {
-                includeTypes = "text"
-                name = "varchar"
-              }
-            ))
+tasks {
+  generateJooqClasses {
+    basePackageName = "dev.pankowski.garcon.infrastructure.persistence.generated"
+    flywayProperties = mapOf("flyway.placeholderReplacement" to "false")
+    usingJavaConfig {
+      name = "org.jooq.codegen.DefaultGenerator"
+      database.apply {
+        name = "org.jooq.meta.postgres.PostgresDatabase"
+        inputSchema = "public"
+        excludes = "flyway_schema_history"
+        forcedTypes.addAll(listOf(
+          ForcedType().apply {
+            includeTypes = "timestamp\\ with\\ time\\ zone"
+            name = "INSTANT"
+          },
+          ForcedType().apply {
+            includeTypes = "integer"
+            includeExpression = "version"
+            userType = "dev.pankowski.garcon.domain.Version"
+            converter = "dev.pankowski.garcon.infrastructure.persistence.VersionConverter"
+          },
+          ForcedType().apply {
+            includeExpression = "classification"
+            userType = "dev.pankowski.garcon.domain.Classification"
+            isEnumConverter = true
+          },
+          ForcedType().apply {
+            includeExpression = "repost_status"
+            userType = "dev.pankowski.garcon.domain.RepostStatus"
+            isEnumConverter = true
+          },
+          // Jooq applies the first matching conversion it encounters.
+          // For columns holding enum values both below and enum converters match.
+          // We want enum converters to win, so conversion below must be specified after them.
+          // We need this because PostgreSQL `text` type doesn't have length restrictions,
+          // so Jooq treats this as CLOB (mapped to String on Java side), but I don't want the JDBC
+          // CLOB infrastructure to be involved for these fields.
+          ForcedType().apply {
+            includeTypes = "text"
+            name = "varchar"
           }
-          generate.apply {
-            isDeprecated = false
-          }
-          target.apply {
-            packageName = "dev.pankowski.garcon.infrastructure.persistence.generated"
-            directory = "build/generated/source/jooq/main"
-          }
-        }
+        ))
       }
     }
   }
-}
-
-// See https://github.com/etiennestuder/gradle-jooq-plugin#synchronizing-the-jooq-version-between-the-spring-boot-gradle-plugin-and-the-jooq-gradle-plugin
-ext["jooq.version"] = jooq.version.get()
-
-// Accessor for convenience
-val TaskContainer.generateJooq
-  get() = named<JooqGenerate>("generateJooq")
-
-// See https://github.com/etiennestuder/gradle-jooq-plugin/blob/main/example/configure_jooq_with_flyway/build.gradle
-tasks.generateJooq {
-  dependsOn(tasks.flywayMigrate)
-
-  inputs.files(fileTree("src/main/resources/db/migration"))
-    .withPropertyName("migrations")
-    .withPathSensitivity(PathSensitivity.RELATIVE)
-  allInputsDeclared = true
-}
-
-tasks.compileKotlin {
-  mustRunAfter(tasks.generateJooq)
 }
 
 // Tests & code coverage
@@ -288,6 +215,5 @@ sonar {
 
 // Sonar v5 doesn't trigger compilation tasks. Therefore, we declare the dependencies ourselves.
 tasks.sonar {
-  dependsOn(tasks.compileKotlin)
-  dependsOn(tasks.generateJooq)
+  dependsOn(tasks.assemble)
 }
