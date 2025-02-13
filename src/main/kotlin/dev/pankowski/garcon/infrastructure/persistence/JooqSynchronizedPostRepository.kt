@@ -1,8 +1,8 @@
 package dev.pankowski.garcon.infrastructure.persistence
 
 import dev.pankowski.garcon.domain.*
-import dev.pankowski.garcon.infrastructure.persistence.generated.Indexes
-import dev.pankowski.garcon.infrastructure.persistence.generated.Tables.SYNCHRONIZED_POSTS
+import dev.pankowski.garcon.infrastructure.persistence.generated.indexes.SYNCHRONIZED_POSTS_POST_EXTERNAL_ID
+import dev.pankowski.garcon.infrastructure.persistence.generated.tables.SynchronizedPosts.Companion.SYNCHRONIZED_POSTS
 import dev.pankowski.garcon.infrastructure.persistence.generated.tables.records.SynchronizedPostsRecord
 import org.jooq.DSLContext
 import org.jooq.UpdateSetMoreStep
@@ -62,7 +62,7 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       try {
         store()
       } catch (e: DuplicateKeyException) {
-        if (e.message!!.contains(Indexes.SYNCHRONIZED_POSTS_POST_EXTERNAL_ID.name, ignoreCase = true))
+        if (e.message!!.contains(SYNCHRONIZED_POSTS_POST_EXTERNAL_ID.name, ignoreCase = true))
           throw SynchronizedPostHasDuplicateExternalId(
             "Failed to store synchronized post due to duplicate external ID ${data.post.externalId.value}"
           )
@@ -153,19 +153,19 @@ class JooqSynchronizedPostRepository(private val context: DSLContext) : Synchron
       )
 
     fun toRepost(r: SynchronizedPostsRecord) =
-      when (r.repostStatus!!) {
+      when (r.repostStatus) {
         RepostStatus.SKIP -> Repost.Skip
         RepostStatus.PENDING -> Repost.Pending
         RepostStatus.FAILED ->
           Repost.Failed(
-            attempts = r.repostAttempts,
-            lastAttemptAt = r.repostLastAttemptAt,
+            attempts = r.repostAttempts!!,
+            lastAttemptAt = r.repostLastAttemptAt!!,
             nextAttemptAt = r.repostNextAttemptAt,
           )
 
         RepostStatus.SUCCESS ->
           Repost.Success(
-            repostedAt = r.repostRepostedAt
+            repostedAt = r.repostRepostedAt!!
           )
       }
 

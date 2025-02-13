@@ -143,7 +143,7 @@ tasks {
     basePackageName = "dev.pankowski.garcon.infrastructure.persistence.generated"
     flywayProperties = mapOf("flyway.placeholderReplacement" to "false")
     usingJavaConfig {
-      name = "org.jooq.codegen.DefaultGenerator"
+      name = "org.jooq.codegen.KotlinGenerator"
       database.apply {
         name = "org.jooq.meta.postgres.PostgresDatabase"
         inputSchema = "public"
@@ -180,6 +180,11 @@ tasks {
             name = "varchar"
           }
         ))
+      }
+      generate.apply {
+        isKotlinNotNullRecordAttributes = true
+        isKotlinNotNullPojoAttributes = true
+        isKotlinNotNullInterfaceAttributes = true
       }
     }
   }
