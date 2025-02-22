@@ -1,6 +1,6 @@
 services:
   database:
-    image: postgres:15.11
+    image: postgres:15.12
     environment:
       POSTGRES_DB: garcon
       POSTGRES_USER: garcon
