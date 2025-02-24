@@ -1,3 +1,4 @@
+import dev.monosoul.jooq.RecommendedVersions
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jooq.meta.jaxb.ForcedType
 
@@ -73,6 +74,8 @@ dependencies {
   implementation("net.thisptr:jackson-jq")
 
   // Persistence
+  project.extra["jooq.version"] = RecommendedVersions.JOOQ_VERSION
+  project.extra["flyway.version"] = RecommendedVersions.FLYWAY_VERSION
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.flywaydb:flyway-database-postgresql")
   runtimeOnly("org.postgresql:postgresql")
