@@ -23,7 +23,7 @@ plugins {
   id("dev.monosoul.jooq-docker") version "7.0.2"
   jacoco
   id("org.sonarqube") version "6.0.1.5171"
-  id("com.dorongold.task-tree") version "4.0.0"
+  id("com.dorongold.task-tree") version "4.0.1"
 }
 
 tasks.wrapper {
