@@ -9,7 +9,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.6.0")
+    classpath("org.flywaydb:flyway-database-postgresql:11.7.0")
   }
 }
 
@@ -40,7 +40,7 @@ repositories {
 
 dependencyManagement {
   dependencies {
-    dependency("com.google.guava:guava:33.4.6-jre")
+    dependency("com.google.guava:guava:33.4.7-jre")
     dependency("org.jsoup:jsoup:1.19.1")
     dependency("org.mozilla:rhino:1.8.0")
     dependency("net.thisptr:jackson-jq:1.2.0")
@@ -51,7 +51,7 @@ dependencyManagement {
     dependency("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.3.0")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:3.1.0")
-    dependency("io.mockk:mockk:1.13.17")
+    dependency("io.mockk:mockk:1.14.0")
     dependency("org.wiremock:wiremock-standalone:3.12.1")
     dependency("com.tngtech.archunit:archunit-junit5:1.4.0")
   }
