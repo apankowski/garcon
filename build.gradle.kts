@@ -40,7 +40,7 @@ repositories {
 
 dependencyManagement {
   dependencies {
-    dependency("com.google.guava:guava:33.4.7-jre")
+    dependency("com.google.guava:guava:33.4.8-jre")
     dependency("org.jsoup:jsoup:1.19.1")
     dependency("org.mozilla:rhino:1.8.0")
     dependency("net.thisptr:jackson-jq:1.2.0")
