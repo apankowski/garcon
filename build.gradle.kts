@@ -9,7 +9,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.7.0")
+    classpath("org.flywaydb:flyway-database-postgresql:11.7.1")
   }
 }
 
