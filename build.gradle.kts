@@ -20,7 +20,7 @@ plugins {
   id("io.spring.dependency-management") version "1.1.7"
   id("com.gorylenko.gradle-git-properties") version "2.5.0"
   id("com.adarshr.test-logger") version "4.0.0"
-  id("dev.monosoul.jooq-docker") version "7.0.6"
+  id("dev.monosoul.jooq-docker") version "7.0.7"
   jacoco
   id("org.sonarqube") version "6.1.0.5360"
   id("com.dorongold.task-tree") version "4.0.1"
