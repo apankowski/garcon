@@ -9,18 +9,18 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.7.2")
+    classpath("org.flywaydb:flyway-database-postgresql:11.8.1")
   }
 }
 
 plugins {
   kotlin("jvm") version "2.1.20"
   kotlin("plugin.spring") version "2.1.20"
-  id("org.springframework.boot") version "3.4.4"
+  id("org.springframework.boot") version "3.4.5"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.gorylenko.gradle-git-properties") version "2.5.0"
   id("com.adarshr.test-logger") version "4.0.0"
-  id("dev.monosoul.jooq-docker") version "7.0.7"
+  id("dev.monosoul.jooq-docker") version "7.0.9"
   jacoco
   id("org.sonarqube") version "6.1.0.5360"
   id("com.dorongold.task-tree") version "4.0.1"
@@ -41,7 +41,7 @@ repositories {
 dependencyManagement {
   dependencies {
     dependency("com.google.guava:guava:33.4.8-jre")
-    dependency("org.jsoup:jsoup:1.19.1")
+    dependency("org.jsoup:jsoup:1.20.1")
     dependency("org.mozilla:rhino:1.8.0")
     dependency("net.thisptr:jackson-jq:1.2.0")
     dependency("com.slack.api:slack-api-client:1.45.3")
@@ -51,9 +51,9 @@ dependencyManagement {
     dependency("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
     dependency("io.kotest.extensions:kotest-extensions-spring:1.3.0")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:3.1.0")
-    dependency("io.mockk:mockk:1.14.0")
-    dependency("org.wiremock:wiremock-standalone:3.12.1")
-    dependency("com.tngtech.archunit:archunit-junit5:1.4.0")
+    dependency("io.mockk:mockk:1.14.2")
+    dependency("org.wiremock:wiremock-standalone:3.13.0")
+    dependency("com.tngtech.archunit:archunit-junit5:1.4.1")
   }
 }
 
