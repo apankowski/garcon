@@ -20,7 +20,7 @@ plugins {
   id("io.spring.dependency-management") version "1.1.7"
   id("com.gorylenko.gradle-git-properties") version "2.5.0"
   id("com.adarshr.test-logger") version "4.0.0"
-  id("dev.monosoul.jooq-docker") version "7.0.11"
+  id("dev.monosoul.jooq-docker") version "7.0.12"
   jacoco
   id("org.sonarqube") version "6.2.0.5505"
   id("com.dorongold.task-tree") version "4.0.1"
@@ -52,7 +52,7 @@ dependencyManagement {
     dependency("io.kotest.extensions:kotest-extensions-spring:1.3.0")
     dependency("io.kotest.extensions:kotest-extensions-wiremock:3.1.0")
     dependency("io.mockk:mockk:1.14.2")
-    dependency("org.wiremock:wiremock-standalone:3.13.0")
+    dependency("org.wiremock:wiremock-standalone:3.13.1")
     dependency("com.tngtech.archunit:archunit-junit5:1.4.1")
   }
 }
