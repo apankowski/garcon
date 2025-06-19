@@ -9,14 +9,14 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.9.1")
+    classpath("org.flywaydb:flyway-database-postgresql:11.9.2")
   }
 }
 
 plugins {
   kotlin("jvm") version "2.1.21"
   kotlin("plugin.spring") version "2.1.21"
-  id("org.springframework.boot") version "3.5.0"
+  id("org.springframework.boot") version "3.5.1"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.gorylenko.gradle-git-properties") version "2.5.0"
   id("com.adarshr.test-logger") version "4.0.0"
