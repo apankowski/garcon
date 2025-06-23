@@ -14,8 +14,8 @@ buildscript {
 }
 
 plugins {
-  kotlin("jvm") version "2.1.21"
-  kotlin("plugin.spring") version "2.1.21"
+  kotlin("jvm") version "2.2.0"
+  kotlin("plugin.spring") version "2.2.0"
   id("org.springframework.boot") version "3.5.3"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.gorylenko.gradle-git-properties") version "2.5.0"
@@ -41,7 +41,7 @@ repositories {
 dependencyManagement {
   dependencies {
     dependency("com.google.guava:guava:33.4.8-jre")
-    dependency("org.jsoup:jsoup:1.20.1")
+    dependency("org.jsoup:jsoup:1.21.1")
     dependency("org.mozilla:rhino:1.8.0")
     dependency("net.thisptr:jackson-jq:1.3.0")
     dependency("com.slack.api:slack-api-client:1.45.3")
