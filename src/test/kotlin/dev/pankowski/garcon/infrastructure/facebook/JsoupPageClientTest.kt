@@ -1,7 +1,15 @@
 package dev.pankowski.garcon.infrastructure.facebook
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.client.WireMock.badRequest
+import com.github.tomakehurst.wiremock.client.WireMock.equalTo
+import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.notFound
+import com.github.tomakehurst.wiremock.client.WireMock.ok
+import com.github.tomakehurst.wiremock.client.WireMock.okForContentType
+import com.github.tomakehurst.wiremock.client.WireMock.serviceUnavailable
+import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED
 import dev.pankowski.garcon.domain.PageName
 import dev.pankowski.garcon.domain.someClientConfig
@@ -21,7 +29,7 @@ import io.kotest.matchers.string.containIgnoringCase
 import io.kotest.matchers.string.shouldNotBeEmpty
 import org.jsoup.HttpStatusException
 import org.springframework.http.MediaType
-import java.net.SocketTimeoutException
+import java.net.http.HttpTimeoutException
 import java.time.Duration
 
 class JsoupPageClientTest : FreeSpec({
@@ -82,7 +90,7 @@ class JsoupPageClientTest : FreeSpec({
     )
 
     // expect
-    shouldThrow<SocketTimeoutException> {
+    shouldThrow<HttpTimeoutException> {
       client.load(pageConfig)
     }
   }
