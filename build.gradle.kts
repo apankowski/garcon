@@ -18,9 +18,9 @@ plugins {
   kotlin("plugin.spring") version "2.2.0"
   id("org.springframework.boot") version "3.5.3"
   id("io.spring.dependency-management") version "1.1.7"
-  id("com.gorylenko.gradle-git-properties") version "2.5.0"
+  id("com.gorylenko.gradle-git-properties") version "2.5.2"
   id("com.adarshr.test-logger") version "4.0.0"
-  id("dev.monosoul.jooq-docker") version "7.0.16"
+  id("dev.monosoul.jooq-docker") version "7.0.17"
   jacoco
   id("org.sonarqube") version "6.2.0.5505"
   id("com.dorongold.task-tree") version "4.0.1"
