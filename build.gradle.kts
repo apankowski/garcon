@@ -9,18 +9,18 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.10.5")
+    classpath("org.flywaydb:flyway-database-postgresql:11.11.1")
   }
 }
 
 plugins {
-  kotlin("jvm") version "2.2.0"
-  kotlin("plugin.spring") version "2.2.0"
+  kotlin("jvm") version "2.2.10"
+  kotlin("plugin.spring") version "2.2.10"
   id("org.springframework.boot") version "3.5.4"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.gorylenko.gradle-git-properties") version "2.5.2"
   id("com.adarshr.test-logger") version "4.0.0"
-  id("dev.monosoul.jooq-docker") version "7.0.19"
+  id("dev.monosoul.jooq-docker") version "7.0.20"
   jacoco
   id("org.sonarqube") version "6.2.0.5505"
   id("com.dorongold.task-tree") version "4.0.1"
