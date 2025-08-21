@@ -24,7 +24,7 @@ jobs:
 
     steps:
     - name: Checkout source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0 # Required by Sonar to figure out which code is "new"
 
@@ -32,7 +32,7 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: Setup Java
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         java-version: 21
         distribution: temurin
