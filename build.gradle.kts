@@ -9,20 +9,20 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.10.5")
+    classpath("org.flywaydb:flyway-database-postgresql:11.11.2")
   }
 }
 
 plugins {
-  kotlin("jvm") version "2.2.0"
-  kotlin("plugin.spring") version "2.2.0"
-  id("org.springframework.boot") version "3.5.4"
+  kotlin("jvm") version "2.2.10"
+  kotlin("plugin.spring") version "2.2.10"
+  id("org.springframework.boot") version "3.5.5"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.gorylenko.gradle-git-properties") version "2.5.2"
   id("com.adarshr.test-logger") version "4.0.0"
-  id("dev.monosoul.jooq-docker") version "7.0.19"
+  id("dev.monosoul.jooq-docker") version "7.0.22"
   jacoco
-  id("org.sonarqube") version "6.2.0.5505"
+  id("org.sonarqube") version "6.3.0.5676"
   id("com.dorongold.task-tree") version "4.0.1"
 }
 
@@ -41,10 +41,10 @@ repositories {
 dependencyManagement {
   dependencies {
     dependency("com.google.guava:guava:33.4.8-jre")
-    dependency("org.jsoup:jsoup:1.21.1")
+    dependency("org.jsoup:jsoup:1.21.2")
     dependency("org.mozilla:rhino:1.8.0")
-    dependency("net.thisptr:jackson-jq:1.4.0")
-    dependency("com.slack.api:slack-api-client:1.45.3")
+    dependency("net.thisptr:jackson-jq:1.5.0")
+    dependency("com.slack.api:slack-api-client:1.45.4")
     dependency("io.kotest:kotest-runner-junit5:5.9.1")
     dependency("io.kotest:kotest-framework-datatest:5.9.1")
     dependency("io.kotest:kotest-assertions-core:5.9.1")
