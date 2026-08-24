@@ -24,21 +24,21 @@ jobs:
 
     steps:
     - name: Checkout source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0 # Required by Sonar to figure out which code is "new"
 
     - name: Setup Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      uses: docker/setup-buildx-action@v4
 
     - name: Setup Java
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v6
       with:
         java-version: 21
         distribution: temurin
 
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@ac638b010cf58a27ee6c972d7336334ccaf61c96 # v4.4.1
+      uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
       with:
         dependency-graph: ${{ github.event_name == 'pull_request' && 'generate' || 'generate-and-submit' }}
 
@@ -50,7 +50,7 @@ jobs:
       run: ./gradlew test
 
     - name: Archive test results
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       if: always() && (steps.test.conclusion != 'skipped')
       with:
         name: test-results
@@ -64,7 +64,7 @@ jobs:
         junit_files: build/test-results/**/*.xml
 
     - name: Archive code coverage report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       if: always() && (steps.test.conclusion != 'skipped')
       with:
         name: code-coverage-report
@@ -72,7 +72,7 @@ jobs:
         if-no-files-found: error
 
     - name: Cache Sonar packages
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ~/.sonar/cache
         key: sonar
@@ -100,13 +100,13 @@ jobs:
         failure-threshold: error
 
     - name: Upload Hadolint results
-      uses: github/codeql-action/upload-sarif@v3
+      uses: github/codeql-action/upload-sarif@v4
       if: always() && (steps.hadolint.conclusion != 'skipped')
       with:
         sarif_file: hadolint-output.sarif
 
     - name: Build docker image
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       with:
         context: .
         tags: apankowski/garcon:${{ github.sha }}
@@ -131,13 +131,13 @@ jobs:
         output: trivy-output.sarif
 
     - name: Upload Trivy results
-      uses: github/codeql-action/upload-sarif@v3
+      uses: github/codeql-action/upload-sarif@v4
       if: always() && (steps.trivy.conclusion != 'skipped')
       with:
         sarif_file: trivy-output.sarif
 
     - name: Archive security scanning report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       if: always() && (steps.hadolint.conclusion != 'skipped' || steps.trivy.conclusion != 'skipped')
       with:
         name: security-scanning-report
