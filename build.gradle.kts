@@ -27,7 +27,7 @@ plugins {
 }
 
 tasks.wrapper {
-  gradleVersion = "8.14.3"
+  gradleVersion = "21.0.12_8-jre-alpine"
 }
 
 group = "dev.pankowski"
